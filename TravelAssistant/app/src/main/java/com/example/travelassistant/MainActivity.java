@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     EditText edtPasswordLogin;
     Button  btnSignIn;
     private String tokenLogin = "";
-    private static final String API_ADDR = "http://35.197.153.192:3000/";
+    public static final String API_ADDR = "http://35.197.153.192:3000/";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +105,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                     else
                         Toast.makeText(getApplicationContext(), "LOGIN FAILED!", Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(MainActivity.this, ListTourActivity.class);
+                    startActivity(intent);
                 }
                 catch (Exception e)
                 {

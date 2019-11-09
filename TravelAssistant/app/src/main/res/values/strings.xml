@@ -15,4 +15,5 @@
     <string name="via_sms">   Via sms</string>
     <string name="via_email">Via email</string>
     <string name="submit_button">Submit</string>
+    <string name="search_hint">Search Here...</string>
 </resources>
