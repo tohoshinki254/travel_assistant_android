@@ -1,135 +1,209 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="15dp"
-    tools:context=".RegisterActivity">
-
-    <TextView
-        android:id="@+id/fullNameLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/full_name_label"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        android:textColor="@color/colorGray"
-        android:layout_marginTop="10dp"/>
-
-    <EditText
-        android:id="@+id/inputFullNameBox"
+    android:layout_height="match_parent" >
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="text"
-        android:textSize="20sp"
-        android:background="@drawable/border_edit_text"
-        android:layout_marginBottom="10dp"
-        android:layout_below="@id/fullNameLabel"
-        android:layout_marginTop="5dp"
-        android:padding="10sp"/>
+        android:layout_margin="15dp"
+        tools:context=".RegisterActivity">
 
-    <TextView
-        android:id="@+id/emailLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/email_label"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        android:textColor="@color/colorGray"
-        android:layout_marginTop="10dp"
-        android:layout_below="@id/inputFullNameBox" />
+        <TextView
+            android:id="@+id/fullNameLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/full_name_label"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorGray"
+            android:layout_marginTop="10dp"/>
 
-    <EditText
-        android:id="@+id/inputEmailBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"
-        android:textSize="20sp"
-        android:background="@drawable/border_edit_text"
-        android:layout_marginBottom="10dp"
-        android:layout_below="@id/emailLabel"
-        android:layout_marginTop="5dp"
-        android:padding="10sp"/>
+        <EditText
+            android:id="@+id/inputFullNameBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:textSize="20sp"
+            android:background="@drawable/border_edit_text"
+            android:layout_marginBottom="10dp"
+            android:layout_below="@id/fullNameLabel"
+            android:layout_marginTop="5dp"
+            android:padding="10sp"/>
 
-    <TextView
-        android:id="@+id/phoneLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/phone_label"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        android:textColor="@color/colorGray"
-        android:layout_marginTop="10dp"
-        android:layout_below="@id/inputEmailBox"/>
+        <TextView
+            android:id="@+id/genderLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/gender_label"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorGray"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/inputFullNameBox"/>
 
-    <EditText
-        android:id="@+id/inputPhoneBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="phone"
-        android:textSize="20sp"
-        android:background="@drawable/border_edit_text"
-        android:layout_marginBottom="10dp"
-        android:layout_below="@id/phoneLabel"
-        android:layout_marginTop="5dp"
-        android:padding="10sp"/>
+        <EditText
+            android:id="@+id/inputGenderBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:textSize="20sp"
+            android:background="@drawable/border_edit_text"
+            android:layout_marginBottom="10dp"
+            android:layout_below="@id/genderLabel"
+            android:layout_marginTop="5dp"
+            android:padding="10sp"/>
 
-    <TextView
-        android:id="@+id/registerPasswordLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/password_label"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        android:textColor="@color/colorGray"
-        android:layout_marginTop="10dp"
-        android:layout_below="@id/inputPhoneBox" />
+        <TextView
+            android:id="@+id/dobLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dob_label"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorGray"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/inputGenderBox"/>
 
-    <EditText
-        android:id="@+id/inputRegisterPasswordBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:textSize="20sp"
-        android:background="@drawable/border_edit_text"
-        android:layout_marginBottom="10dp"
-        android:layout_below="@id/registerPasswordLabel"
-        android:layout_marginTop="5dp"
-        android:padding="10sp"/>
+        <EditText
+            android:id="@+id/inputDobBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:textSize="20sp"
+            android:background="@drawable/border_edit_text"
+            android:layout_marginBottom="10dp"
+            android:layout_below="@id/dobLabel"
+            android:layout_marginTop="5dp"
+            android:padding="10sp"/>
 
-    <TextView
-        android:id="@+id/confirmPasswordLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/confirm_password_label"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        android:textColor="@color/colorGray"
-        android:layout_marginTop="10dp"
-        android:layout_below="@id/inputRegisterPasswordBox" />
+        <TextView
+            android:id="@+id/addressLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/address_label"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorGray"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/inputDobBox"/>
 
-    <EditText
-        android:id="@+id/inputConfirmPasswordBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:textSize="20sp"
-        android:background="@drawable/border_edit_text"
-        android:layout_marginBottom="10dp"
-        android:layout_below="@id/confirmPasswordLabel"
-        android:layout_marginTop="5dp"
-        android:padding="10sp"/>
+        <EditText
+            android:id="@+id/inputAddressBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:textSize="20sp"
+            android:background="@drawable/border_edit_text"
+            android:layout_marginBottom="10dp"
+            android:layout_below="@id/addressLabel"
+            android:layout_marginTop="5dp"
+            android:padding="10sp"/>
 
-    <Button
-        android:id="@+id/signInButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/inputConfirmPasswordBox"
-        android:text="@string/sign_up"
-        android:textSize="20sp"
-        android:textAllCaps="false"
-        android:textColor="@color/colorWhite"
-        android:background="@drawable/border_button"
-        android:layout_marginTop="20dp" />
+        <TextView
+            android:id="@+id/emailLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/email_label"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorGray"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/inputAddressBox" />
 
-</RelativeLayout>
+        <EditText
+            android:id="@+id/inputEmailBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:textSize="20sp"
+            android:background="@drawable/border_edit_text"
+            android:layout_marginBottom="10dp"
+            android:layout_below="@id/emailLabel"
+            android:layout_marginTop="5dp"
+            android:padding="10sp"/>
+
+        <TextView
+            android:id="@+id/phoneLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/phone_label"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorGray"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/inputEmailBox"/>
+
+        <EditText
+            android:id="@+id/inputPhoneBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="phone"
+            android:textSize="20sp"
+            android:background="@drawable/border_edit_text"
+            android:layout_marginBottom="10dp"
+            android:layout_below="@id/phoneLabel"
+            android:layout_marginTop="5dp"
+            android:padding="10sp"/>
+
+        <TextView
+            android:id="@+id/registerPasswordLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/password_label"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorGray"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/inputPhoneBox" />
+
+        <EditText
+            android:id="@+id/inputRegisterPasswordBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:textSize="20sp"
+            android:background="@drawable/border_edit_text"
+            android:layout_marginBottom="10dp"
+            android:layout_below="@id/registerPasswordLabel"
+            android:layout_marginTop="5dp"
+            android:padding="10sp"/>
+
+        <TextView
+            android:id="@+id/confirmPasswordLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/confirm_password_label"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorGray"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/inputRegisterPasswordBox" />
+
+        <EditText
+            android:id="@+id/inputConfirmPasswordBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:textSize="20sp"
+            android:background="@drawable/border_edit_text"
+            android:layout_marginBottom="10dp"
+            android:layout_below="@id/confirmPasswordLabel"
+            android:layout_marginTop="5dp"
+            android:padding="10sp"/>
+
+        <Button
+            android:id="@+id/signUpButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/inputConfirmPasswordBox"
+            android:text="@string/sign_up"
+            android:textSize="20sp"
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite"
+            android:background="@drawable/border_button"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="40dp"/>
+
+    </RelativeLayout>
+</ScrollView>

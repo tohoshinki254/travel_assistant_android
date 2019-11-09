@@ -3,6 +3,9 @@
     <string name="username_label">EMAIL/PHONE</string>
     <string name="password_label">PASSWORD</string>
     <string name="full_name_label">FULL NAME</string>
+    <string name="gender_label">GENDER</string>
+    <string name="dob_label">DAY OF BIRTH</string>
+    <string name="address_label">ADDRESS</string>
     <string name="email_label">EMAIL</string>
     <string name="phone_label">PHONE</string>
     <string name="confirm_password_label">CONFIRM PASSWORD</string>
