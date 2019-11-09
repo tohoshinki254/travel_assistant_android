@@ -9,4 +9,16 @@ public class Tour {
     public int adults;
     public int childs;
     public String avatar;
+
+    public Tour(Tour t)
+    {
+        name  = t.name;
+        startDate = t.startDate;
+        endDate = t.endDate;
+        minCost = t.minCost;
+        maxCost = t.maxCost;
+        adults = t.adults;
+        childs = t.childs;
+        avatar = t.avatar;
+    }
 }
