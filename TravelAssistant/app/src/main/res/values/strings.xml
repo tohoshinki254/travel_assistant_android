@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Travel Assistant</string>
+    <string name="username_label">EMAIL/PHONE</string>
+    <string name="password_label">PASSWORD</string>
+    <string name="full_name_label">FULL NAME</string>
+    <string name="email_label">EMAIL</string>
+    <string name="phone_label">PHONE</string>
+    <string name="confirm_password_label">CONFIRM PASSWORD</string>
+    <string name="sign_in">Sign In</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_up_with_facebook">Sign Up With Facebook</string>
+    <string name="sign_up_with_google">Sign Up With Google</string>
+    <string name="instruct_forgot_password">Select which contact details should we use to reset your password:</string>
+    <string name="via_sms">   Via sms</string>
+    <string name="via_email">Via email</string>
+    <string name="submit_button">Submit</string>
+</resources>
