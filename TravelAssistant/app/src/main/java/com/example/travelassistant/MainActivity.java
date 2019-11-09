@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setWiget();
+        setWidget();
         setEvent();
     }
 
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    private void setWiget()
+    private void setWidget()
     {
         edtUserAcc = (EditText) findViewById(R.id.inputUsernameBox);
         edtPasswordLogin = (EditText) findViewById(R.id.inputPasswordBox);
