@@ -22,4 +22,6 @@
     <string name="via_email">Via email</string>
     <string name="submit_button">Submit</string>
     <string name="search_hint">Search Here...</string>
+    <string name="title_dialog">Thoát ứng dụng</string>
+    <string name="message_dialog">Nhấn YES để thoát.\nNhấn NO để trở lại.</string>
 </resources>

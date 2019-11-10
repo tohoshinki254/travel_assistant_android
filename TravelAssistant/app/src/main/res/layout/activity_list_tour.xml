@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:layout_width="match_parent"
+<RelativeLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:weightSum="30">
+    android:orientation="vertical">
 
     <EditText
         android:id="@+id/edtSearch"
-        android:layout_weight="2"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="38dp"
         android:hint="@string/search_hint"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="7dp"
@@ -22,20 +20,71 @@
         android:background="@drawable/border_search_edit_text"/>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcvListTour"
+        android:layout_below="@id/edtSearch"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="26"
+        android:layout_height="match_parent"
     />
     <LinearLayout
         android:id="@+id/layoutBarBottom"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:background="@color/colorGray50">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="123"/>
-    </LinearLayout>
+        android:layout_height="40dp"
+        android:background="@color/colorGray50"
+        android:layout_alignParentBottom="true"
+        android:layout_above="@id/edtSearch"
+        android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/imgbMenu"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/menu_icon"
+            android:scaleType="fitXY"
+            android:background="@android:color/transparent"
+            android:adjustViewBounds="true"/>
 
-</LinearLayout>
+        <ImageButton
+            android:id="@+id/imgbTime"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/time_icon"
+            android:background="@android:color/transparent"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"/>
+
+        <ImageButton
+            android:id="@+id/imgbMap"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/map_icon"
+            android:background="@android:color/transparent"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"/>
+
+        <ImageButton
+            android:id="@+id/imgbBell"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/bell_icon"
+            android:background="@android:color/transparent"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"/>
+
+        <ImageButton
+            android:id="@+id/imgbSetting"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/setting_icon"
+            android:background="@android:color/transparent"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"/>
+    </LinearLayout>
+</RelativeLayout>
