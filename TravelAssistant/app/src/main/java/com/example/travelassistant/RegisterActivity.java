@@ -55,8 +55,8 @@ public class RegisterActivity extends AppCompatActivity {
                 try{
                     final OkHttpClient httpClient = new OkHttpClient();
                     final RequestBody formBody = new FormBody.Builder()
-                            .add("password", edtGender.getText().toString())
-                            .add("fullname", edtFullName.getText().toString())
+                            .add("password", edtPasswordRegister.getText().toString())
+                            .add("fullName", edtFullName.getText().toString())
                             .add("email", edtEmail.getText().toString())
                             .add("phone", edtPhone.getText().toString())
                             .add("address", edtAddress.getText().toString())
@@ -91,6 +91,7 @@ public class RegisterActivity extends AppCompatActivity {
                     if(temp != null)
                     {
                         Toast.makeText(getApplicationContext(), "REGISTER SUCCESSFULLY!", Toast.LENGTH_SHORT).show();
+                        finish();
                     }
                     else
                         Toast.makeText(getApplicationContext(), "REGISTER FAILED!", Toast.LENGTH_SHORT).show();

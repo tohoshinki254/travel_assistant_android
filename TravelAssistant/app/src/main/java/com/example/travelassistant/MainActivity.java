@@ -113,23 +113,14 @@ public class MainActivity extends AppCompatActivity {
                         JSONObject res = new JSONObject(temp);
                         tokenLogin = res.getString("token");
                         Toast.makeText(getApplicationContext(), "LOGIN SUCCESSFULLY!", Toast.LENGTH_SHORT).show();
-<<<<<<< HEAD
-                    } else
-                        Toast.makeText(getApplicationContext(), "LOGIN FAILED!", Toast.LENGTH_SHORT).show();
-
-                    Intent intent = new Intent(MainActivity.this, ListTourActivity.class);
-                    startActivity(intent);
-                } catch (Exception e) {
-
-=======
                         Intent intent = new Intent(MainActivity.this, ListTourActivity.class);
                         intent.putExtra("token", tokenLogin);
                         startActivity(intent);
-                    }
-                    else
+                    } else
                         Toast.makeText(getApplicationContext(), "LOGIN FAILED!", Toast.LENGTH_SHORT).show();
 
->>>>>>> 1bd85bc57cb8c5fa7e1596e6989146b9c0e33bbb
+                } catch (Exception e) {
+
                 }
             }
         });
@@ -180,11 +171,11 @@ public class MainActivity extends AppCompatActivity {
                         JSONObject res = new JSONObject(temp);
                         tokenLogin = res.getString("token");
                         Toast.makeText(getApplicationContext(), "LOGIN SUCCESSFULLY!", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(MainActivity.this, ListTourActivity.class);
+                        intent.putExtra("token", tokenLogin);
+                        startActivity(intent);
                     } else
                         Toast.makeText(getApplicationContext(), "LOGIN FAILED!", Toast.LENGTH_SHORT).show();
-
-                    Intent intent = new Intent(MainActivity.this, ListTourActivity.class);
-                    startActivity(intent);
 
                 } catch (Exception e) {
 
@@ -198,8 +189,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 accessToken = loginResult.getAccessToken();
-                Intent intent = new Intent(MainActivity.this, ListTourActivity.class);
-                startActivity(intent);
             }
 
             @Override
