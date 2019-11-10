@@ -1,4 +1,7 @@
 <resources>
+    <string name="facebook_app_id">2136256193342758</string>
+    <string name="fb_login_protocol_scheme">fb2136256193342758</string>
+
     <string name="app_name">Travel Assistant</string>
     <string name="username_label">EMAIL/PHONE</string>
     <string name="password_label">PASSWORD</string>
