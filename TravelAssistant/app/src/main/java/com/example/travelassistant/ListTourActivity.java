@@ -1,5 +1,6 @@
 package com.example.travelassistant;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -12,7 +13,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
@@ -36,6 +40,7 @@ public class ListTourActivity extends AppCompatActivity {
     TourAdapter tourAdapter;
     EditText edtSearch;
     ArrayList <Tour> tourArrayList;
+    ImageButton imbCreate;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +75,38 @@ public class ListTourActivity extends AppCompatActivity {
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId())
+        {
+            case android.R.id.home:
+                AlertDialog.Builder builder = new AlertDialog.Builder(ListTourActivity.this);
+                builder.setTitle(R.string.title_dialog);
+                builder.setMessage(R.string.message_dialog);
+                builder.setCancelable(true);
+                builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int k) {
+                        dialogInterface.cancel();
+                        finishAffinity();
+                    }
+                });
+
+                builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int k) {
+                        dialogInterface.cancel();
+                    }
+                });
+
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+                break;
+        }
+
+        return true;
     }
 
     private void loadListTour()
@@ -144,6 +181,14 @@ public class ListTourActivity extends AppCompatActivity {
 
             }
         });
+
+        imbCreate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ListTourActivity.this, StopPointMap.class);
+                startActivity(intent);
+            }
+        });
     }
     private void getWidget()
     {
@@ -151,5 +196,6 @@ public class ListTourActivity extends AppCompatActivity {
         tourArrayList = new ArrayList<>();
         rcvListTour = (RecyclerView) findViewById(R.id.rcvListTour);
         rcvListTour.setLayoutManager(new LinearLayoutManager(this));
+        imbCreate = (ImageButton) findViewById(R.id.imgbCreat);
     }
 }
