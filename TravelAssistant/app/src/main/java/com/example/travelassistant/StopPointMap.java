@@ -6,30 +6,33 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.annotation.SuppressLint;
-<<<<<<< HEAD
+
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.res.Resources;
 import android.location.Address;
 import android.location.Geocoder;
-=======
+
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
->>>>>>> c6978730f566347d278db60c7bfe6696ef2ea7e2
+
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.view.View;
-<<<<<<< HEAD
+
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
-=======
->>>>>>> c6978730f566347d278db60c7bfe6696ef2ea7e2
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -83,34 +86,37 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
     LinearLayout btnCreateStopPoint;
     SupportMapFragment mapFragment;
     Geocoder geocoder;
-<<<<<<< HEAD
     Dialog dialog;
-
     Calendar calendar;
     int day, month, year,hour, minute;
     DatePickerDialog datePickerDialog;
     TimePickerDialog timePickerDialog;
 
     TextView txtArriveTime, txtArriveDate, txtLeaveTime, txtLeaveDate;
+    Spinner spnProvince, spnService;
+    EditText edtStopPointName, edtAddress,edtMinCost, edtMaxCost;
 
-=======
+
+
+
+
     ArrayList<LatLng> latLngs;
     ImageButton imgbMyLocation;
     ImageButton imgbMenuStopPoint;
     Polyline polyline;
->>>>>>> c6978730f566347d278db60c7bfe6696ef2ea7e2
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stop_point_map);
         setWidget();
-<<<<<<< HEAD
-=======
+
+
 
 
         mapFragment.getMapAsync(this);
->>>>>>> c6978730f566347d278db60c7bfe6696ef2ea7e2
+
         setEvent();
         mapFragment.getMapAsync(this);
 
@@ -165,34 +171,8 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
 
                 DisplayPopupDialog();
-                LatLng middle = mMap.getCameraPosition().target;
-                if (latLngs.size() < 2)
-                {
-                    latLngs.add(middle);
-                }
-                else
-                {
-                    latLngs.add(latLngs.size() - 1, middle);
-                }
-                try {
 
-                    mMap.addMarker(new MarkerOptions().position(middle).title("Stop Point")
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.orange_flag_icon)));
-                    if(latLngs.size() >= 2)
-                    {
-                        if (polyline != null)
-                        {
-                            polyline.remove();
-                            polyline = null;
-                        }
-                        drawRoute();
-                    }
-                    List<Address> addresses;
-                    addresses = geocoder.getFromLocation(middle.latitude, middle.longitude, 1);
-                    Toast.makeText(getApplicationContext(), addresses.get(0).getAddressLine(0), Toast.LENGTH_SHORT).show();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+
 
             }
         });
@@ -370,6 +350,7 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
 
         }
     }
+
     private void updateLocationUI() {
         if (mMap == null) {
             return;
@@ -387,6 +368,7 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
 
         }
     }
+
     private void setWidget()
     {
         imgbMyLocation = (ImageButton) findViewById(R.id.imgbMyLocation);
@@ -399,30 +381,97 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
     }
 
+    int lastIndex = -1;
+
     public void DisplayPopupDialog()
     {
         dialog = new Dialog(StopPointMap.this);
         dialog.setContentView(R.layout.stoppoint_info_popup);
 
+        spnProvince = (Spinner) dialog.findViewById(R.id.stop_point_province_Category);
+        spnService = (Spinner) dialog.findViewById(R.id.stop_point_serviceType_Category);
         ImageButton exitButton = (ImageButton) dialog.findViewById(R.id.stop_point_exit_button);
-
-        Button dialogButton =  (Button) dialog.findViewById(R.id.stop_point_OK_button);
-        dialogButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
-
-
-
-
+        Button saveButton =  (Button) dialog.findViewById(R.id.stop_point_OK_button);
         txtArriveDate =(TextView) dialog.findViewById(R.id.stop_point_arrive_date);
         txtArriveTime =(TextView) dialog.findViewById(R.id.stop_point_arrive_time);
         txtLeaveDate =(TextView) dialog.findViewById(R.id.stop_point_leave_date);
         txtLeaveTime =(TextView) dialog.findViewById(R.id.stop_point_leave_time);
+        edtAddress =(EditText) dialog.findViewById(R.id.stop_point_address_Content);
+        edtMinCost = (EditText)dialog.findViewById(R.id.stop_point_min_cost_Content);
+        edtStopPointName = (EditText)dialog.findViewById(R.id.stop_point_name_Content);
+        edtMaxCost = (EditText)dialog.findViewById(R.id.stop_point_max_cost_Content);
+
+        String[] arrProvinceName = getResources().getStringArray(R.array.list_province_name);
+        String[] arrProvinceId = getResources().getStringArray(R.array.list_province_id);
+        String[] arrServiceName = getResources().getStringArray(R.array.list_service);
+        ArrayList<String> arrListProvince = new ArrayList<String>(Arrays.asList(arrProvinceName));
+        ArrayList<String> arrListService = new ArrayList<String>(Arrays.asList(arrServiceName));
+
+        ArrayAdapter<String> adapter_province = new ArrayAdapter(StopPointMap.this,android.R.layout.simple_spinner_item,arrListProvince);
+        adapter_province.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
+        spnProvince.setAdapter(adapter_province);
+        spnProvince.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
 
+        ArrayAdapter<String> adapter_service = new ArrayAdapter(StopPointMap.this,android.R.layout.simple_spinner_item,arrListService);
+        adapter_service.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
+        spnService.setAdapter(adapter_service);
+        spnService.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                long timeArrive, timeLeave;
+                int provinceId, serviceId, minCost, maxCost;
+
+                provinceId = spnProvince.getSelectedItemPosition() + 1;
+                serviceId = spnService.getSelectedItemPosition() + 1;
+                String strStopPointName = edtStopPointName.getText().toString();
+                String strAddress = edtAddress.getText().toString();
+                minCost = Integer.parseInt(edtMinCost.getText().toString());
+                maxCost = Integer.parseInt(edtMaxCost.getText().toString());
+
+                dialog.dismiss();
+                try {
+
+                    mMap.addMarker(new MarkerOptions().position(latLngs.get(lastIndex)).title("Stop Point")
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.orange_flag_icon)));
+                    if(latLngs.size() >= 2)
+                    {
+                        if (polyline != null)
+                        {
+                            polyline.remove();
+                            polyline = null;
+                        }
+                        drawRoute();
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         txtArriveDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -436,7 +485,13 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
                 datePickerDialog = new DatePickerDialog(StopPointMap.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
-                        txtArriveDate.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
+                        String chosenDay = Integer.toString(dayOfMonth);
+                        String chosenMonth = Integer.toString(month + 1);
+                        if (dayOfMonth < 10)
+                            chosenDay = "0" + chosenDay;
+                        if (month + 1 < 10)
+                            chosenMonth = "0" + chosenMonth;
+                        txtArriveDate.setText(chosenDay + "/" + chosenMonth + "/" + year);
                     }
                 }, year, month, day);
 
@@ -457,7 +512,14 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
                 datePickerDialog = new DatePickerDialog(StopPointMap.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
-                        txtLeaveDate.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
+                        String chosenDay = Integer.toString(dayOfMonth);
+                        String chosenMonth = Integer.toString(month + 1);
+                        if (dayOfMonth < 10)
+                            chosenDay = "0" + chosenDay;
+                        if (month + 1 < 10)
+                            chosenMonth = "0" + chosenMonth;
+
+                        txtLeaveDate.setText(chosenDay + "/" + chosenMonth + "/" + year);
                     }
                 }, year, month, day);
 
@@ -465,7 +527,6 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
-
 
         txtArriveTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -508,9 +569,30 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
         exitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 dialog.dismiss();
             }
         });
+
+        LatLng middle = mMap.getCameraPosition().target;
+        if (latLngs.size() < 2)
+        {
+            latLngs.add(middle);
+            lastIndex = latLngs.size() - 1;
+        }
+        else
+        {
+            latLngs.add(latLngs.size() - 1, middle);
+            lastIndex = latLngs.size() - 2;
+        }
+        List<Address> addresses;
+        try {
+            addresses = geocoder.getFromLocation(middle.latitude, middle.longitude, 1);
+            edtAddress.setText(addresses.get(0).getAddressLine(0));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
         dialog.show();
         dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
