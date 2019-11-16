@@ -2,11 +2,21 @@ package com.example.travelassistant;
 
 import androidx.fragment.app.FragmentActivity;
 
+import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
@@ -24,6 +34,7 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -35,14 +46,24 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
     LinearLayout btnCreateStopPoint;
     SupportMapFragment mapFragment;
     Geocoder geocoder;
+    Dialog dialog;
+
+    Calendar calendar;
+    int day, month, year,hour, minute;
+    DatePickerDialog datePickerDialog;
+    TimePickerDialog timePickerDialog;
+
+    TextView txtArriveTime, txtArriveDate, txtLeaveTime, txtLeaveDate;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stop_point_map);
         setWidget();
-        mapFragment.getMapAsync(this);
         setEvent();
+        mapFragment.getMapAsync(this);
+
     }
 
 
@@ -90,6 +111,8 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
         btnCreateStopPoint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                DisplayPopupDialog();
                 LatLng middle = mMap.getCameraPosition().target;
                 try {
 
@@ -114,5 +137,123 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
         btnCreateStopPoint = (LinearLayout) findViewById(R.id.layoutCreateStopPoint);
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+    }
+
+    public void DisplayPopupDialog()
+    {
+        dialog = new Dialog(StopPointMap.this);
+        dialog.setContentView(R.layout.stoppoint_info_popup);
+
+        ImageButton exitButton = (ImageButton) dialog.findViewById(R.id.stop_point_exit_button);
+
+        Button dialogButton =  (Button) dialog.findViewById(R.id.stop_point_OK_button);
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+
+
+
+        txtArriveDate =(TextView) dialog.findViewById(R.id.stop_point_arrive_date);
+        txtArriveTime =(TextView) dialog.findViewById(R.id.stop_point_arrive_time);
+        txtLeaveDate =(TextView) dialog.findViewById(R.id.stop_point_leave_date);
+        txtLeaveTime =(TextView) dialog.findViewById(R.id.stop_point_leave_time);
+
+
+
+        txtArriveDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calendar = Calendar.getInstance();
+                year = calendar.get(Calendar.YEAR);
+                month = calendar.get(Calendar.MONTH);
+                day = calendar.get(Calendar.DAY_OF_MONTH);
+                minute = calendar.get(Calendar.MINUTE);
+                hour = calendar.get(Calendar.HOUR);
+                datePickerDialog = new DatePickerDialog(StopPointMap.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
+                        txtArriveDate.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
+                    }
+                }, year, month, day);
+
+                datePickerDialog.show();
+
+            }
+        });
+
+        txtLeaveDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calendar = Calendar.getInstance();
+                year = calendar.get(Calendar.YEAR);
+                month = calendar.get(Calendar.MONTH);
+                day = calendar.get(Calendar.DAY_OF_MONTH);
+                minute = calendar.get(Calendar.MINUTE);
+                hour = calendar.get(Calendar.HOUR);
+                datePickerDialog = new DatePickerDialog(StopPointMap.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
+                        txtLeaveDate.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
+                    }
+                }, year, month, day);
+
+                datePickerDialog.show();
+
+            }
+        });
+
+
+        txtArriveTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                calendar = Calendar.getInstance();
+                minute = calendar.get(Calendar.MINUTE);
+                hour = calendar.get(Calendar.HOUR_OF_DAY);
+
+                timePickerDialog = new TimePickerDialog(StopPointMap.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int i, int i1) {
+                        txtArriveTime.setText(String.format("%02d:%02d", i, i1));
+                    }
+                }, hour, minute, true);
+
+                timePickerDialog.show();
+            }
+        });
+
+        txtLeaveTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                calendar = Calendar.getInstance();
+                minute = calendar.get(Calendar.MINUTE);
+                hour = calendar.get(Calendar.HOUR_OF_DAY);
+
+                timePickerDialog = new TimePickerDialog(StopPointMap.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int i, int i1) {
+                        txtLeaveTime.setText(String.format("%02d:%02d", i, i1));
+                    }
+                }, hour, minute, true);
+
+                timePickerDialog.show();
+            }
+        });
+
+
+
+        exitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+        dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
+
     }
 }

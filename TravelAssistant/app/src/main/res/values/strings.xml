@@ -28,4 +28,17 @@
     <string name="title_activity_stop_point_map">Map</string>
     <string name="create_stop_point">CREATE STOP POINT</string>
     <string name="additional_info">(first and second point are origin and destination)</string>
+    <string name="stop_point_info_label">Stop point information</string>
+    <string name="stop_point_name">Stop point name</string>
+    <string name="stop_point_serviceType">Service type</string>
+    <string name="stop_point_address">Address</string>
+    <string name="stop_point_province">Province</string>
+    <string name="stop_point_min_cost">Min cost</string>
+    <string name="stop_point_max_cost">Max cost</string>
+    <string name="stop_point_arrive_at">Arrive at</string>
+    <string name="stop_point_leave_at">Leave at</string>
+    <string name="stop_point_time">Time</string>
+    <string name="stop_point_select_date">Select date</string>
+    <string name="stop_point_save">SAVE</string>
+
 </resources>
