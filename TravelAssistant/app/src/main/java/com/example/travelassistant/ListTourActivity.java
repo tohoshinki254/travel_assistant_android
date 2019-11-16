@@ -41,6 +41,7 @@ public class ListTourActivity extends AppCompatActivity {
     EditText edtSearch;
     ArrayList <Tour> tourArrayList;
     ImageButton imbCreate;
+    private String token = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,7 +113,7 @@ public class ListTourActivity extends AppCompatActivity {
     private void loadListTour()
     {
         Intent intent = this.getIntent();
-        String token = intent.getStringExtra("token");
+        token = intent.getStringExtra("token");
 
         final OkHttpClient httpClient = new OkHttpClient();
         final Request request = new Request.Builder()
@@ -185,7 +186,8 @@ public class ListTourActivity extends AppCompatActivity {
         imbCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ListTourActivity.this, StopPointMap.class);
+                Intent intent = new Intent(ListTourActivity.this, CreateTour.class);
+                intent.putExtra("token", token);
                 startActivity(intent);
             }
         });

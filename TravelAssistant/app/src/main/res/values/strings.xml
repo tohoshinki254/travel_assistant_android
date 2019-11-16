@@ -23,9 +23,6 @@
     <string name="via_email">Via email</string>
     <string name="submit_button">Submit</string>
     <string name="search_hint">Search Here...</string>
-<<<<<<< HEAD
-    <string name="title_dialog">Thoát ứng dụng</string>
-    <string name="message_dialog">Nhấn YES để thoát.\nNhấn NO để trở lại.</string>
     <string name="create_tour_str">Create tour</string>
     <string name="tour_name_label">Tour name</string>
     <string name="start_date_label">Start date</string>
@@ -38,11 +35,9 @@
     <string name="radio_button_create_tour">This is your private trip ?</string>
     <string name="create_text_button">Create</string>
     <string name="select_date_hint">Select date</string>
-=======
     <string name="title_dialog">Exit</string>
     <string name="message_dialog">Press YES to exit.\nPress NO to cancel.</string>
     <string name="title_activity_stop_point_map">Map</string>
     <string name="create_stop_point">CREATE STOP POINT</string>
     <string name="additional_info">(first and second point are origin and destination)</string>
->>>>>>> d77760f36b44f528838483ca3827075eacc5be39
 </resources>

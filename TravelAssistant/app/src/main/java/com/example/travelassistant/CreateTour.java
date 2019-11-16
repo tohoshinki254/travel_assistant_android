@@ -50,12 +50,15 @@ public class CreateTour extends AppCompatActivity {
     private String string_date = "";
     private String millis_start = "1552401906062";
     private String millis_end = "1552401906062";
-    private String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI3OSIsInBob25lIjoiMDE1MjM2NTI0OCIsImVtYWlsIjoidHF0Mjg5OUBnbWFpbC5jb20iLCJleHAiOjE1NzY0NjYwMzQ2NTksImFjY291bnQiOiJ1c2VyIiwiaWF0IjoxNTczODc0MDM0fQ.53JBKZcM0uDCnhkORc04aNAe0g5_AcCHSWP4MKUrja0";
+    private String token = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_tour);
+
+        Intent intent = this.getIntent();
+        token = intent.getStringExtra("token");
 
         setWidget();
         setEvent();
@@ -166,7 +169,8 @@ public class CreateTour extends AppCompatActivity {
                     if (temp != null) {
                         JSONObject res = new JSONObject(temp);
                         id = res.getString("id");
-                        Intent intent = new Intent(CreateTour.this, ListTourActivity.class);
+                        Intent intent = new Intent(CreateTour.this, StopPointMap.class);
+                        intent.putExtra("id", id);
                         startActivity(intent);
                     } else
                         Toast.makeText(getApplicationContext(), "CREATE FAILED!", Toast.LENGTH_SHORT).show();
