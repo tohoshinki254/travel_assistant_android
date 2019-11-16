@@ -74,5 +74,29 @@
             android:textSize="12sp" />
     </LinearLayout>
 
+    <ImageButton
+        android:id="@+id/imgbMyLocation"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitXY"
+        android:src="@drawable/my_location_icon"
+        android:layout_above="@id/layoutCreateStopPoint"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="18dp"
+        android:layout_marginRight="14dp"/>
+
+    <ImageButton
+        android:id="@+id/imgbMenuStopPoint"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/menu_stoppoint_icon"
+        android:scaleType="fitXY"
+        android:layout_above="@id/imgbMyLocation"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="14dp"
+        android:layout_marginBottom="14dp"/>
+
 
 </RelativeLayout>
