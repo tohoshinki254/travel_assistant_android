@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Address;
@@ -168,6 +169,14 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
                 getLocationPermission();
                 updateLocationUI();
                 getDeviceLocation();
+            }
+        });
+
+        imgbMenuStopPoint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(StopPointMap.this, ListStopPoint.class);
+                startActivity(intent);
             }
         });
     }
