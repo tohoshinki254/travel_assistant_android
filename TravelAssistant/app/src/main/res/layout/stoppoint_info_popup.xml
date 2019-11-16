@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginEnd="5dp"
+    android:layout_marginStart="5dp"
+
+    >
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/stop_point_info_labelTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/stop_point_info_label"
+        android:layout_marginBottom="10dp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        />
+
+    <ImageButton
+        android:id="@+id/stop_point_exit_button"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/exit_icon"
+        android:background="#00000000"/>
+
+
+    />
+
+    <TextView
+        android:id="@+id/stop_point_name_Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/stop_point_name"
+        android:textAlignment="textStart"
+        android:layout_below="@id/stop_point_info_labelTitle"
+        android:textColor="@color/colorGray"
+        />
+
+    <EditText
+        android:id="@+id/stop_point_name_Content"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@id/stop_point_name_Title"
+        android:background="@drawable/border_edit_text"
+        android:inputType="text"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="5dp"
+        android:paddingEnd="5dp"
+        android:paddingStart="5dp"
+
+        />
+
+    <TextView
+        android:id="@+id/stop_point_serviceType_Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/stop_point_serviceType"
+        android:textAlignment="textStart"
+        android:layout_below="@id/stop_point_name_Content"
+        android:textColor="@color/colorGray"
+        android:layout_marginTop="10dp"
+        />
+
+    <Spinner
+        android:id="@+id/stop_point_serviceType_Category"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@id/stop_point_serviceType_Title"
+        android:background="@drawable/border_edit_text"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"/>
+
+    <TextView
+        android:id="@+id/stop_point_address_Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/stop_point_address"
+        android:textAlignment="textStart"
+        android:layout_below="@id/stop_point_serviceType_Category"
+        android:textColor="@color/colorGray"
+        android:layout_marginTop="10dp"
+
+        />
+
+    <EditText
+        android:id="@+id/stop_point_address_Content"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@id/stop_point_address_Title"
+        android:background="@drawable/border_edit_text"
+        android:inputType="text"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
+        android:paddingEnd="5dp"
+        android:paddingStart="5dp"
+
+        />
+
+    <TextView
+        android:id="@+id/stop_point_province_Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/stop_point_province"
+        android:textAlignment="textStart"
+        android:layout_below="@id/stop_point_address_Content"
+        android:textColor="@color/colorGray"
+        android:layout_marginTop="10dp"
+
+        />
+
+    <Spinner
+        android:id="@+id/stop_point_province_Category"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@id/stop_point_province_Title"
+        android:background="@drawable/border_edit_text"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"/>
+
+    <LinearLayout
+        android:id="@+id/stop_point_cost_linear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:layout_below="@id/stop_point_province_Category"
+        android:layout_marginTop="10dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingStart="0dp"
+            android:paddingEnd="5dp">
+            <TextView
+                android:id="@+id/stop_point_min_cost_Title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/stop_point_min_cost"
+                android:textColor="@color/colorGray"
+
+                />
+
+            <EditText
+                android:id="@+id/stop_point_min_cost_Content"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_below="@id/stop_point_min_cost_Title"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/border_edit_text"
+                android:inputType="number"
+                android:paddingEnd="5dp"
+                android:paddingStart="5dp"/>
+
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingStart="5dp"
+            android:paddingEnd="0dp">
+
+            <TextView
+                android:id="@+id/stop_point_max_cost_Title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/stop_point_max_cost"
+                android:textColor="@color/colorGray"
+                />
+
+            <EditText
+                android:id="@+id/stop_point_max_cost_Content"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_below="@id/stop_point_max_cost_Title"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/border_edit_text"
+                android:inputType="number"
+                android:paddingEnd="5dp"
+                android:paddingStart="5dp"/>
+
+        </RelativeLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/stop_point_arrive_Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/stop_point_arrive_at"
+        android:textAlignment="textStart"
+        android:layout_below="@id/stop_point_cost_linear"
+        android:textColor="@color/colorGray"
+        android:layout_marginTop="10dp"
+        />
+
+    <LinearLayout
+        android:id="@+id/stop_point_arrive_linear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:layout_below="@id/stop_point_arrive_Title"
+        android:layout_marginTop="5dp"
+        >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingStart="0dp"
+            android:paddingEnd="5dp"
+            >
+
+            <TextView
+                android:id="@+id/stop_point_arrive_time"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:hint="@string/stop_point_time"
+                android:background="@drawable/border_rectangle_edit_text"
+                android:textAlignment="center"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:gravity="center_vertical"
+
+                android:inputType="time"/>
+
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/stop_point_arrive_date"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+
+                android:background="@drawable/border_rectangle_edit_text"
+                android:hint="@string/stop_point_select_date"
+                android:inputType="date"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:textAlignment="center"
+                android:gravity="center_vertical"
+                android:layout_marginStart="5dp"
+                android:textColorHint="@color/colorGray" />
+
+
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/stop_point_leave_Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/stop_point_leave_at"
+        android:textAlignment="textStart"
+        android:layout_below="@id/stop_point_arrive_linear"
+        android:textColor="@color/colorGray"
+        android:layout_marginTop="20dp"
+
+
+        />
+
+    <LinearLayout
+        android:id="@+id/stop_point_leave_linear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:layout_below="@id/stop_point_leave_Title"
+        android:layout_marginTop="5dp"
+
+        >
+
+        <RelativeLayout
+
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingStart="0dp"
+            android:paddingEnd="5dp">
+
+            <TextView
+                android:id="@+id/stop_point_leave_time"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:hint="@string/stop_point_time"
+                android:background="@drawable/border_rectangle_edit_text"
+                android:textAlignment="center"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:gravity="center_vertical"
+
+                android:inputType="time"/>
+
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/stop_point_leave_date"
+
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/border_rectangle_edit_text"
+                android:hint="@string/stop_point_select_date"
+
+                android:inputType="date"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:textAlignment="center"
+                android:gravity="center_vertical"
+
+                android:textColorHint="@color/colorGray" />
+
+
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/stop_point_OK_button"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@id/stop_point_leave_linear"
+        android:text="@string/stop_point_save"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/border_button"
+        android:textColor="@color/colorWhite"
+        />
+
+</RelativeLayout>
+</ScrollView>
