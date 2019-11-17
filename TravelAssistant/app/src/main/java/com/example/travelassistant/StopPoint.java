@@ -3,17 +3,18 @@ package com.example.travelassistant;
 import java.util.List;
 
 public class StopPoint {
+    public Integer id;
     public String name;
     public Integer provinceId;
-    public Integer Lat;
-    public Integer Long;
+    public Double Lat;
+    public Double Long;
     public Long arrivalAt;
     public Long leaveAt;
-    public String minCost;
-    public String maxCost;
+    public Integer minCost;
+    public Integer maxCost;
     public Integer serviceTypeId;
     public String avatar;
-
+    public String address;
     public StopPoint() {
 
     }
@@ -29,5 +30,6 @@ public class StopPoint {
         maxCost = sp.maxCost;
         serviceTypeId = sp.serviceTypeId;
         avatar = sp.avatar;
+        address = sp.address;
     }
 }

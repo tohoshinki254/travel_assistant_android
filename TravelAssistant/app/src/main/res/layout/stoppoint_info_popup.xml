@@ -75,7 +75,8 @@
         android:layout_below="@id/stop_point_serviceType_Title"
         android:background="@drawable/border_edit_text"
         android:layout_marginTop="5dp"
-        android:layout_marginBottom="10dp"/>
+        android:layout_marginBottom="10dp"
+        />
 
     <TextView
         android:id="@+id/stop_point_address_Title"
@@ -290,8 +291,6 @@
         >
 
         <RelativeLayout
-
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -353,6 +352,7 @@
         android:layout_below="@id/stop_point_leave_linear"
         android:text="@string/stop_point_save"
         android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:background="@drawable/border_button"
         android:textColor="@color/colorWhite"
         />

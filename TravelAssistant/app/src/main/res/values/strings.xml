@@ -53,5 +53,144 @@
     <string name="stop_point_time">Time</string>
     <string name="stop_point_select_date">Select date</string>
     <string name="stop_point_save">SAVE</string>
+    <string-array name="list_province_name">
+        <item>Hồ Chí Minh</item>
+        <item>Hà Nội</item>
+        <item>Đà Nẵng</item>
+        <item>Bình Dương</item>
+        <item>Đồng Nai</item>
+        <item> Khánh Hòa</item>
+        <item>Hải Phòng</item>
+        <item> Long An</item>
+        <item>Quảng Nam</item>
+        <item>Bà Rịa Vũng Tàu</item>
+        <item>Đắk Lắk</item>
+        <item>Cần Thơ</item>
+        <item>Bình Thuận</item>
+        <item>Lâm Đồng</item>
+        <item>Thừa Thiên Huế</item>
+        <item>Kiên Giang</item>
+        <item>Bắc Ninh</item>
+        <item>Quảng Ninh</item>
+        <item>Thanh Hóa</item>
+        <item>Nghệ An</item>
+        <item>Hải Dương</item>
+        <item>Gia Lai</item>
+        <item>Bình Phước</item>
+        <item>Hưng Yên</item>
+        <item>Bình Định</item>
+        <item>Tiền Giang</item>
+        <item>Thái Bình</item>
+        <item>Bắc Giang</item>
+        <item>Hòa Bình</item>
+        <item>An Giang</item>
+        <item>Vĩnh Phúc</item>
+        <item>Tây Ninh</item>
+        <item>Thái Nguyên</item>
+        <item>Lào Cai</item>
+        <item>Nam Định</item>
+        <item>Quảng Ngãi</item>
+        <item>Bến Tre</item>
+        <item>Đắk Nông</item>
+        <item>Cà Mau</item>
+        <item>Vĩnh Long</item>
+        <item>Ninh Bình</item>
+        <item>Phú Thọ</item>
+        <item>Ninh Thuận</item>
+        <item>Phú Yên</item>
+        <item>Hà Nam</item>
+        <item>Hà Tĩnh</item>
+        <item>Đồng Tháp</item>
+        <item>Sóc Trăng</item>
+        <item>Kon Tum</item>
+        <item>Quảng Bình</item>
+        <item>Quảng Trị</item>
+        <item>Trà Vinh</item>
+        <item>Hậu Giang</item>
+        <item>Sơn La</item>
+        <item>Bạc Liêu</item>
+        <item>Yên Bái</item>
+        <item>Tuyên Quang</item>
+        <item>Điện Biên</item>
+        <item>Lai Châu</item>
+        <item>Lạng Sơn</item>
+        <item>Hà Giang</item>
+        <item>Bắc Kạn</item>
+        <item>Cao Bằng</item>
+    </string-array>
+
+    <string-array name="list_province_id">
+        <item>SG</item>
+        <item>HN</item>
+        <item>DDN</item>
+        <item>BD</item>
+        <item>DNA</item>
+        <item>KH</item>
+        <item>HP</item>
+        <item>LA</item>
+        <item>QNA</item>
+        <item>VT</item>
+        <item>DDL</item>
+        <item>CT</item>
+        <item>BTH</item>
+        <item>LDD</item>
+        <item>TTH</item>
+        <item>KG</item>
+        <item>BN</item>
+        <item>QNI</item>
+        <item>TH</item>
+        <item>NA</item>
+        <item>HD</item>
+        <item>GL</item>
+        <item>BP</item>
+        <item>HY</item>
+        <item>BDD</item>
+        <item>TG</item>
+        <item>TB</item>
+        <item>BG</item>
+        <item>HB</item>
+        <item>AG</item>
+        <item>VP</item>
+        <item>TNI</item>
+        <item>TN</item>
+        <item>LCA</item>
+        <item>NDD</item>
+        <item>QNG</item>
+        <item>BTR</item>
+        <item>DNO</item>
+        <item>CM</item>
+        <item>VL</item>
+        <item>NB</item>
+        <item>PT</item>
+        <item>NT</item>
+        <item>PY</item>
+        <item>HNA</item>
+        <item>HT</item>
+        <item>DDT</item>
+        <item>ST</item>
+        <item>KT</item>
+        <item>QB</item>
+        <item>QT</item>
+        <item>TV</item>
+        <item>HGI</item>
+        <item>SL</item>
+        <item>BL</item>
+        <item>YB</item>
+        <item>TQ</item>
+        <item>DDB</item>
+        <item>LCH</item>
+        <item>LS</item>
+        <item>HG</item>
+        <item>BK</item>
+        <item>CB</item>
+    </string-array>
+
+    <string-array name="list_service">
+        <item>Restaurant</item>
+        <item>Hotel</item>
+        <item>Rest Station</item>
+        <item>Other</item>
+
+    </string-array>
 
 </resources>
