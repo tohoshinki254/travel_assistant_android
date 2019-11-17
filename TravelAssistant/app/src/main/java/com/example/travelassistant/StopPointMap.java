@@ -6,32 +6,24 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.annotation.SuppressLint;
-<<<<<<< HEAD
 import android.content.Intent;
-=======
-<<<<<<< HEAD
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.location.Address;
 import android.location.Geocoder;
-=======
->>>>>>> 6ebaf430d929cda3d7f067342fdbde639c609d95
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
->>>>>>> c6978730f566347d278db60c7bfe6696ef2ea7e2
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.view.View;
-<<<<<<< HEAD
 import android.widget.Button;
 import android.widget.DatePicker;
-=======
->>>>>>> c6978730f566347d278db60c7bfe6696ef2ea7e2
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -87,7 +79,6 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
     LinearLayout btnCreateStopPoint;
     SupportMapFragment mapFragment;
     Geocoder geocoder;
-<<<<<<< HEAD
     Dialog dialog;
 
     Calendar calendar;
@@ -97,24 +88,18 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
 
     TextView txtArriveTime, txtArriveDate, txtLeaveTime, txtLeaveDate;
 
-=======
     ArrayList<LatLng> latLngs;
     ImageButton imgbMyLocation;
     ImageButton imgbMenuStopPoint;
     Polyline polyline;
->>>>>>> c6978730f566347d278db60c7bfe6696ef2ea7e2
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stop_point_map);
         setWidget();
-<<<<<<< HEAD
-=======
 
 
-        mapFragment.getMapAsync(this);
->>>>>>> c6978730f566347d278db60c7bfe6696ef2ea7e2
         setEvent();
         mapFragment.getMapAsync(this);
 
@@ -169,6 +154,7 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
 
                 DisplayPopupDialog();
+
                 LatLng middle = mMap.getCameraPosition().target;
                 if (latLngs.size() < 2)
                 {
@@ -191,9 +177,7 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
                         }
                         drawRoute();
                     }
-                    List<Address> addresses;
-                    addresses = geocoder.getFromLocation(middle.latitude, middle.longitude, 1);
-                    Toast.makeText(getApplicationContext(), addresses.get(0).getAddressLine(0), Toast.LENGTH_SHORT).show();
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -410,7 +394,7 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
     }
-
+    int lastIndex = -1;
     public void DisplayPopupDialog()
     {
         dialog = new Dialog(StopPointMap.this);
@@ -433,7 +417,6 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
         txtArriveTime =(TextView) dialog.findViewById(R.id.stop_point_arrive_time);
         txtLeaveDate =(TextView) dialog.findViewById(R.id.stop_point_leave_date);
         txtLeaveTime =(TextView) dialog.findViewById(R.id.stop_point_leave_time);
-
 
 
         txtArriveDate.setOnClickListener(new View.OnClickListener() {
@@ -523,6 +506,9 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
                 dialog.dismiss();
             }
         });
+
+
+
 
         dialog.show();
         dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);

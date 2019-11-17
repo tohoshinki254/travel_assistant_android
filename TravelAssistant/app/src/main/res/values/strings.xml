@@ -40,9 +40,7 @@
     <string name="title_activity_stop_point_map">Map</string>
     <string name="create_stop_point">CREATE STOP POINT</string>
     <string name="additional_info">(first and second point are origin and destination)</string>
-<<<<<<< HEAD
     <string name="list_stop_point_label">List Stop Point</string>
-=======
     <string name="stop_point_info_label">Stop point information</string>
     <string name="stop_point_name">Stop point name</string>
     <string name="stop_point_serviceType">Service type</string>
@@ -56,5 +54,4 @@
     <string name="stop_point_select_date">Select date</string>
     <string name="stop_point_save">SAVE</string>
 
->>>>>>> 6ebaf430d929cda3d7f067342fdbde639c609d95
 </resources>
