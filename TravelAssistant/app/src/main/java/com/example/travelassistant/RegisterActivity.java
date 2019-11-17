@@ -33,7 +33,7 @@ public class RegisterActivity extends AppCompatActivity {
     EditText edtAddress;
     Button btnSignUp;
     private String tokenLogin = "";
-    private static final String API_ADDR = "http://35.197.153.192:3000/";
+    public static final String API_ADDR = "http://35.197.153.192:3000/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

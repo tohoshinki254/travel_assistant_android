@@ -6,42 +6,30 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.annotation.SuppressLint;
-<<<<<<< HEAD
-import android.content.Intent;
-=======
-
 import android.content.Intent;
 
->>>>>>> 966ee798a7cd3b542ab2f34b3e4d947c5309caef
+
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
-import android.content.res.Resources;
+
 import android.location.Address;
 import android.location.Geocoder;
-<<<<<<< HEAD
-=======
 
->>>>>>> 966ee798a7cd3b542ab2f34b3e4d947c5309caef
+
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-<<<<<<< HEAD
-=======
 
->>>>>>> 966ee798a7cd3b542ab2f34b3e4d947c5309caef
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.view.View;
-<<<<<<< HEAD
-=======
 
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
->>>>>>> 966ee798a7cd3b542ab2f34b3e4d947c5309caef
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -99,6 +87,7 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private boolean mLocationPermissionGranted = false;
     public static int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+    public static int ID;
     final static String keyAPI = "AIzaSyDA0nzuUp9-hXSMcNliQrzKmlbFudlRQNQ";
     final static String keyAPIHTTP = "AIzaSyC6HrlfZJ18_N9kZBKKnqXZCCfVGqqff74";
     LinearLayout btnCreateStopPoint;
@@ -114,7 +103,7 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
     Spinner spnProvince, spnService;
     EditText edtStopPointName, edtAddress,edtMinCost, edtMaxCost;
 
-    ArrayList<StopPoint> stopPointArrayList = new ArrayList<>();
+    ArrayList<StopPoint> stopPointArrayList;
 
 
 
@@ -122,27 +111,17 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
     ImageButton imgbMyLocation;
     ImageButton imgbMenuStopPoint;
     Polyline polyline;
-<<<<<<< HEAD
-=======
 
->>>>>>> 966ee798a7cd3b542ab2f34b3e4d947c5309caef
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stop_point_map);
         setWidget();
-<<<<<<< HEAD
 
-
-=======
-
-
-
-
-        mapFragment.getMapAsync(this);
-
->>>>>>> 966ee798a7cd3b542ab2f34b3e4d947c5309caef
+        Intent intent = getIntent();
+        ID = intent.getIntExtra("id", -1);
         setEvent();
         mapFragment.getMapAsync(this);
 
@@ -197,38 +176,6 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
 
                 DisplayPopupDialog();
-<<<<<<< HEAD
-
-                LatLng middle = mMap.getCameraPosition().target;
-                if (latLngs.size() < 2)
-                {
-                    latLngs.add(middle);
-                }
-                else
-                {
-                    latLngs.add(latLngs.size() - 1, middle);
-                }
-                try {
-
-                    mMap.addMarker(new MarkerOptions().position(middle).title("Stop Point")
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.orange_flag_icon)));
-                    if(latLngs.size() >= 2)
-                    {
-                        if (polyline != null)
-                        {
-                            polyline.remove();
-                            polyline = null;
-                        }
-                        drawRoute();
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-=======
-
-
->>>>>>> 966ee798a7cd3b542ab2f34b3e4d947c5309caef
 
             }
         });
@@ -246,6 +193,9 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(StopPointMap.this, ListStopPoint.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList("list_stop_points", stopPointArrayList);
+                intent.putExtras(bundle);
                 startActivity(intent);
             }
         });
@@ -443,14 +393,11 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
         btnCreateStopPoint = (LinearLayout) findViewById(R.id.layoutCreateStopPoint);
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+
+        stopPointArrayList = new ArrayList<>();
     }
-<<<<<<< HEAD
-    int lastIndex = -1;
-=======
 
     int lastIndex = -1;
-
->>>>>>> 966ee798a7cd3b542ab2f34b3e4d947c5309caef
     public void DisplayPopupDialog()
     {
         dialog = new Dialog(StopPointMap.this);
@@ -541,7 +488,7 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
                 }
 
                 StopPoint sp = new StopPoint();
-                sp.id = -1;
+                sp.id = null;
                 sp.arrivalAt = timeArrive_ms;
                 sp.leaveAt = timeLeave_ms;
                 sp.avatar = null;
@@ -579,12 +526,10 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
                 }
 
 
-<<<<<<< HEAD
-=======
             }
         });
 
->>>>>>> 966ee798a7cd3b542ab2f34b3e4d947c5309caef
+
         txtArriveDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -686,9 +631,6 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-<<<<<<< HEAD
-
-=======
         LatLng middle = mMap.getCameraPosition().target;
         if (latLngs.size() < 2)
         {
@@ -707,7 +649,6 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
         } catch (IOException e) {
             e.printStackTrace();
         }
->>>>>>> 966ee798a7cd3b542ab2f34b3e4d947c5309caef
 
 
         dialog.show();

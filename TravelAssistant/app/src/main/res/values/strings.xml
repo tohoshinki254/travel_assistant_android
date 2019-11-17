@@ -192,5 +192,5 @@
         <item>Other</item>
 
     </string-array>
-
+    <string name="save">save</string>
 </resources>

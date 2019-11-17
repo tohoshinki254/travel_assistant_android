@@ -46,7 +46,7 @@ public class CreateTour extends AppCompatActivity {
     private Calendar calendar;
     private static final String value = "0";
     private String isPrivate = "false";
-    private String id = "";
+    private int id;
     private String string_date = "";
     private String millis_start = "1552401906062";
     private String millis_end = "1552401906062";
@@ -168,7 +168,7 @@ public class CreateTour extends AppCompatActivity {
 
                     if (temp != null) {
                         JSONObject res = new JSONObject(temp);
-                        id = res.getString("id");
+                        id = res.getInt("id");
                         Intent intent = new Intent(CreateTour.this, StopPointMap.class);
                         intent.putExtra("id", id);
                         startActivity(intent);

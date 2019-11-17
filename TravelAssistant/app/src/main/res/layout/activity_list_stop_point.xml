@@ -11,4 +11,18 @@
         android:layout_height="match_parent"
         />
 
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border_button"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/stop_point_save"
+        android:textStyle="bold"
+        android:textSize="25sp"
+        android:textColor="@color/quantum_white_100"/>
+
 </RelativeLayout>

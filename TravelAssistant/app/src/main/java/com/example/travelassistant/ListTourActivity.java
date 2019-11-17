@@ -41,7 +41,7 @@ public class ListTourActivity extends AppCompatActivity {
     EditText edtSearch;
     ArrayList <Tour> tourArrayList;
     ImageButton imbCreate;
-    private String token = "";
+    public static String token = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
