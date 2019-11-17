@@ -9,7 +9,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class ListStopPointAdapter extends RecyclerView.Adapter<ListStopPointAdapter.ListStopPointViewHolder> {
     private ArrayList<StopPoint> listStopPoint;
@@ -33,14 +36,28 @@ public class ListStopPointAdapter extends RecyclerView.Adapter<ListStopPointAdap
         StopPoint sp = listStopPoint.get(position);
 
         holder.tvName.setText(sp.name);
-        String temp = sp.arrivalAt + " - " + sp.leaveAt;
+
+        DateFormat simple = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
+        Date dateArrive = new Date(sp.arrivalAt);
+        Date dateLeave = new Date(sp.leaveAt);
+        String temp = simple.format(dateArrive) + " - " + simple.format(dateLeave);
         holder.tvCalendar.setText(temp);
-        temp = "" + sp.provinceId;
+
+        temp = "" + sp.address;
         holder.tvAddress.setText(temp);
+
         temp = sp.minCost + " - " + sp.maxCost;
         holder.tvMoney.setText(temp);
-        temp = "" + sp.serviceTypeId;
-        holder.tvService.setText(temp);
+
+        if (sp.serviceTypeId == 1)
+            holder.tvService.setText("Restaurant");
+        else if (sp.serviceTypeId == 2)
+            holder.tvService.setText("Hotel");
+        else if (sp.serviceTypeId == 3)
+            holder.tvService.setText("Rest Station");
+        else
+            holder.tvService.setText("Other");
+
     }
 
     public int getItemCount() {

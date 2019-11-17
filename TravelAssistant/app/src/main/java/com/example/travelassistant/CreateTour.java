@@ -19,7 +19,11 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -47,9 +51,8 @@ public class CreateTour extends AppCompatActivity {
     private static final String value = "0";
     private String isPrivate = "false";
     private int id;
-    private String string_date = "";
-    private String millis_start = "1552401906062";
-    private String millis_end = "1552401906062";
+    private Long millis_start;
+    private Long millis_end;
     private String token = "";
 
     @Override
@@ -121,6 +124,25 @@ public class CreateTour extends AppCompatActivity {
                 InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                 inputMethodManager.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
 
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy");
+                String dateInString = edtStartDate.getText().toString();
+                try {
+                    Date date = sdf.parse(dateInString);
+                    assert date != null;
+                    millis_start = new Long(date.getTime() + 25200000);
+                    millis_end = millis_start;
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                dateInString = edtEndDate.getText().toString();
+                try {
+                    Date date = sdf.parse(dateInString);
+                    assert date != null;
+                    millis_end = new Long(date.getTime() + 25200000);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
                 if (radioButton.isSelected())
                     isPrivate = new String("true");
 
@@ -128,8 +150,8 @@ public class CreateTour extends AppCompatActivity {
                     final OkHttpClient httpClient = new OkHttpClient();
                     final RequestBody formBody = new FormBody.Builder()
                             .add("name", edtTourname.getText().toString())
-                            .add("startDate", millis_start)
-                            .add("endDate", millis_end)
+                            .add("startDate", millis_start.toString())
+                            .add("endDate", millis_end.toString())
                             .add("sourceLat", value)
                             .add("sourceLong", value)
                             .add("desLat", value)
