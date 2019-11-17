@@ -17,7 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ListStopPoint"></activity>
+        <activity android:name=".ListStopPoint"
+            android:label="@string/list_stop_point_label"
+            android:theme="@style/AppTheme"></activity>
         <activity
             android:name=".CreateTour"
             android:label="@string/create_tour_str"

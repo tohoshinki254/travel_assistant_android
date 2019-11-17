@@ -7,6 +7,8 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.annotation.SuppressLint;
 
+import android.content.Intent;
+
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
@@ -62,9 +64,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
@@ -96,7 +101,7 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
     Spinner spnProvince, spnService;
     EditText edtStopPointName, edtAddress,edtMinCost, edtMaxCost;
 
-
+    ArrayList<StopPoint> stopPointArrayList = new ArrayList<>();
 
 
 
@@ -183,6 +188,14 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
                 getLocationPermission();
                 updateLocationUI();
                 getDeviceLocation();
+            }
+        });
+
+        imgbMenuStopPoint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(StopPointMap.this, ListStopPoint.class);
+                startActivity(intent);
             }
         });
     }
@@ -442,7 +455,8 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                long timeArrive, timeLeave;
+                long timeArrive_ms = 0;
+                long timeLeave_ms = 0;
                 int provinceId, serviceId, minCost, maxCost;
 
                 provinceId = spnProvince.getSelectedItemPosition() + 1;
@@ -451,6 +465,44 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
                 String strAddress = edtAddress.getText().toString();
                 minCost = Integer.parseInt(edtMinCost.getText().toString());
                 maxCost = Integer.parseInt(edtMaxCost.getText().toString());
+                String strArriveTime = txtArriveTime.getText().toString();
+                String strArriveDate = txtArriveDate.getText().toString();
+                String strLeaveTime = txtLeaveTime.getText().toString();
+                String strLeaveDate = txtLeaveDate.getText().toString();
+
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
+                formatter.setLenient(false);
+                String timeArrived = strArriveDate + ", " + strArriveTime;
+                String timeLeave = strLeaveDate + ", " + strLeaveTime;
+
+                try {
+                    Date timeArrivedDate = formatter.parse(timeArrived);
+                    Date timeLeaveDate = formatter.parse(timeLeave);
+                    timeArrive_ms = timeArrivedDate.getTime();
+                    timeLeave_ms = timeLeaveDate.getTime();
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                StopPoint sp = new StopPoint();
+                sp.id = -1;
+                sp.arrivalAt = timeArrive_ms;
+                sp.leaveAt = timeLeave_ms;
+                sp.avatar = null;
+                sp.Long = latLngs.get(lastIndex).longitude;
+                sp.Lat = latLngs.get(lastIndex).latitude;
+                sp.minCost = minCost;
+                sp.maxCost = maxCost;
+                sp.name = strStopPointName;
+                sp.provinceId = provinceId;
+                sp.serviceTypeId = serviceId;
+                sp.address = strAddress;
+
+                if (stopPointArrayList.size() <= 1)
+                    stopPointArrayList.add(sp);
+                else
+                    stopPointArrayList.add(stopPointArrayList.size() - 1,sp);
 
                 dialog.dismiss();
                 try {
@@ -470,6 +522,8 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+
             }
         });
 

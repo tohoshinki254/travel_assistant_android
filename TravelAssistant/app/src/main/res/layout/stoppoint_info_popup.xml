@@ -352,6 +352,7 @@
         android:layout_below="@id/stop_point_leave_linear"
         android:text="@string/stop_point_save"
         android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:background="@drawable/border_button"
         android:textColor="@color/colorWhite"
         />
