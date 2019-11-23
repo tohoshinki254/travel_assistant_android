@@ -102,6 +102,7 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
     TextView txtArriveTime, txtArriveDate, txtLeaveTime, txtLeaveDate;
     Spinner spnProvince, spnService;
     EditText edtStopPointName, edtAddress,edtMinCost, edtMaxCost;
+    ImageButton imgTickButton;
 
     ArrayList<StopPoint> stopPointArrayList;
 
@@ -171,12 +172,31 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
 
     private void setEvent()
     {
+        imgTickButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (stopPointArrayList.size() != 2)
+                    Toast.makeText(getApplicationContext(), "You must choose the origin and the destination!",
+                            Toast.LENGTH_SHORT).show();
+                else {
+                    Intent intent = new Intent();
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelableArrayList("list_stop_points", stopPointArrayList);
+                    intent.putExtras(bundle);
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
+            }
+        });
+
         btnCreateStopPoint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if (stopPointArrayList.size() >= 2) {
+                    Toast.makeText(getApplicationContext(), "You have already chosen the origin and the destination!",
+                            Toast.LENGTH_SHORT).show();
+                }
                 DisplayPopupDialog();
-
             }
         });
 
@@ -387,6 +407,7 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
     {
         imgbMyLocation = (ImageButton) findViewById(R.id.imgbMyLocation);
         imgbMenuStopPoint = (ImageButton) findViewById(R.id.imgbMenuStopPoint);
+        imgTickButton = (ImageButton) findViewById(R.id.imgbTickButton);
         latLngs = new ArrayList<>();
         geocoder = new Geocoder(this, Locale.getDefault());
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);

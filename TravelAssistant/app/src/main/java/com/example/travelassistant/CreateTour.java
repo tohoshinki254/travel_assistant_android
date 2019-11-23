@@ -1,5 +1,6 @@
 package com.example.travelassistant;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
@@ -14,6 +15,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
@@ -21,6 +23,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -30,6 +33,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.example.travelassistant.ListStopPoint.JSON;
 import static com.example.travelassistant.MainActivity.API_ADDR;
 
 public class CreateTour extends AppCompatActivity {
@@ -40,20 +44,25 @@ public class CreateTour extends AppCompatActivity {
     private EditText edtEndDate;
     private ImageButton imgCalendarStart;
     private ImageButton imgCalendarEnd;
+    private Button btnChoosePlace;
     private EditText edtAdults;
     private EditText edtChildren;
     private EditText edtMinCost;
     private EditText edtMaxCost;
     private RadioButton radioButton;
     private Button createButton;
+    private TextView tvStartPlace;
+    private TextView tvEndPlace;
     private int year, month, day;
     private Calendar calendar;
     private static final String value = "0";
-    private String isPrivate = "false";
+    private boolean isPrivate = false;
     private int id;
     private Long millis_start;
     private Long millis_end;
     private String token = "";
+    public static final int REQUEST_CODE = 1999;
+    private ArrayList<StopPoint> listStopPoints;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +113,17 @@ public class CreateTour extends AppCompatActivity {
             }
         });
 
+        btnChoosePlace.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
+
+                Intent intent = new Intent(CreateTour.this, StopPointMap.class);
+                startActivityForResult(intent, REQUEST_CODE);
+            }
+        });
+
         radioButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -144,24 +164,26 @@ public class CreateTour extends AppCompatActivity {
                 }
 
                 if (radioButton.isSelected())
-                    isPrivate = new String("true");
+                    isPrivate = true;
 
                 try {
                     final OkHttpClient httpClient = new OkHttpClient();
-                    final RequestBody formBody = new FormBody.Builder()
-                            .add("name", edtTourname.getText().toString())
-                            .add("startDate", millis_start.toString())
-                            .add("endDate", millis_end.toString())
-                            .add("sourceLat", value)
-                            .add("sourceLong", value)
-                            .add("desLat", value)
-                            .add("desLong", value)
-                            .add("isPrivate", isPrivate)
-                            .add("adults", edtAdults.getText().toString())
-                            .add("childs", edtChildren.getText().toString())
-                            .add("minCost", edtMinCost.getText().toString())
-                            .add("maxCost", edtMaxCost.getText().toString())
-                            .build();
+
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("name", edtTourname.getText().toString());
+                    jsonObject.put("startDate", millis_start);
+                    jsonObject.put("endDate", millis_end);
+                    jsonObject.put("sourceLat", listStopPoints.get(0).Lat);
+                    jsonObject.put("sourceLong", listStopPoints.get(0).Long);
+                    jsonObject.put("desLat", listStopPoints.get(1).Lat);
+                    jsonObject.put("desLong", listStopPoints.get(1).Long);
+                    jsonObject.put("isPrivate", isPrivate);
+                    jsonObject.put("adults", Integer.parseInt(edtAdults.getText().toString()));
+                    jsonObject.put("childs", Integer.parseInt(edtChildren.getText().toString()));
+                    jsonObject.put("minCost", Integer.parseInt(edtMinCost.getText().toString()));
+                    jsonObject.put("maxCost", Integer.parseInt(edtMaxCost.getText().toString()));
+
+                    RequestBody formBody = RequestBody.create(jsonObject.toString(), JSON);
 
                     final Request request = new Request.Builder()
                             .url(API_ADDR + "tour/create")
@@ -204,6 +226,19 @@ public class CreateTour extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Bundle bundle = data.getExtras();
+                listStopPoints = bundle.getParcelableArrayList("list_stop_points");
+                tvStartPlace.setText(listStopPoints.get(0).address);
+                tvEndPlace.setText(listStopPoints.get(1).address);
+            }
+        }
+    }
+
     private void setWidget() {
         edtTourname = (EditText)findViewById(R.id.inputTourName);
         edtStartDate = (EditText)findViewById(R.id.inputStaDate);
@@ -216,5 +251,8 @@ public class CreateTour extends AppCompatActivity {
         edtMaxCost = (EditText)findViewById(R.id.inputMaxCost);
         radioButton = (RadioButton)findViewById(R.id.privateTripButton);
         createButton = (Button)findViewById(R.id.createButton);
+        btnChoosePlace = (Button)findViewById(R.id.choosePlaceButton);
+        tvStartPlace = (TextView)findViewById(R.id.inputStartPlace);
+        tvEndPlace = (TextView)findViewById(R.id.inputEndPlace);
     }
 }

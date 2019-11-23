@@ -21,6 +21,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.example.travelassistant.ListStopPoint.JSON;
+
 public class RegisterActivity extends AppCompatActivity {
 
     EditText edtFullName;
@@ -54,15 +56,17 @@ public class RegisterActivity extends AppCompatActivity {
 
                 try{
                     final OkHttpClient httpClient = new OkHttpClient();
-                    final RequestBody formBody = new FormBody.Builder()
-                            .add("password", edtPasswordRegister.getText().toString())
-                            .add("fullName", edtFullName.getText().toString())
-                            .add("email", edtEmail.getText().toString())
-                            .add("phone", edtPhone.getText().toString())
-                            .add("address", edtAddress.getText().toString())
-                            .add("dob", edtDob.getText().toString())
-                            .add("gender", edtGender.getText().toString())
-                            .build();
+
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("password", edtPasswordRegister.getText().toString());
+                    jsonObject.put("fullName", edtFullName.getText().toString());
+                    jsonObject.put("email", edtEmail.getText().toString());
+                    jsonObject.put("phone", edtPhone.getText().toString());
+                    jsonObject.put("address", edtAddress.getText().toString());
+                    jsonObject.put("dob", edtDob.getText().toString());
+                    jsonObject.put("gender", Integer.parseInt(edtGender.getText().toString()));
+
+                    RequestBody formBody = RequestBody.create(jsonObject.toString(), JSON);
 
                     final Request request = new Request.Builder()
                             .url(API_ADDR + "user/register")

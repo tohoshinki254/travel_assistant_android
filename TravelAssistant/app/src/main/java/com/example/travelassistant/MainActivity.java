@@ -31,6 +31,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.example.travelassistant.ListStopPoint.JSON;
+
 public class MainActivity extends AppCompatActivity {
 
     TextView textView1;
@@ -80,10 +82,12 @@ public class MainActivity extends AppCompatActivity {
 
                 try {
                     final OkHttpClient httpClient = new OkHttpClient();
-                    final RequestBody formBody = new FormBody.Builder()
-                            .add("emailPhone", edtUserAcc.getText().toString())
-                            .add("password", edtPasswordLogin.getText().toString())
-                            .build();
+
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("emailPhone", edtUserAcc.getText().toString());
+                    jsonObject.put("password", edtPasswordLogin.getText().toString());
+
+                    RequestBody formBody = RequestBody.create(jsonObject.toString(), JSON);
 
                     final Request request = new Request.Builder()
                             .url(API_ADDR + "user/login")

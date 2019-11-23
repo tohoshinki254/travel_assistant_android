@@ -27,6 +27,9 @@
     <string name="tour_name_label">Tour name</string>
     <string name="start_date_label">Start date</string>
     <string name="end_day_label">End date</string>
+    <string name="start_place_label">Start place</string>
+    <string name="end_place_label">End place</string>
+    <string name="hint_to_select_start_end_place">Choose start and end place</string>
     <string name="adults_label">Adults</string>
     <string name="children_label">Children</string>
     <string name="min_cost_label">Min cost</string>
