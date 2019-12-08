@@ -196,4 +196,10 @@
 
     </string-array>
     <string name="save">save</string>
+    <string name="create_origin_destination">Create the origin/destionation point</string>
+    <string name="note_origin_destination">(The first point is the origin and the second point is destination)</string>
+
+    <string name="senderTitle">Sender: </string>
+    <string name="TourNameTitle">Tour name: </string>
+    <string name="timeTitle">Time: </string>
 </resources>

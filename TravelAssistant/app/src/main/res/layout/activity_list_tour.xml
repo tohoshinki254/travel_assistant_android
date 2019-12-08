@@ -24,7 +24,9 @@
         android:id="@+id/rcvListTour"
         android:layout_below="@id/edtSearch"
         android:layout_width="match_parent"
+        android:layout_marginBottom="8dp"
         android:layout_height="match_parent"
+        android:layout_above="@id/layoutBarBottom"
     />
 
     <ImageButton
@@ -51,7 +53,7 @@
             android:id="@+id/imgbMenu"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginLeft="50dp"
+            android:layout_marginLeft="65dp"
             android:layout_marginTop="8dp"
             android:src="@drawable/menu_icon"
             android:scaleType="fitXY"
@@ -59,32 +61,22 @@
             android:adjustViewBounds="true"/>
 
         <ImageButton
-            android:id="@+id/imgbTime"
+            android:id="@+id/imgbHistory"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginLeft="50dp"
+            android:layout_marginLeft="65dp"
             android:layout_marginTop="8dp"
-            android:src="@drawable/time_icon"
+            android:adjustViewBounds="true"
             android:background="@android:color/transparent"
             android:scaleType="fitXY"
-            android:adjustViewBounds="true"/>
+            android:src="@drawable/time_icon" />
 
-        <ImageButton
-            android:id="@+id/imgbMap"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginLeft="50dp"
-            android:layout_marginTop="8dp"
-            android:src="@drawable/map_icon"
-            android:background="@android:color/transparent"
-            android:scaleType="fitXY"
-            android:adjustViewBounds="true"/>
 
         <ImageButton
             android:id="@+id/imgbBell"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginLeft="50dp"
+            android:layout_marginLeft="65dp"
             android:layout_marginTop="8dp"
             android:src="@drawable/bell_icon"
             android:background="@android:color/transparent"
@@ -95,7 +87,7 @@
             android:id="@+id/imgbSetting"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginLeft="50dp"
+            android:layout_marginLeft="65dp"
             android:layout_marginTop="8dp"
             android:src="@drawable/setting_icon"
             android:background="@android:color/transparent"

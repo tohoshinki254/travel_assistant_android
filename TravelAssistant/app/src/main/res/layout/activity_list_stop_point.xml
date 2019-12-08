@@ -9,6 +9,8 @@
         android:id="@+id/rcvListStopPoint"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@id/btnSave"
+        android:layout_marginBottom="8dp"
         />
 
     <Button
