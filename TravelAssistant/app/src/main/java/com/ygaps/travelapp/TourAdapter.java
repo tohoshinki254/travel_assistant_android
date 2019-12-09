@@ -15,19 +15,23 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder> implements Filterable {
 
     public ArrayList<Tour> toursOrigin;
-    private ArrayList<Tour> toursResult;
+    public ArrayList<Tour> toursResult;
     private Context context;
     private ItemFilter mFilter = new ItemFilter();
-
-    public TourAdapter(ArrayList<Tour> tours, Context context) {
+    private onItemClickListener mOnItemClickListener;
+    public TourAdapter(ArrayList<Tour> tours, Context context, onItemClickListener itemClickListener) {
         this.toursResult = tours;
         this.toursOrigin = new ArrayList<>(tours);
         this.context = context;
+        this.mOnItemClickListener = itemClickListener;
     }
 
     @NonNull
@@ -36,7 +40,7 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
 
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.tour_layout, parent, false);
-        return new TourViewHolder(itemView);
+        return new TourViewHolder(itemView, mOnItemClickListener);
     }
 
 
@@ -45,15 +49,22 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
         Tour t = toursResult.get(position);
 
         if(t.avatar == null)
-            t.avatar = "https://icon-library.net/images/no-image-available-icon/no-image-available-icon-6.jpg";
+            t.avatar = "http://i.pinimg.com/736x/3b/d9/fd/3bd9fd6dc12a4a08a928d6a31387d056.jpg";
 
         Picasso.get()
                 .load(t.avatar)
-                .error(R.drawable.no_image)
+                .error(R.drawable.background)
                 .into(holder.ivTourImg);
 
         holder.tvName.setText(t.name);
-        String temp = t.startDate + " - " + t.endDate;
+        String temp = "";
+        if (t.startDate != null && t.endDate != null) {
+            DateFormat simple = new SimpleDateFormat("dd MMM yyyy");
+            Date dateArrive = new Date(Long.parseLong(t.startDate));
+            Date dateLeave = new Date(Long.parseLong(t.endDate));
+            temp = simple.format(dateArrive) + " - " + simple.format(dateLeave);
+        }
+
         holder.tvCalendar.setText(temp);
         temp = "" + t.adults;
         holder.tvAdults.setText(temp);
@@ -68,13 +79,15 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
     }
 
 
-    public class TourViewHolder extends RecyclerView.ViewHolder {
+    public class TourViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView tvName;
         public TextView tvCalendar;
         public TextView tvAdults;
         public TextView tvMoney;
         public ImageView ivTourImg;
-        public TourViewHolder(@NonNull View itemView) {
+        public onItemClickListener itemClickListener;
+
+        public TourViewHolder(@NonNull View itemView, onItemClickListener itemClickListener) {
             super(itemView);
 
             tvName = (TextView) itemView.findViewById(R.id.tvName);
@@ -82,6 +95,14 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
             tvAdults = (TextView) itemView.findViewById(R.id.tvAdults);
             tvMoney = (TextView) itemView.findViewById(R.id.tvMoney);
             ivTourImg = (ImageView) itemView.findViewById(R.id.ivTourImg);
+            this.itemClickListener = itemClickListener;
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            itemClickListener.onItemClick(getAdapterPosition());
         }
     }
 
@@ -130,5 +151,9 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
             toursResult = (ArrayList<Tour>) results.values;
             notifyDataSetChanged();
         }
+    }
+
+    public interface onItemClickListener {
+        void onItemClick(int i);
     }
 }

@@ -98,7 +98,6 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
     TextView txtArriveTime, txtArriveDate, txtLeaveTime, txtLeaveDate;
     Spinner spnProvince, spnService;
     EditText edtStopPointName, edtAddress,edtMinCost, edtMaxCost;
-    ImageButton imgTickButton;
 
     ArrayList<StopPoint> stopPointArrayList;
 
@@ -118,10 +117,15 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
         setWidget();
 
         Intent intent = getIntent();
-        ID = intent.getIntExtra("id", -1);
+        Bundle bundle = intent.getExtras();
+        ID = bundle.getInt("id", -1);
+        stopPointArrayList = bundle.getParcelableArrayList("list_stop_point");
+        LatLng latLng1 = new LatLng(stopPointArrayList.get(0).Lat, stopPointArrayList.get(0).Long);
+        latLngs.add(latLng1);
+        LatLng latLng2 = new LatLng(stopPointArrayList.get(1).Lat, stopPointArrayList.get(1).Long);
+        latLngs.add(latLng2);
         setEvent();
         mapFragment.getMapAsync(this);
-
     }
 
 
@@ -130,9 +134,18 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         getLocationPermission();
-        updateLocationUI();
-        getDeviceLocation();
+        try {
+            drawRoute();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngs.get(0), 17));
 
+        mMap.addMarker(new MarkerOptions().position(latLngs.get(0)).title("Origin")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.my_marker_icon)));
+
+        mMap.addMarker(new MarkerOptions().position(latLngs.get(1)).title("Destination")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.my_marker_icon)));
         if (!Places.isInitialized()) {
             Places.initialize(getApplicationContext(), keyAPI );
         }
@@ -152,7 +165,7 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
                 public void onPlaceSelected(Place place) {
                     // TODO: Get info about the selected place.
                     LatLng locationSelected = place.getLatLng();
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationSelected, 15));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationSelected, 17));
 
                 }
 
@@ -168,30 +181,10 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
 
     private void setEvent()
     {
-        imgTickButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (stopPointArrayList.size() != 2)
-                    Toast.makeText(getApplicationContext(), "You must choose the origin and the destination!",
-                            Toast.LENGTH_SHORT).show();
-                else {
-                    Intent intent = new Intent();
-                    Bundle bundle = new Bundle();
-                    bundle.putParcelableArrayList("list_stop_points", stopPointArrayList);
-                    intent.putExtras(bundle);
-                    setResult(RESULT_OK, intent);
-                    finish();
-                }
-            }
-        });
 
         btnCreateStopPoint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (stopPointArrayList.size() >= 2) {
-                    Toast.makeText(getApplicationContext(), "You have already chosen the origin and the destination!",
-                            Toast.LENGTH_SHORT).show();
-                }
                 DisplayPopupDialog();
             }
         });
@@ -301,7 +294,7 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
         polyline = mMap.addPolyline(new PolylineOptions()
                 .addAll(latLngList)
                 .width(12)
-                .color(Color.parseColor("#05b1fb"))
+                .color(Color.parseColor("#FF8922"))
                 .geodesic(true)
         );
     }
@@ -368,7 +361,7 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
                             Location myLocation = (Location) task.getResult();
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                     new LatLng(myLocation.getLatitude(),
-                                            myLocation.getLongitude()), 15));
+                                            myLocation.getLongitude()), 17));
                         } else {
 
 
@@ -403,14 +396,13 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
     {
         imgbMyLocation = (ImageButton) findViewById(R.id.imgbMyLocation);
         imgbMenuStopPoint = (ImageButton) findViewById(R.id.imgbMenuStopPoint);
-        imgTickButton = (ImageButton) findViewById(R.id.imgbTickButton);
         latLngs = new ArrayList<>();
         geocoder = new Geocoder(this, Locale.getDefault());
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         btnCreateStopPoint = (LinearLayout) findViewById(R.id.layoutCreateStopPoint);
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-
+        polyline = null;
         stopPointArrayList = new ArrayList<>();
     }
 
@@ -525,11 +517,21 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
 
                 dialog.dismiss();
                 try {
-
-                    mMap.addMarker(new MarkerOptions().position(latLngs.get(lastIndex)).title("Stop Point")
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.orange_flag_icon)));
-                    if(latLngs.size() >= 2)
+                    if (latLngs.size() > 2)
                     {
+                        switch (stopPointArrayList.get(lastIndex).serviceTypeId) {
+                            case 1:
+                                mMap.addMarker(new MarkerOptions().position(latLngs.get(lastIndex)).title("Restaurant")
+                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant_icon)));
+                                break;
+                            case 2:
+                                mMap.addMarker(new MarkerOptions().position(latLngs.get(lastIndex)).title("Hotel")
+                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.hotel_icon)));
+                                break;
+                            default:
+                                mMap.addMarker(new MarkerOptions().position(latLngs.get(lastIndex)).title("Stop Point")
+                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.stop_point_icon)));
+                        }
                         if (polyline != null)
                         {
                             polyline.remove();
@@ -537,7 +539,6 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
                         }
                         drawRoute();
                     }
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -643,22 +644,14 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
         exitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                latLngs.remove(lastIndex);
                 dialog.dismiss();
             }
         });
 
         LatLng middle = mMap.getCameraPosition().target;
-        if (latLngs.size() < 2)
-        {
-            latLngs.add(middle);
-            lastIndex = latLngs.size() - 1;
-        }
-        else
-        {
-            latLngs.add(latLngs.size() - 1, middle);
-            lastIndex = latLngs.size() - 2;
-        }
+        latLngs.add(latLngs.size() - 1, middle);
+        lastIndex = latLngs.size() - 2;
         List<Address> addresses;
         try {
             addresses = geocoder.getFromLocation(middle.latitude, middle.longitude, 1);

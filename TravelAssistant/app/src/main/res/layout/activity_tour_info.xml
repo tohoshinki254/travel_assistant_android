@@ -12,11 +12,11 @@
         <ImageView
             android:id="@+id/avatarOfATour"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="200dp"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="15dp"
             android:layout_marginRight="10dp"
-            android:src="@drawable/no_image"/>
+            android:src="@drawable/background"/>
 
         <LinearLayout
             android:id="@+id/tourInfo"
@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             android:layout_marginRight="10dp"
             android:layout_below="@id/avatarOfATour" >
 

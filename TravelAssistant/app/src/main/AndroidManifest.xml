@@ -25,6 +25,12 @@
             android:name="com.ygaps.travelapp.TourInfo"
             android:theme="@style/AppTheme"
             android:label="Tour Information"></activity>
+        <activity android:name="com.ygaps.travelapp.Map"></activity>
+
+        <activity android:name="com.ygaps.travelapp.ChatActivity"
+            android:theme="@style/AppTheme">
+
+        </activity>
         <activity
             android:name="com.ygaps.travelapp.ListStopPoint"
             android:label="@string/list_stop_point_label"

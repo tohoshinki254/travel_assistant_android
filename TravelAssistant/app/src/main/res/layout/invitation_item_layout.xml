@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="130dp"
+    android:layout_margin="8dp"
+    android:background="@drawable/border_tour_item">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_image"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="12dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:src="@drawable/no_avatar"
+        app:civ_border_width="2dp"
+        app:civ_border_color="@color/quantum_black_100" />
+
+    <LinearLayout
+        android:id="@+id/ln01"
+        android:layout_toRightOf="@id/profile_image"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvSender"
+            android:layout_width="wrap_content"
+
+            android:text="@string/senderTitle"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textColor="@color/quantum_black_100"/>
+
+        <TextView
+            android:id="@+id/tvSenderName"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_height="wrap_content"
+            android:text="abc"
+            android:textStyle="italic"
+            android:textColor="@color/colorGray"/>
+    </LinearLayout>
+
+    <LinearLayout
+    android:id="@+id/ln02"
+    android:layout_toRightOf="@id/profile_image"
+    android:layout_marginLeft="6dp"
+    android:layout_marginRight="6dp"
+    android:layout_marginTop="5dp"
+    android:layout_width="match_parent"
+    android:layout_below="@id/ln01"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:text="@string/TourNameTitle"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@color/quantum_black_100"/>
+
+    <TextView
+        android:id="@+id/tvTourName"
+        android:layout_width="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_height="wrap_content"
+        android:text="abc"
+        android:textStyle="italic"
+        android:textColor="@color/colorGray"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ln03"
+        android:layout_toRightOf="@id/profile_image"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_below="@id/ln02"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:text="@string/timeTitle"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textColor="@color/quantum_black_100"/>
+
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_height="wrap_content"
+            android:text="abc"
+            android:textStyle="italic"
+            android:textColor="@color/colorGray"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ln04"
+        android:layout_toRightOf="@id/profile_image"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="2dp"
+        android:layout_width="match_parent"
+        android:layout_below="@id/ln03"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnConfirm"
+            android:layout_width="140dp"
+            android:layout_height="30dp"
+            android:background="@drawable/border_button"
+            android:text="Confirm"
+            android:textColor="@color/quantum_white_100"/>
+
+        <Button
+            android:id="@+id/btnDelete"
+            android:layout_width="140dp"
+            android:layout_marginLeft="15dp"
+            android:layout_height="30dp"
+            android:background="@drawable/border_button_1"
+            android:text="Delete"
+            android:textColor="@color/quantum_black_100"/>
+    </LinearLayout>
+</RelativeLayout>

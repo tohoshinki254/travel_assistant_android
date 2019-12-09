@@ -28,7 +28,6 @@
             android:layout_width="match_parent"
             android:layout_height="25dp"
             android:paddingTop="3dp"
-            android:text="sssssss"
             android:layout_marginLeft="5dp"/>
     </LinearLayout>
 
@@ -46,7 +45,6 @@
             android:id="@+id/tvCalendar"
             android:layout_width="match_parent"
             android:layout_height="25dp"
-            android:text="sssssss"
             android:paddingTop="3dp"
             android:layout_marginLeft="5dp"/>
     </LinearLayout>
@@ -65,7 +63,6 @@
             android:id="@+id/tvAdults"
             android:layout_width="match_parent"
             android:layout_height="25dp"
-            android:text="sssssss"
             android:paddingTop="3dp"
             android:layout_marginLeft="5dp"/>
     </LinearLayout>
@@ -84,7 +81,6 @@
             android:id="@+id/tvMoney"
             android:layout_width="match_parent"
             android:layout_height="25dp"
-            android:text="sssssss"
             android:paddingTop="3dp"
             android:layout_marginLeft="5dp"/>
     </LinearLayout>

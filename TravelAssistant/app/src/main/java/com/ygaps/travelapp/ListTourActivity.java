@@ -32,7 +32,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class ListTourActivity extends AppCompatActivity {
+public class ListTourActivity extends AppCompatActivity implements TourAdapter.onItemClickListener {
 
 
     RecyclerView rcvListTour;
@@ -150,7 +150,7 @@ public class ListTourActivity extends AppCompatActivity {
 
 
                     tourArrayList = (ArrayList<Tour>) jsonAdapter.fromJson(s);
-                    tourAdapter = new TourAdapter(tourArrayList, ListTourActivity.this);
+                    tourAdapter = new TourAdapter(tourArrayList, ListTourActivity.this, ListTourActivity.this);
                     rcvListTour.setAdapter(tourAdapter);
 
                 } catch (Exception e) {
@@ -198,5 +198,10 @@ public class ListTourActivity extends AppCompatActivity {
         rcvListTour = (RecyclerView) findViewById(R.id.rcvListTour);
         rcvListTour.setLayoutManager(new LinearLayoutManager(this));
         imbCreate = (ImageButton) findViewById(R.id.imgbCreat);
+    }
+
+    @Override
+    public void onItemClick(int i) {
+
     }
 }

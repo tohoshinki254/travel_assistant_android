@@ -118,7 +118,7 @@ public class CreateTour extends AppCompatActivity {
                 InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                 inputMethodManager.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
 
-                Intent intent = new Intent(CreateTour.this, StopPointMap.class);
+                Intent intent = new Intent(CreateTour.this, Map.class);
                 startActivityForResult(intent, REQUEST_CODE);
             }
         });
@@ -213,7 +213,10 @@ public class CreateTour extends AppCompatActivity {
                         JSONObject res = new JSONObject(temp);
                         id = res.getInt("id");
                         Intent intent = new Intent(CreateTour.this, StopPointMap.class);
-                        intent.putExtra("id", id);
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("id", id);
+                        bundle.putParcelableArrayList("list_stop_point", listStopPoints);
+                        intent.putExtras(bundle);
                         startActivity(intent);
                     } else
                         Toast.makeText(getApplicationContext(), "CREATE FAILED!", Toast.LENGTH_SHORT).show();

@@ -44,6 +44,7 @@ public class ListStopPoint extends AppCompatActivity {
         listStopPointAdapter = new ListStopPointAdapter(listStopPoints, ListStopPoint.this);
         rcvListStopPoint.setAdapter(listStopPointAdapter);
 
+
         setEvent();
     }
 

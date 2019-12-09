@@ -2,6 +2,7 @@ package com.ygaps.travelapp;
 
 public class Tour {
     public String name;
+    public int id;
     public String startDate;
     public String endDate;
     public String minCost;
@@ -13,6 +14,7 @@ public class Tour {
     public Tour(Tour t)
     {
         name  = t.name;
+        id = t.id;
         startDate = t.startDate;
         endDate = t.endDate;
         minCost = t.minCost;
