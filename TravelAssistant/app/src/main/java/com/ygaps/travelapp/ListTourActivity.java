@@ -18,6 +18,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -25,6 +27,7 @@ import com.google.gson.reflect.TypeToken;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 
@@ -33,6 +36,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -45,6 +49,9 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
     TourAdapter userTourAdapter;
     InvitationAdapter invitationAdapter;
     EditText edtSearch;
+    TextView tvId;
+    CircleImageView profileAvatar;
+    TextView tvFullname;
     ArrayList <Tour> tourArrayList;
     ArrayList <Tour> userTourArrayList;
     ArrayList <InvitationModel> invitationModelArrayList;
@@ -53,6 +60,8 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
     ImageButton imbMenu;
     ImageButton imbSetting;
     ImageButton imbNoti;
+    RelativeLayout layouSetting;
+    User userInfo;
     int statusTab = 0;
     public static String token = "";
     @Override
@@ -228,7 +237,7 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
             public void onClick(View v) {
                 statusTab = 1;
                 setStatusTab(statusTab);
-                setTitle("User List Tour");
+                setTitle("My Tours");
                 final OkHttpClient httpClient = new OkHttpClient();
                 final Request request = new Request.Builder()
                         .url(MainActivity.API_ADDR + "tour/history-user?pageIndex=1&pageSize=1000")
@@ -336,6 +345,51 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
                 statusTab = 3;
                 setStatusTab(statusTab);
                 setTitle("Setting");
+
+                final OkHttpClient httpClient = new OkHttpClient();
+                final Request request = new Request.Builder()
+                                        .url(MainActivity.API_ADDR + "user/info")
+                                        .addHeader("Authorization", ListTourActivity.token)
+                                        .build();
+
+                @SuppressLint("StaticFieldLeak") AsyncTask <Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
+                    @Override
+                    protected String doInBackground(Void... voids) {
+                        try {
+                            Response response = httpClient.newCall(request).execute();
+                            if (!response.isSuccessful())
+                                return null;
+
+                            return response.body().string();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    protected void onPostExecute(String s) {
+                        if (s != null)
+                        {
+                            Gson gson = new Gson();
+                            userInfo = gson.fromJson(s, User.class);
+
+                            if (userInfo.full_name == null)
+                                userInfo.full_name = "Not Available";
+
+                            tvFullname.setText(userInfo.full_name);
+                            tvId.setText((userInfo.id) + "");
+
+                            Picasso.get()
+                                    .load("http://placehold.it/200x200&text=No%20Avatar")
+                                    .error(R.drawable.no_avatar)
+                                    .into(profileAvatar);
+
+                        }
+                    }
+                };
+
+                asyncTask.execute();
             }
         });
     }
@@ -343,15 +397,19 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
     {
         imbSetting = (ImageButton) findViewById(R.id.imgbSetting);
         imbNoti = (ImageButton) findViewById(R.id.imgbBell);
+        profileAvatar = (CircleImageView) findViewById(R.id.profile_avatar);
         edtSearch = (EditText) findViewById(R.id.edtSearch);
         tourArrayList = new ArrayList<>();
         userTourArrayList = new ArrayList<>();
+        tvFullname = (TextView) findViewById(R.id.tvFullName);
+        tvId = (TextView) findViewById(R.id.tvId);
         invitationModelArrayList = new ArrayList<>();
         imbMenu = (ImageButton) findViewById(R.id.imgbMenu);
         imbHistory = (ImageButton) findViewById(R.id.imgbHistory);
         rcvListTour = (RecyclerView) findViewById(R.id.rcvListTour);
         rcvListTour.setLayoutManager(new LinearLayoutManager(this));
         imbCreate = (ImageButton) findViewById(R.id.imgbCreat);
+        layouSetting = (RelativeLayout) findViewById(R.id.layoutSetting);
     }
 
     @Override
@@ -377,15 +435,27 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
         {
             case 0:
                 imbMenu.setImageResource(R.drawable.menu_on_icon);
+                layouSetting.setVisibility(View.GONE);
+                rcvListTour.setVisibility(View.VISIBLE);
+                edtSearch.setVisibility(View.VISIBLE);
                 break;
             case 1:
                 imbHistory.setImageResource(R.drawable.time_on_icon);
+                layouSetting.setVisibility(View.GONE);
+                rcvListTour.setVisibility(View.VISIBLE);
+                edtSearch.setVisibility(View.VISIBLE);
                 break;
             case 2:
                 imbNoti.setImageResource(R.drawable.bell_on_icon);
+                edtSearch.setVisibility(View.GONE);
+                layouSetting.setVisibility(View.GONE);
+                rcvListTour.setVisibility(View.VISIBLE);
                 break;
             case 3:
                 imbSetting.setImageResource(R.drawable.setting_on_icon);
+                edtSearch.setVisibility(View.GONE);
+                rcvListTour.setVisibility(View.GONE);
+                layouSetting.setVisibility(View.VISIBLE);
                 break;
         }
     }

@@ -49,7 +49,7 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
         Tour t = toursResult.get(position);
 
         if(t.avatar == null)
-            t.avatar = "https://trainghiemso.vn/wp-content/uploads/2019/02/Nghe-nh%E1%BA%A1c-th%C6%B0-gi%C3%A3n-b%E1%BA%B1ng-%C3%A2m-thanh-thi%C3%AAn-nhi%C3%AAn-tr%C3%AAn-Chrome-featured.jpg";
+            t.avatar = "http://i.pinimg.com/736x/3b/d9/fd/3bd9fd6dc12a4a08a928d6a31387d056.jpg";
 
         Picasso.get()
                 .load(t.avatar)

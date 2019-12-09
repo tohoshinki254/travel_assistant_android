@@ -1,6 +1,8 @@
 package com.ygaps.travelapp;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +15,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class InvitationAdapter extends RecyclerView.Adapter<InvitationAdapter.InvitationViewHolder> {
 
@@ -96,16 +107,60 @@ public class InvitationAdapter extends RecyclerView.Adapter<InvitationAdapter.In
             btnConfirm.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(context, "Confirm -  " + getAdapterPosition(), Toast.LENGTH_LONG).show();
+                    int position = getAdapterPosition();
+                    responeInviation(true, invitationList.get(position).id + "");
+                    invitationList.remove(position);
+                    notifyDataSetChanged();
                 }
             });
 
             btnDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(context, "Delete -  " + getAdapterPosition(), Toast.LENGTH_LONG).show();
+                    int position = getAdapterPosition();
+                    responeInviation(false, invitationList.get(position).id + "");
+                    invitationList.remove(position);
+                    notifyDataSetChanged();
                 }
             });
         }
+    }
+
+    private void responeInviation(boolean isAccepted, String tourId)
+    {
+        final OkHttpClient httpClient = new OkHttpClient();
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("tourId", tourId);
+            jsonObject.put("isAccepted", isAccepted);
+            RequestBody body = RequestBody.create(jsonObject.toString(), ListStopPoint.JSON);
+            final Request request = new Request.Builder()
+                                    .url(MainActivity.API_ADDR + "tour/response/invitation")
+                                    .addHeader("Authorization", ListTourActivity.token)
+                                    .post(body)
+                                    .build();
+
+            @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
+                @Override
+                protected String doInBackground(Void... voids) {
+                    try {
+                        Response response = httpClient.newCall(request).execute();
+
+                        if (!response.isSuccessful())
+                            return null;
+
+                        return response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                }
+            };
+
+            asyncTask.execute();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 }
