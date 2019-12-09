@@ -28,14 +28,14 @@
             android:background="#00000000" />
 
         <TextView
-            android:id="@+id/full_name_label_edit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/full_name_label"
-            android:layout_below="@id/edit_profile_labelTitle"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:textColor="@color/colorGray" />
+        android:id="@+id/full_name_label_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/full_name_label"
+        android:layout_below="@id/edit_profile_labelTitle"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textColor="@color/colorGray" />
 
         <EditText
             android:id="@+id/updateFullNameBox"
@@ -106,13 +106,11 @@
             android:textColor="@color/colorGray"
             android:layout_marginTop="10dp"/>
 
-        <EditText
+        <Spinner
             android:id="@+id/updateGenderBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text"
             android:textSize="20sp"
-            android:background="@drawable/border_edit_text"
             android:layout_marginBottom="10dp"
             android:layout_below="@id/gender_label_edit"
             android:layout_marginTop="5dp"

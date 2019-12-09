@@ -354,6 +354,7 @@ public class TourInfo extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(),"Invite Failed", Toast.LENGTH_SHORT).show();
                         }
                     };
+                    asyncTask.execute();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

@@ -206,6 +206,6 @@
     <string name="timeTitle">Time: </string>
     <string name="fullnameTitle">Full Name: </string>
     <string name="IdTitle">ID: </string>
-    <string name="editProfile">Edit profile ></string>
+    <string name="editProfile">Edit Profile</string>
     <string name="logout">Logout</string>
 </resources>
