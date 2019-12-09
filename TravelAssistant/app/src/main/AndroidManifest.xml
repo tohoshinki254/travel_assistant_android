@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.travelassistant">
+    package="com.ygaps.travelapp">
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -8,6 +8,10 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -17,13 +21,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ListStopPoint"
-            android:label="@string/list_stop_point_label"
-            android:theme="@style/AppTheme"></activity>
         <activity
-            android:name=".CreateTour"
+            android:name="com.ygaps.travelapp.TourInfo"
+            android:theme="@style/AppTheme"
+            android:label="Tour Information"></activity>
+        <activity
+            android:name="com.ygaps.travelapp.ListStopPoint"
+            android:label="@string/list_stop_point_label"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name="com.ygaps.travelapp.CreateTour"
             android:label="@string/create_tour_str"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -37,35 +46,35 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".StopPointMap"
+            android:name="com.ygaps.travelapp.StopPointMap"
             android:label="@string/title_activity_stop_point_map"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".ListTourActivity"
+            android:name="com.ygaps.travelapp.ListTourActivity"
             android:label="@string/list_tour"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.travelassistant.MainActivity" />
+                android:value="com.ygaps.travelapp.MainActivity" />
         </activity>
         <activity
-            android:name=".FotgotPasswordActivity"
+            android:name="com.ygaps.travelapp.FotgotPasswordActivity"
             android:label="@string/forgot_password"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.travelassistant.MainActivity" />
+                android:value="com.ygaps.travelapp.MainActivity" />
         </activity>
         <activity
-            android:name=".RegisterActivity"
+            android:name="com.ygaps.travelapp.RegisterActivity"
             android:label="@string/sign_up"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.travelassistant.MainActivity" />
+                android:value="com.ygaps.travelapp.MainActivity" />
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name="com.ygaps.travelapp.MainActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
