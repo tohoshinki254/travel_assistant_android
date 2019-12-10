@@ -9,8 +9,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -22,6 +24,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.moshi.JsonAdapter;
@@ -29,6 +35,7 @@ import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -39,7 +46,10 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
+
+import static com.ygaps.travelapp.ListStopPoint.JSON;
 
 public class ListTourActivity extends AppCompatActivity implements TourAdapter.onItemClickListener {
 
@@ -71,8 +81,17 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
         getWidget();
         Intent intent = this.getIntent();
         token = intent.getStringExtra("token");
-        setStatusTab(statusTab);
-        loadListTour();
+        if (intent.getBooleanExtra("FireBase", false))
+        {
+            SharedPreferences sharedPreferences = getSharedPreferences("tokenShare", MODE_PRIVATE);
+            token = sharedPreferences.getString("token", "");
+            loadListInvitation();
+        }
+        else {
+            registerFireBase(token);
+            setStatusTab(statusTab);
+            loadListTour();
+        }
         setEvent();
     }
 
@@ -186,6 +205,55 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
 
     }
 
+    private void loadListInvitation(){
+        statusTab = 2;
+        setStatusTab(statusTab);
+        setTitle("Invitaion");
+
+        final OkHttpClient httpClient = new OkHttpClient();
+        final Request request = new Request.Builder()
+                .url(MainActivity.API_ADDR + "tour/get/invitation?pageIndex=1&pageSize=500")
+                .addHeader("Authorization",token)
+                .build();
+
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... voids) {
+                try {
+                    Response response = httpClient.newCall(request).execute();
+                    if(!response.isSuccessful())
+                        return null;
+
+                    return response.body().string();
+                } catch (Exception e) {
+                    Log.d("ERROR", "throw: " + e.getMessage());
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+
+                if (s == null)
+                    return;
+
+                try{
+                    JSONObject jsonObject = new JSONObject(s);
+                    Gson gson = new Gson();
+                    invitationModelArrayList = gson.fromJson(jsonObject.getString("tours"), new TypeToken<ArrayList<InvitationModel>>(){}.getType());
+                    invitationAdapter = new InvitationAdapter(invitationModelArrayList, ListTourActivity.this);
+                    rcvListTour.setAdapter(invitationAdapter);
+                } catch (Exception e)
+                {
+                    Log.d("ERROR", "throw: " + e.getMessage());
+                }
+            }
+        };
+
+        asyncTask.execute();
+    }
+
     private void setEvent()
     {
         edtSearch.addTextChangedListener(new TextWatcher() {
@@ -289,53 +357,7 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
         imbNoti.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                statusTab = 2;
-                setStatusTab(statusTab);
-                setTitle("Invitaion");
-
-                final OkHttpClient httpClient = new OkHttpClient();
-                final Request request = new Request.Builder()
-                        .url(MainActivity.API_ADDR + "tour/get/invitation?pageIndex=1&pageSize=500")
-                        .addHeader("Authorization",token)
-                        .build();
-
-                @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
-                    @Override
-                    protected String doInBackground(Void... voids) {
-                        try {
-                            Response response = httpClient.newCall(request).execute();
-                            if(!response.isSuccessful())
-                                return null;
-
-                            return response.body().string();
-                        } catch (Exception e) {
-                            Log.d("ERROR", "throw: " + e.getMessage());
-                            return null;
-                        }
-                    }
-
-                    @Override
-                    protected void onPostExecute(String s) {
-                        super.onPostExecute(s);
-
-                        if (s == null)
-                            return;
-
-                        try{
-                            JSONObject jsonObject = new JSONObject(s);
-                            Gson gson = new Gson();
-                            invitationModelArrayList = gson.fromJson(jsonObject.getString("tours"), new TypeToken<ArrayList<InvitationModel>>(){}.getType());
-                            invitationAdapter = new InvitationAdapter(invitationModelArrayList, ListTourActivity.this);
-                            rcvListTour.setAdapter(invitationAdapter);
-                        } catch (Exception e)
-                        {
-                            Log.d("ERROR", "throw: " + e.getMessage());
-                        }
-                    }
-                };
-
-                asyncTask.execute();
-
+                loadListInvitation();
             }
         });
 
@@ -458,5 +480,58 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
                 layouSetting.setVisibility(View.VISIBLE);
                 break;
         }
+    }
+
+
+    private void registerFireBase(final String userToken){
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+            @Override
+            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                if (task.isSuccessful())
+                {
+                    String fcmToken = task.getResult().getToken();
+                    String id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+                    Log.d("xxx", "fcmToken: " + fcmToken);
+                    Log.d("xxx", "id: " + id);
+                    Log.d("xxx", "userToken: " + userToken);
+                    final OkHttpClient httpClient = new OkHttpClient();
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("fcmToken", fcmToken);
+                        jsonObject.put("deviceId", id);
+                        jsonObject.put("platform", 1);
+                        jsonObject.put ("appVersion", "1");
+                        RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
+
+                        final Request request = new Request.Builder()
+                                .url(MainActivity.API_ADDR + "user/notification/put-token")
+                                .addHeader("Authorization", userToken)
+                                .post(body)
+                                .build();
+
+                        @SuppressLint("StaticFieldLeak") AsyncTask <Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
+                            @Override
+                            protected String doInBackground(Void... voids) {
+                                try {
+                                    Response response = httpClient.newCall(request).execute();
+                                    if (!response.isSuccessful())
+                                        return null;
+
+                                    return response.body().string();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                    return null;
+                                }
+
+                            }
+                        };
+
+                        asyncTask.execute();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 }

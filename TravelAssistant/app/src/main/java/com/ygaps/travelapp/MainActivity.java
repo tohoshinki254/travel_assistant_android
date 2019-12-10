@@ -1,11 +1,15 @@
 package com.ygaps.travelapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -20,7 +24,12 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -44,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     ImageButton imgbtnfb;
     CallbackManager callbackManager;
     AccessToken accessToken = AccessToken.getCurrentAccessToken();
+    SharedPreferences tokenShare;
     private String tokenLogin = "";
     public static final String API_ADDR = "http://35.197.153.192:3000/";
     @Override
@@ -94,10 +104,16 @@ public class MainActivity extends AppCompatActivity {
                             .post(formBody)
                             .build();
 
+
+                    final ProgressDialog dialog = new ProgressDialog(MainActivity.this);
+                    dialog.setTitle("Sign in");
+                    dialog.setMessage("Please wait ...");
+
                     @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
                         @Override
                         protected String doInBackground(Void... voids) {
                             try {
+                                publishProgress();
                                 Response response = httpClient.newCall(request).execute();
 
                                 if (!response.isSuccessful())
@@ -109,14 +125,21 @@ public class MainActivity extends AppCompatActivity {
                                 return null;
                             }
                         }
+
+                        @Override
+                        protected void onProgressUpdate(Void... values) {
+                            dialog.show();
+                        }
                     };
                     String temp;
                     temp = asyncTask.execute().get();
+                    dialog.dismiss();
 
                     if (temp != null) {
                         JSONObject res = new JSONObject(temp);
                         tokenLogin = res.getString("token");
                         Toast.makeText(getApplicationContext(), "LOGIN SUCCESSFULLY!", Toast.LENGTH_SHORT).show();
+                        saveToken(tokenLogin);
                         Intent intent = new Intent(MainActivity.this, ListTourActivity.class);
                         intent.putExtra("token", tokenLogin);
                         startActivity(intent);
@@ -215,11 +238,18 @@ public class MainActivity extends AppCompatActivity {
         btnSignIn = (Button) findViewById(R.id.signInButton);
         loginButton = (LoginButton)findViewById(R.id.facebookIcon);
         imgbtnfb = (ImageButton) findViewById(R.id.fb);
+        tokenShare = getSharedPreferences("tokenShare", MODE_PRIVATE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void saveToken(String userToken){
+        SharedPreferences.Editor editor = tokenShare.edit();
+        editor.putString("token", userToken);
+        editor.commit();
     }
 }

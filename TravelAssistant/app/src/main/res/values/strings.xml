@@ -206,4 +206,5 @@
     <string name="IdTitle">ID: </string>
     <string name="editProfile">Edit profile ></string>
     <string name="logout">Logout</string>
+    <string name="invitationTitle" ><strong>You have a new invitation!!</strong></string>
 </resources>
