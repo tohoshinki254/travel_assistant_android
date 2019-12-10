@@ -7,13 +7,17 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -29,7 +33,7 @@ public class RegisterActivity extends AppCompatActivity {
     EditText edtPhone;
     EditText edtPasswordRegister;
     EditText edtConfirmPassword;
-    EditText edtGender;
+    Spinner spnGender;
     EditText edtDob;
     EditText edtAddress;
     Button btnSignUp;
@@ -63,7 +67,11 @@ public class RegisterActivity extends AppCompatActivity {
                     jsonObject.put("phone", edtPhone.getText().toString());
                     jsonObject.put("address", edtAddress.getText().toString());
                     jsonObject.put("dob", edtDob.getText().toString());
-                    jsonObject.put("gender", Integer.parseInt(edtGender.getText().toString()));
+
+                    if (String.valueOf(spnGender.getSelectedItem()).equals("Male"))
+                        jsonObject.put("gender", 1);
+                    else
+                        jsonObject.put("gender", 0);
 
                     RequestBody formBody = RequestBody.create(jsonObject.toString(), JSON);
 
@@ -114,8 +122,16 @@ public class RegisterActivity extends AppCompatActivity {
         edtPasswordRegister = (EditText) findViewById(R.id.inputRegisterPasswordBox);
         edtConfirmPassword = (EditText) findViewById(R.id.inputConfirmPasswordBox);
         btnSignUp = (Button) findViewById(R.id.signUpButton);
-        edtGender = (EditText) findViewById(R.id.inputGenderBox);
+        spnGender = (Spinner) findViewById(R.id.inputGenderBox);
         edtDob = (EditText) findViewById(R.id.inputDobBox);
         edtAddress = (EditText) findViewById(R.id.inputAddressBox);
+
+        List<String> gender = new ArrayList<String>();
+        gender.add("Male");
+        gender.add("Female");
+
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, gender);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spnGender.setAdapter(spinnerAdapter);
     }
 }

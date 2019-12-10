@@ -2,7 +2,7 @@ package com.ygaps.travelapp;
 
 public class User {
     public int id;
-    public String full_name;
+    public String fullName;
     public String email;
     public String phone;
     public String dob;

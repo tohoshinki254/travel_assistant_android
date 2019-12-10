@@ -56,6 +56,8 @@
     <string name="stop_point_time">Time</string>
     <string name="stop_point_select_date">Select date</string>
     <string name="stop_point_save">SAVE</string>
+    <string name="comments_title">Comments</string>
+    <string name="members_title">Members</string>
     <string-array name="list_province_name">
         <item>Hồ Chí Minh</item>
         <item>Hà Nội</item>
@@ -204,7 +206,7 @@
     <string name="timeTitle">Time: </string>
     <string name="fullnameTitle">Full Name: </string>
     <string name="IdTitle">ID: </string>
-    <string name="editProfile">Edit profile ></string>
+    <string name="editProfile">Edit Profile</string>
     <string name="logout">Logout</string>
     <string name="invitationTitle" ><strong>You have a new invitation!!</strong></string>
 </resources>

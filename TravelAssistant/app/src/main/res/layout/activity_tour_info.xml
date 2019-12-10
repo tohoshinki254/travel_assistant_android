@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TourInfo">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/avatarOfATour"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/background"/>
+
+        <LinearLayout
+            android:id="@+id/tourInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_below="@id/avatarOfATour" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp">
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/location_icon"
+                    android:layout_marginStart="3dp"/>
+
+                <TextView
+                    android:id="@+id/tvName"
+                    android:layout_width="match_parent"
+                    android:layout_height="25dp"
+                    android:paddingTop="3dp"
+                    android:layout_marginStart="5dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp">
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/calendar_icon"
+                    android:layout_marginStart="3dp"/>
+
+                <TextView
+                    android:id="@+id/tvCalendar"
+                    android:layout_width="match_parent"
+                    android:layout_height="25dp"
+                    android:paddingTop="3dp"
+                    android:layout_marginStart="5dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp">
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/people_icon"
+                    android:layout_marginStart="3dp"/>
+
+                <TextView
+                    android:id="@+id/tvPeople"
+                    android:layout_width="match_parent"
+                    android:layout_height="25dp"
+                    android:paddingTop="3dp"
+                    android:layout_marginStart="5dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp">
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/money_icon"
+                    android:layout_marginStart="3dp"/>
+
+                <TextView
+                    android:id="@+id/tvMoney"
+                    android:layout_width="match_parent"
+                    android:layout_height="25dp"
+                    android:paddingTop="3dp"
+                    android:layout_marginStart="5dp"/>
+            </LinearLayout>
+
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp">
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/host_icon"
+                    android:layout_marginStart="3dp"/>
+
+                <TextView
+                    android:id="@+id/tvHost"
+                    android:layout_width="match_parent"
+                    android:layout_height="25dp"
+                    android:paddingTop="3dp"
+                    android:layout_marginStart="5dp"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/showListStopPoint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tourInfo"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:text="Show List Stop Point"
+            android:textSize="23sp"
+            android:padding="5dp"
+            android:background="@drawable/border_edit_text_rectangle"
+            android:textColor="@color/colorOrange"
+            android:clickable="true" />
+
+        <TextView
+            android:id="@+id/showListComment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/showListStopPoint"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:text="Show Comments"
+            android:textSize="23sp"
+            android:padding="5dp"
+            android:background="@drawable/border_edit_text_rectangle"
+            android:textColor="@color/colorOrange"
+            android:clickable="true" />
+
+        <TextView
+            android:id="@+id/showListMember"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/showListComment"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:text="Show Members"
+            android:textSize="23sp"
+            android:padding="5dp"
+            android:background="@drawable/border_edit_text_rectangle"
+            android:textColor="@color/colorOrange"
+            android:clickable="true"/>
+
+        <LinearLayout
+            android:id="@+id/FollowAndChat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="15dp"
+            android:padding="5dp"
+            android:layout_below="@id/showListMember">
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginRight="30dp">
+                <Button
+                    android:id="@+id/FollowButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/border_button"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="20sp"
+                    android:text="Follow"
+                    android:drawableStart="@drawable/my_location_icon"
+                    android:padding="10dp"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="30dp">
+                <Button
+                    android:id="@+id/ChatButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/border_button"
+                    android:textColor="@color/colorWhite"
+                    android:text="Chat"
+                    android:textSize="20sp"
+                    android:drawableStart="@drawable/chat_icon"
+                    android:padding="10dp"/>
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/AudioAnd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="15dp"
+            android:padding="5dp"
+            android:layout_below="@id/FollowAndChat">
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginRight="30dp">
+                <Button
+                    android:id="@+id/AudioButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/border_button"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="20sp"
+                    android:text="Audio"
+                    android:drawableStart="@drawable/audio_icon"
+                    android:padding="10dp"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="30dp">
+                <Button
+                    android:id="@+id/addMemberButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/border_button"
+                    android:textColor="@color/colorWhite"
+                    android:text="Member"
+                    android:textSize="20sp"
+                    android:drawableStart="@drawable/add_member_icon"
+                    android:padding="10dp"/>
+            </RelativeLayout>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</ScrollView>

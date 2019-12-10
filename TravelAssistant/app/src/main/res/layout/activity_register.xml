@@ -42,17 +42,13 @@
             android:layout_marginTop="10dp"
             android:layout_below="@id/inputFullNameBox"/>
 
-        <EditText
+        <Spinner
             android:id="@+id/inputGenderBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number"
-            android:textSize="20sp"
-            android:background="@drawable/border_edit_text"
             android:layout_marginBottom="10dp"
             android:layout_below="@id/genderLabel"
-            android:layout_marginTop="5dp"
-            android:padding="10sp"/>
+            android:layout_marginTop="5dp" />
 
         <TextView
             android:id="@+id/dobLabel"
