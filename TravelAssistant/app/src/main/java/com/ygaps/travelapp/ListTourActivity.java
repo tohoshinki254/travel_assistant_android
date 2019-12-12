@@ -464,11 +464,19 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
     public void onItemClick(int i) {
         if(statusTab == 0)
         {
-            Toast.makeText(getApplicationContext(), statusTab + " - i", Toast.LENGTH_SHORT).show();
+            Tour tour = tourArrayList.get(i);
+            Intent intent = new Intent(ListTourActivity.this, TourInfo.class);
+            intent.putExtra("userId", userInfo.id);
+            intent.putExtra("tourId", tour.id);
+            startActivity(intent);
         }
         else
         {
-            Toast.makeText(getApplicationContext(), statusTab + " - i", Toast.LENGTH_SHORT).show();
+            Tour tour = userTourArrayList.get(i);
+            Intent intent = new Intent(ListTourActivity.this, TourInfo.class);
+            intent.putExtra("userId", userInfo.id);
+            intent.putExtra("tourId", tour.id);
+            startActivity(intent);
         }
     }
 
