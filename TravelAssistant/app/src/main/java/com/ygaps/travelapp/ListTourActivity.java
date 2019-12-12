@@ -34,6 +34,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.moshi.JsonAdapter;
@@ -317,6 +318,7 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
         imbMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                test();
                 statusTab = 0;
                 setStatusTab(statusTab);
                 setTitle("List Tour");
@@ -431,6 +433,10 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
                                     .error(R.drawable.no_avatar)
                                     .into(profileAvatar);
 
+                            SharedPreferences sharedPreferences = getSharedPreferences("tokenShare", MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putInt("userID", userInfo.id);
+                            editor.apply();
                         }
                     }
                 };
@@ -464,11 +470,11 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
     public void onItemClick(int i) {
         if(statusTab == 0)
         {
-            Toast.makeText(getApplicationContext(), statusTab + " - i", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), statusTab + " - " + i, Toast.LENGTH_SHORT).show();
         }
         else
         {
-            Toast.makeText(getApplicationContext(), statusTab + " - i", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), statusTab + " - " + i, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -741,5 +747,66 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
         });
 
         dialog.show();
+    }
+
+
+    private void test(){
+        FirebaseMessaging.getInstance().subscribeToTopic("tour-id-87")
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+
+                        if (task.isSuccessful())
+                        {
+
+                            final OkHttpClient okHttpClient = new OkHttpClient();
+                            JSONObject jsonObject = new JSONObject();
+                            try {
+                                jsonObject.put("tourId", "87");
+                                jsonObject.put("userId", "79");
+                                jsonObject.put("noti", "test test" );
+
+                                RequestBody formBody = RequestBody.create(jsonObject.toString(), JSON);
+                                final Request request = new Request.Builder()
+                                        .url("http://35.197.153.192:3000/tour/notification")
+                                        .addHeader("Authorization",  token)
+                                        .post(formBody)
+                                        .build();
+
+                                @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
+                                    @Override
+                                    protected String doInBackground(Void... voids) {
+                                        try {
+
+                                            Response response = okHttpClient.newCall(request).execute();
+
+                                            if(!response.isSuccessful())
+                                                return null;
+
+                                            return response.body().string();
+
+                                        } catch (IOException e) {
+                                            return null;
+                                        }
+                                    }
+
+                                    @Override
+                                    protected void onPostExecute(String s) {
+                                        if (s == null)
+                                            s = "null roi";
+
+                                        Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
+                                    }
+                                };
+
+                                asyncTask.execute();
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }
+                });
     }
 }

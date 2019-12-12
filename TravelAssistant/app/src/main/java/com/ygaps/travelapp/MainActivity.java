@@ -250,6 +250,6 @@ public class MainActivity extends AppCompatActivity {
     private void saveToken(String userToken){
         SharedPreferences.Editor editor = tokenShare.edit();
         editor.putString("token", userToken);
-        editor.commit();
+        editor.apply();
     }
 }
