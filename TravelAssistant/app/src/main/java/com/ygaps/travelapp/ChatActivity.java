@@ -43,19 +43,21 @@ public class ChatActivity extends AppCompatActivity {
     private Button btnSend;
     private EditText edtMessage;
     String message;
+    private static int userId;
+    private static int tourId;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+        Intent intent = getIntent();
+        userId = intent.getIntExtra("userId", -1);
+        tourId = intent.getIntExtra("tourId", -1);
+
         setWidget();
         loadListChat();
-
-
-        //listChatAdapter.notifyDataSetChanged();
-
-
 
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,11 +82,9 @@ public class ChatActivity extends AppCompatActivity {
 
     private void loadListChat()
     {
-
-
         final OkHttpClient httpClient = new OkHttpClient();
         final Request request = new Request.Builder()
-                .url(API_ADDR + "tour/notification-list?tourId=87&pageIndex=1&pageSize=500")
+                .url(API_ADDR + "tour/notification-list?tourId=" + tourId + "&pageIndex=1&pageSize=500")
                 .addHeader("Authorization",ListTourActivity.token)
                 .build();
 
@@ -117,7 +117,6 @@ public class ChatActivity extends AppCompatActivity {
                         listChatAdapter = new ChatAdapter(listChat,ChatActivity.this);
                         rcvListChat.scrollToPosition(listChat.size() - 1);
                         rcvListChat.setAdapter(listChatAdapter);
-
                     }
                     catch (Exception e)
                     {
@@ -140,8 +139,8 @@ public class ChatActivity extends AppCompatActivity {
             final OkHttpClient httpClient = new OkHttpClient();
 
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("tourId",87);
-            jsonObject.put("userId",79);
+            jsonObject.put("tourId",tourId);
+            jsonObject.put("userId",userId);
             jsonObject.put("noti",message);
 
 

@@ -103,6 +103,7 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
             setStatusTab(statusTab);
             loadListTour();
         }
+        loadUserInfo();
         setEvent();
     }
 
@@ -318,7 +319,6 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
         imbMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                test();
                 statusTab = 0;
                 setStatusTab(statusTab);
                 setTitle("List Tour");
@@ -393,55 +393,7 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
                 statusTab = 3;
                 setStatusTab(statusTab);
                 setTitle("Setting");
-
-                final OkHttpClient httpClient = new OkHttpClient();
-                final Request request = new Request.Builder()
-                        .url(MainActivity.API_ADDR + "user/info")
-                        .addHeader("Authorization", ListTourActivity.token)
-                        .build();
-
-                @SuppressLint("StaticFieldLeak") AsyncTask <Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
-                    @Override
-                    protected String doInBackground(Void... voids) {
-                        try {
-                            Response response = httpClient.newCall(request).execute();
-                            if (!response.isSuccessful())
-                                return null;
-
-                            return response.body().string();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            return null;
-                        }
-                    }
-
-                    @Override
-                    protected void onPostExecute(String s) {
-                        if (s != null)
-                        {
-                            Gson gson = new Gson();
-                            userInfo = gson.fromJson(s, User.class);
-
-                            if (userInfo.fullName == null)
-                                userInfo.fullName = "Not Available";
-
-                            tvFullname.setText(userInfo.fullName);
-                            tvId.setText((userInfo.id) + "");
-
-                            Picasso.get()
-                                    .load("http://placehold.it/200x200&text=No%20Avatar")
-                                    .error(R.drawable.no_avatar)
-                                    .into(profileAvatar);
-
-                            SharedPreferences sharedPreferences = getSharedPreferences("tokenShare", MODE_PRIVATE);
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.putInt("userID", userInfo.id);
-                            editor.apply();
-                        }
-                    }
-                };
-
-                asyncTask.execute();
+                loadUserInfo();
             }
         });
     }
@@ -470,11 +422,19 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
     public void onItemClick(int i) {
         if(statusTab == 0)
         {
-            Toast.makeText(getApplicationContext(), statusTab + " - " + i, Toast.LENGTH_SHORT).show();
+            Tour tour = tourArrayList.get(i);
+            Intent intent = new Intent(ListTourActivity.this, TourInfo.class);
+            intent.putExtra("userId", userInfo.id);
+            intent.putExtra("tourId", tour.id);
+            startActivity(intent);
         }
         else
         {
-            Toast.makeText(getApplicationContext(), statusTab + " - " + i, Toast.LENGTH_SHORT).show();
+            Tour tour = userTourArrayList.get(i);
+            Intent intent = new Intent(ListTourActivity.this, TourInfo.class);
+            intent.putExtra("userId", userInfo.id);
+            intent.putExtra("tourId", tour.id);
+            startActivity(intent);
         }
     }
 
@@ -562,6 +522,57 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
                 }
             }
         });
+    }
+
+    private void loadUserInfo(){
+        final OkHttpClient httpClient = new OkHttpClient();
+        final Request request = new Request.Builder()
+                .url(MainActivity.API_ADDR + "user/info")
+                .addHeader("Authorization", ListTourActivity.token)
+                .build();
+
+        @SuppressLint("StaticFieldLeak") AsyncTask <Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... voids) {
+                try {
+                    Response response = httpClient.newCall(request).execute();
+                    if (!response.isSuccessful())
+                        return null;
+
+                    return response.body().string();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                if (s != null)
+                {
+                    Gson gson = new Gson();
+                    userInfo = gson.fromJson(s, User.class);
+
+                    if (userInfo.fullName == null)
+                        userInfo.fullName = "Not Available";
+
+                    tvFullname.setText(userInfo.fullName);
+                    tvId.setText((userInfo.id) + "");
+
+                    Picasso.get()
+                            .load("http://placehold.it/200x200&text=No%20Avatar")
+                            .error(R.drawable.no_avatar)
+                            .into(profileAvatar);
+
+                    SharedPreferences sharedPreferences = getSharedPreferences("tokenShare", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putInt("userID", userInfo.id);
+                    editor.apply();
+                }
+            }
+        };
+
+        asyncTask.execute();
     }
 
     private void DisplayEditProfilePopupDialog() {
@@ -749,64 +760,4 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
         dialog.show();
     }
 
-
-    private void test(){
-        FirebaseMessaging.getInstance().subscribeToTopic("tour-id-87")
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-
-                        if (task.isSuccessful())
-                        {
-
-                            final OkHttpClient okHttpClient = new OkHttpClient();
-                            JSONObject jsonObject = new JSONObject();
-                            try {
-                                jsonObject.put("tourId", "87");
-                                jsonObject.put("userId", "79");
-                                jsonObject.put("noti", "test test" );
-
-                                RequestBody formBody = RequestBody.create(jsonObject.toString(), JSON);
-                                final Request request = new Request.Builder()
-                                        .url("http://35.197.153.192:3000/tour/notification")
-                                        .addHeader("Authorization",  token)
-                                        .post(formBody)
-                                        .build();
-
-                                @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
-                                    @Override
-                                    protected String doInBackground(Void... voids) {
-                                        try {
-
-                                            Response response = okHttpClient.newCall(request).execute();
-
-                                            if(!response.isSuccessful())
-                                                return null;
-
-                                            return response.body().string();
-
-                                        } catch (IOException e) {
-                                            return null;
-                                        }
-                                    }
-
-                                    @Override
-                                    protected void onPostExecute(String s) {
-                                        if (s == null)
-                                            s = "null roi";
-
-                                        Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
-                                    }
-                                };
-
-                                asyncTask.execute();
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
-                        }
-                    }
-                });
-    }
 }
