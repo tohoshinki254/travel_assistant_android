@@ -16,13 +16,16 @@ import android.media.MediaRecorder;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.ContactsContract;
 import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,22 +55,25 @@ public class TourInfo extends AppCompatActivity {
 
     public Dialog dialog;
     private RecyclerView rcvStopPoints;
-    private RecyclerView rcvComments;
     private RecyclerView rcvMembers;
     private ImageButton btnFollow;
     private ImageButton btnChat;
     private ImageButton btnAudio;
     private ImageButton btnAddMember;
+    private ImageButton btnComment;
+    private ImageButton btnReview;
     private Button btnJoin;
     private TextView tvJoin;
     private TextView tvShowListStopPoint;
-    private TextView tvShowComments;
     private TextView tvShowMembers;
     private ArrayList<StopPoint> stopPointArrayList;
     private ArrayList<Comment> commentArrayList;
     private ArrayList<Member> memberArrayList;
+    private ArrayList<Comment> reviewArrayList;
+    private ArrayList<PointStats> pointStatsArrayList;
     private ListStopPointAdapter listStopPointAdapter;
     private ListCommentAdapter listCommentAdapter;
+    private ListCommentAdapter listReviewAdapter;
     private ListMemberAdapter listMemberAdapter;
     private TextView tvName;
     private TextView tvCalendar;
@@ -83,8 +89,32 @@ public class TourInfo extends AppCompatActivity {
     public static final int RequestPermissionCode = 1;
     private static int userId;
     private static int tourId;
+    private static String fullName;
 
+    private RecyclerView rcvComments;
+    private EditText edtInputComment;
+    private Button btnSendComment;
+    private TextView tvTourNameTitle;
 
+    private RelativeLayout rltTourInfo;
+    private RelativeLayout rltComment;
+    private RelativeLayout rltReview;
+
+    private ImageButton imgOneStar;
+    private ImageButton imgTwoStar;
+    private ImageButton imgThreeStar;
+    private ImageButton imgFourStar;
+    private ImageButton imgFiveStar;
+    private EditText edtContentReview;
+    private Button btnSendReview;
+    private int pointReview = 0;
+
+    private ImageView imvOneStar;
+    private ImageView imvTwoStar;
+    private ImageView imvThreeStar;
+    private ImageView imvFourStar;
+    private ImageView imvFiveStar;
+    private RecyclerView rcvListReview;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,10 +122,13 @@ public class TourInfo extends AppCompatActivity {
 
         Intent intent = getIntent();
         userId = intent.getIntExtra("userId", -1);
+        fullName = intent.getStringExtra("nameOfUser");
         tourId = intent.getIntExtra("tourId", -1);
 
         setWidget();
         LoadTourInfo();
+        LoadListReview();
+        LoadPointReviewRating();
         setEvent();
     }
 
@@ -105,8 +138,9 @@ public class TourInfo extends AppCompatActivity {
         btnAudio = (ImageButton) findViewById(R.id.audioImageButton);
         btnAddMember = (ImageButton) findViewById(R.id.inviteImageButton);
         btnJoin = (Button) findViewById(R.id.joinTourButton);
+        btnComment = (ImageButton) findViewById(R.id.commentImageButton);
+        btnReview = (ImageButton) findViewById(R.id.reviewImageButton);
         tvShowListStopPoint = (TextView) findViewById(R.id.showListStopPoint);
-        tvShowComments = (TextView) findViewById(R.id.showListComment);
         tvShowMembers = (TextView) findViewById(R.id.showListMember);
         tvName = (TextView) findViewById(R.id.tvName);
         tvCalendar = (TextView) findViewById(R.id.tvCalendar);
@@ -114,9 +148,207 @@ public class TourInfo extends AppCompatActivity {
         tvMoney = (TextView) findViewById(R.id.tvMoney);
         tvPeople = (TextView) findViewById(R.id.tvPeople);
         tvJoin = (TextView) findViewById(R.id.tvJoin);
+        rcvComments = (RecyclerView) findViewById(R.id.show_list_comment);
+        edtInputComment = (EditText) findViewById(R.id.comment_input_box);
+        btnSendComment = (Button) findViewById(R.id.comment_send_button);
+        rltTourInfo = (RelativeLayout) findViewById(R.id.tourInfoActivity);
+        rltComment = (RelativeLayout) findViewById(R.id.commentActivity);
+        rltReview = (RelativeLayout) findViewById(R.id.reviewActivity);
+        tvTourNameTitle = (TextView) findViewById(R.id.tour_name_title);
+        imgOneStar = (ImageButton) findViewById(R.id.oneStarImageButton);
+        imgTwoStar = (ImageButton) findViewById(R.id.twoStarImageButton);
+        imgThreeStar = (ImageButton) findViewById(R.id.threeStarImageButton);
+        imgFourStar = (ImageButton) findViewById(R.id.fourStarImageButton);
+        imgFiveStar = (ImageButton) findViewById(R.id.fiveStarImageButton);
+        edtContentReview = (EditText) findViewById(R.id.inputReviewBox);
+        btnSendReview = (Button) findViewById(R.id.sendReviewButton);
+        imvOneStar = (ImageView) findViewById(R.id.oneStarImageView);
+        imvTwoStar = (ImageView) findViewById(R.id.twoStarImageView);
+        imvThreeStar = (ImageView) findViewById(R.id.threeStarImageView);
+        imvFourStar = (ImageView) findViewById(R.id.fourStarImageView);
+        imvFiveStar = (ImageView) findViewById(R.id.fiveStarImageView);
+        rcvListReview = (RecyclerView) findViewById(R.id.rcvListReview);
+        rcvListReview.setLayoutManager(new LinearLayoutManager(TourInfo.this));
     }
 
     public void setEvent() {
+        btnReview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rltTourInfo.setVisibility(View.GONE);
+                rltReview.setVisibility(View.VISIBLE);
+            }
+        });
+
+        imgOneStar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setStarInReview(true, false, false, false, false);
+                pointReview = 1;
+            }
+        });
+
+        imgTwoStar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setStarInReview(true, true, false, false, false);
+                pointReview = 2;
+            }
+        });
+
+        imgThreeStar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setStarInReview(true, true, true, false, false);
+                pointReview = 3;
+            }
+        });
+
+        imgFourStar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setStarInReview(true, true, true, true, false);
+                pointReview = 4;
+            }
+        });
+
+        imgFiveStar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setStarInReview(true, true, true, true, true);
+                pointReview = 5;
+            }
+        });
+
+        btnSendReview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("tourId", tourId);
+                    jsonObject.put("point", pointReview);
+                    jsonObject.put("review", edtContentReview.getText().toString());
+
+                    final OkHttpClient httpClient = new OkHttpClient();
+                    RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
+                    final Request request = new Request.Builder()
+                            .url(API_ADDR + "tour/add/review")
+                            .addHeader("Authorization", ListTourActivity.token)
+                            .post(body)
+                            .build();
+
+                    @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
+                        @Override
+                        protected String doInBackground(Void... voids) {
+                            try {
+                                Response response = httpClient.newCall(request).execute();
+
+                                if (!response.isSuccessful())
+                                    return null;
+
+                                return response.body().string();
+                            }
+                            catch (IOException e) {
+                                e.printStackTrace();
+                                return null;
+                            }
+                        }
+
+                        protected void onPostExecute(String s) {
+                            if (s != null) {
+                                try {
+                                    JSONObject object = new JSONObject(s);
+                                    Toast.makeText(getApplicationContext(), object.getString("message"), Toast.LENGTH_SHORT).show();
+                                }
+                                catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            else
+                                Toast.makeText(getApplicationContext(), "Review Failed!", Toast.LENGTH_SHORT).show();
+                        }
+                    };
+                    asyncTask.execute();
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        btnComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rltTourInfo.setVisibility(View.GONE);
+                rltComment.setVisibility(View.VISIBLE);
+            }
+        });
+
+        btnSendComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String a_comment = edtInputComment.getText().toString();
+                if (!a_comment.equals("")) {
+                    Comment c = new Comment(userId, fullName, a_comment, null);
+
+                    try {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("tourId", tourId);
+                        jsonObject.put("userId", userId);
+                        jsonObject.put("comment", a_comment);
+
+                        final OkHttpClient httpClient = new OkHttpClient();
+                        RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
+                        final Request request = new Request.Builder()
+                                .url(API_ADDR + "tour/comment")
+                                .addHeader("Authorization", ListTourActivity.token)
+                                .post(body)
+                                .build();
+
+                        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
+                            @Override
+                            protected String doInBackground(Void... voids) {
+                                try {
+                                    Response response = httpClient.newCall(request).execute();
+
+                                    if (!response.isSuccessful())
+                                        return null;
+
+                                    return response.body().string();
+                                }
+                                catch (IOException ex) {
+                                    ex.printStackTrace();
+                                    return null;
+                                }
+                            }
+
+                            protected void onPostExecute(String s) {
+                                if(s != null) {
+                                    try {
+                                        JSONObject jsonObject1 = new JSONObject(s);
+                                        Toast.makeText(getApplicationContext(), jsonObject1.getString("message"), Toast.LENGTH_SHORT).show();
+                                        LoadTourInfo();
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                else
+                                    Toast.makeText(getApplicationContext(),"Failed", Toast.LENGTH_SHORT).show();
+                            }
+                        };
+                        asyncTask.execute();
+                    }
+                    catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+
+                    commentArrayList.add(c);
+                    edtInputComment.setText("");
+                    listCommentAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+
         btnJoin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -161,6 +393,7 @@ public class TourInfo extends AppCompatActivity {
                                     btnFollow.setEnabled(true);
                                     btnChat.setEnabled(true);
                                     btnAudio.setEnabled(true);
+                                    btnComment.setEnabled(true);
                                     btnJoin.setVisibility(View.INVISIBLE);
                                     tvJoin.setText("Have already joined");
                                 } catch (JSONException e) {
@@ -216,13 +449,6 @@ public class TourInfo extends AppCompatActivity {
             }
         });
 
-        tvShowComments.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DisplayPopupCommentDialog();
-            }
-        });
-
         tvShowMembers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -245,6 +471,7 @@ public class TourInfo extends AppCompatActivity {
             btnChat.setEnabled(false);
             btnAudio.setEnabled(false);
             btnJoin.setVisibility(View.VISIBLE);
+            btnComment.setEnabled(false);
             tvJoin.setText("Haven't joined this tour yet?");
         }
         else {
@@ -265,27 +492,6 @@ public class TourInfo extends AppCompatActivity {
         imgExitListStopPoint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
-
-        dialog.show();
-        dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
-    }
-
-    public void DisplayPopupCommentDialog() {
-        dialog = new Dialog(TourInfo.this);
-        dialog.setContentView(R.layout.list_comments_popup);
-
-        ImageButton imgExitListComment = (ImageButton) dialog.findViewById(R.id.list_comment_popup_exit_button);
-        rcvComments = (RecyclerView) dialog.findViewById(R.id.rcvListComment);
-        rcvComments.setLayoutManager(new LinearLayoutManager(this));
-        listCommentAdapter = new ListCommentAdapter(commentArrayList, TourInfo.this);
-        rcvComments.setAdapter(listCommentAdapter);
-
-        imgExitListComment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
                 dialog.dismiss();
             }
         });
@@ -528,8 +734,12 @@ public class TourInfo extends AppCompatActivity {
                     stopPointArrayList = new Gson().fromJson(stoppoint, new TypeToken<ArrayList<StopPoint>>() {}.getType());
                     memberArrayList = new Gson().fromJson(member, new TypeToken<ArrayList<Member>>() {}.getType());
                     commentArrayList = new Gson().fromJson(comment, new TypeToken<ArrayList<Comment>>() {}.getType());
+                    rcvComments.setLayoutManager(new LinearLayoutManager(TourInfo.this));
+                    listCommentAdapter = new ListCommentAdapter(commentArrayList, TourInfo.this);
+                    rcvComments.setAdapter(listCommentAdapter);
 
                     tvName.setText(jsonObject.getString("name"));
+                    tvTourNameTitle.setText(tvName.getText().toString());
 
                     DateFormat simple = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
                     Date dateStart = new Date(Long.parseLong(jsonObject.getString("startDate")));
@@ -546,5 +756,142 @@ public class TourInfo extends AppCompatActivity {
             }
         };
         asyncTask.execute();
+    }
+
+    private void LoadListReview() {
+        final OkHttpClient okHttpClient = new OkHttpClient();
+        final Request request = new Request.Builder()
+                .url(API_ADDR + "tour/get/review-list?tourId=" + tourId + "&pageIndex=1&pageSize=1000")
+                .addHeader("Authorization", ListTourActivity.token)
+                .build();
+
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... voids) {
+                try {
+                    Response response = okHttpClient.newCall(request).execute();
+
+                    if (!response.isSuccessful())
+                        return null;
+
+                    return response.body().string();
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+
+                if (s != null) {
+                    try {
+                        JSONObject jsonObject = new JSONObject();
+                        reviewArrayList = new Gson().fromJson(jsonObject.getString("reviews"), new TypeToken<ArrayList<Comment>>() {}.getType());
+                        listReviewAdapter = new ListCommentAdapter(reviewArrayList, TourInfo.this);
+                        rcvListReview.setAdapter(listReviewAdapter);
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        asyncTask.execute();
+    }
+
+    private void LoadPointReviewRating() {
+        final OkHttpClient httpClient = new OkHttpClient();
+        final Request request = new Request.Builder()
+                .url(API_ADDR + "tour/get/review-point-stats?tourId=" + tourId)
+                .addHeader("Authorization", ListTourActivity.token)
+                .build();
+
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... voids) {
+                try {
+                    Response response = httpClient.newCall(request).execute();
+
+                    if (!response.isSuccessful())
+                        return null;
+
+                    return response.body().string();
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+
+                if (s != null) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(s);
+                        pointStatsArrayList = new Gson().fromJson(jsonObject.getString("pointStats"), new TypeToken<ArrayList<PointStats>>() {}.getType());
+
+                        int ratingPoint = 0;
+                        int totalReview = 0;
+                        for (int i = 0; i < pointStatsArrayList.size(); i++) {
+                            ratingPoint = ratingPoint + pointStatsArrayList.get(i).point * pointStatsArrayList.get(i).total;
+                            totalReview = totalReview + pointStatsArrayList.get(i).total;
+                        }
+                        ratingPoint = ratingPoint / totalReview;
+
+                        if (ratingPoint >= 1)
+                            imvOneStar.setImageResource(R.drawable.orange_star_icon);
+                        if (ratingPoint >= 2)
+                            imvTwoStar.setImageResource(R.drawable.orange_star_icon);
+                        if (ratingPoint >= 3)
+                            imvThreeStar.setImageResource(R.drawable.orange_star_icon);
+                        if (ratingPoint >= 4)
+                            imvFourStar.setImageResource(R.drawable.orange_star_icon);
+                        if (ratingPoint == 5)
+                            imvFiveStar.setImageResource(R.drawable.orange_star_icon);
+
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        asyncTask.execute();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (rltComment.getVisibility() == View.VISIBLE) {
+            rltComment.setVisibility(View.GONE);
+            rltTourInfo.setVisibility(View.VISIBLE);
+        }else if (rltReview.getVisibility() == View.VISIBLE) {
+            rltReview.setVisibility(View.GONE);
+            rltTourInfo.setVisibility(View.VISIBLE);
+            LoadListReview();
+            LoadPointReviewRating();
+        }else
+            super.onBackPressed();
+    }
+
+    private void setStarInReview(Boolean oneSelected, Boolean twoSelected, Boolean threeSelected, Boolean fourSelected, Boolean fiveSelected) {
+        imgOneStar.setImageResource(R.drawable.white_star_icon);
+        imgTwoStar.setImageResource(R.drawable.white_star_icon);
+        imgThreeStar.setImageResource(R.drawable.white_star_icon);
+        imgFourStar.setImageResource(R.drawable.white_star_icon);
+        imgFiveStar.setImageResource(R.drawable.white_star_icon);
+
+        if (oneSelected)
+            imgOneStar.setImageResource(R.drawable.orange_star_icon);
+        if (twoSelected)
+            imgTwoStar.setImageResource(R.drawable.orange_star_icon);
+        if (threeSelected)
+            imgThreeStar.setImageResource(R.drawable.orange_star_icon);
+        if (fourSelected)
+            imgFourStar.setImageResource(R.drawable.orange_star_icon);
+        if (fiveSelected)
+            imgFiveStar.setImageResource(R.drawable.orange_star_icon);
     }
 }

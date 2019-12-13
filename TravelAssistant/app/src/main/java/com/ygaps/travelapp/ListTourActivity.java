@@ -467,6 +467,7 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
             Tour tour = tourArrayList.get(i);
             Intent intent = new Intent(ListTourActivity.this, TourInfo.class);
             intent.putExtra("userId", userInfo.id);
+            intent.putExtra("nameOfUser", userInfo.fullName);
             intent.putExtra("tourId", tour.id);
             startActivity(intent);
         }
