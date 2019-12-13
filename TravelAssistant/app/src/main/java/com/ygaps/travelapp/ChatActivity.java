@@ -118,17 +118,6 @@ public class ChatActivity extends AppCompatActivity {
                         rcvListChat.scrollToPosition(listChat.size() - 1);
                         rcvListChat.setAdapter(listChatAdapter);
 
-
-                        //listChatAdapter.notifyDataSetChanged();
-                        /*JSONArray jsonArray = jsonObject.getJSONArray("notiList");
-
-                        for(int i=0;i<jsonArray.length();i++)
-                        {
-                            JSONObject j = jsonArray.getJSONObject(i);
-                            String name = j.getString("name");
-                            String notification = j.getString("notification");
-                            listChat.add(new Chat(name, notification));
-                        }*/
                     }
                     catch (Exception e)
                     {
@@ -154,9 +143,6 @@ public class ChatActivity extends AppCompatActivity {
             jsonObject.put("tourId",87);
             jsonObject.put("userId",79);
             jsonObject.put("noti",message);
-
-
-
 
             RequestBody formBody = RequestBody.create(jsonObject.toString(), JSON);
 

@@ -13,6 +13,7 @@ import android.provider.Settings;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -56,13 +57,91 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences tokenShare;
     private String tokenLogin = "";
     public static final String API_ADDR = "http://35.197.153.192:3000/";
+    CheckBox rememberCheckbox;
+    SharedPreferences sharedPreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         setWidget();
+
         setEvent();
+        AutoLogin();
+    }
+
+    private void AutoLogin() {
+        boolean isRemembered = sharedPreferences.getBoolean("remember",false);
+        if (isRemembered)
+        {
+            String UserName = sharedPreferences.getString("username","");
+            String Password = sharedPreferences.getString("password","");
+
+            try {
+                final OkHttpClient httpClient = new OkHttpClient();
+
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("emailPhone", UserName);
+                jsonObject.put("password", Password);
+
+                RequestBody formBody = RequestBody.create(jsonObject.toString(), JSON);
+
+                final Request request = new Request.Builder()
+                        .url(API_ADDR + "user/login")
+                        .post(formBody)
+                        .build();
+
+
+                final ProgressDialog dialog = new ProgressDialog(MainActivity.this);
+                dialog.setTitle("Sign in");
+                dialog.setMessage("Please wait ...");
+
+                @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
+                    @Override
+                    protected String doInBackground(Void... voids) {
+                        try {
+                            publishProgress();
+                            Response response = httpClient.newCall(request).execute();
+
+                            if (!response.isSuccessful())
+                                return null;
+
+                            return response.body().string();
+
+                        } catch (IOException e) {
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    protected void onProgressUpdate(Void... values) {
+                        dialog.show();
+                    }
+                };
+                String temp;
+                temp = asyncTask.execute().get();
+                dialog.dismiss();
+
+                if (temp != null) {
+
+
+                    JSONObject res = new JSONObject(temp);
+                    tokenLogin = res.getString("token");
+                    Toast.makeText(getApplicationContext(), "LOGIN SUCCESSFULLY!", Toast.LENGTH_SHORT).show();
+                    saveToken(tokenLogin);
+                    Intent intent = new Intent(MainActivity.this, ListTourActivity.class);
+                    intent.putExtra("token", tokenLogin);
+                    startActivity(intent);
+                } else
+                    Toast.makeText(getApplicationContext(), "LOGIN FAILED!", Toast.LENGTH_SHORT).show();
+
+            } catch (Exception e) {
+
+            }
+        }
+        else
+            return;
+
     }
 
     private void setEvent() {
@@ -136,6 +215,12 @@ public class MainActivity extends AppCompatActivity {
                     dialog.dismiss();
 
                     if (temp != null) {
+                        SharedPreferences.Editor rememberMeEditor = sharedPreferences.edit();
+                        rememberMeEditor.putString("username",edtUserAcc.getText().toString());
+                        rememberMeEditor.putString("password",edtPasswordLogin.getText().toString());
+                        rememberMeEditor.putBoolean("remember",rememberCheckbox.isChecked());
+                        rememberMeEditor.commit();
+
                         JSONObject res = new JSONObject(temp);
                         tokenLogin = res.getString("token");
                         Toast.makeText(getApplicationContext(), "LOGIN SUCCESSFULLY!", Toast.LENGTH_SHORT).show();
@@ -228,6 +313,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
     }
     private void setWidget()
     {
@@ -239,6 +326,9 @@ public class MainActivity extends AppCompatActivity {
         loginButton = (LoginButton)findViewById(R.id.facebookIcon);
         imgbtnfb = (ImageButton) findViewById(R.id.fb);
         tokenShare = getSharedPreferences("tokenShare", MODE_PRIVATE);
+        rememberCheckbox = (CheckBox)findViewById(R.id.rememberMeCheckbox);
+        sharedPreferences = getSharedPreferences("Remembered_login_info",MODE_PRIVATE);
+
     }
 
     @Override

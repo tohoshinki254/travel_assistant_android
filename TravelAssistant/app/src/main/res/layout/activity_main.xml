@@ -74,11 +74,24 @@
         android:background="@drawable/border_button"
         android:layout_marginTop="20dp" />
 
+    <CheckBox
+        android:id="@+id/rememberMeCheckbox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Remember me"
+        android:layout_marginTop="5dp"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textColor="@color/colorOrange70"
+        android:layout_below="@id/signInButton"
+
+        />
+
     <TextView
         android:id="@+id/forgotPasswordClick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/signInButton"
+        android:layout_below="@id/rememberMeCheckbox"
         android:text="@string/forgot_password"
         android:textSize="15sp"
         android:textStyle="bold"
@@ -90,7 +103,7 @@
         android:id="@+id/signUpClick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/signInButton"
+        android:layout_below="@id/rememberMeCheckbox"
         android:layout_toEndOf="@id/forgotPasswordClick"
         android:text="@string/sign_up"
         android:textSize="15sp"
