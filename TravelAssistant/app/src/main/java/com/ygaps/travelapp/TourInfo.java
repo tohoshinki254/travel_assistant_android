@@ -8,12 +8,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.Image;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -51,10 +54,12 @@ public class TourInfo extends AppCompatActivity {
     private RecyclerView rcvStopPoints;
     private RecyclerView rcvComments;
     private RecyclerView rcvMembers;
-    private Button btnFollow;
-    private Button btnChat;
-    private Button btnAudio;
-    private Button btnAddMember;
+    private ImageButton btnFollow;
+    private ImageButton btnChat;
+    private ImageButton btnAudio;
+    private ImageButton btnAddMember;
+    private Button btnJoin;
+    private TextView tvJoin;
     private TextView tvShowListStopPoint;
     private TextView tvShowComments;
     private TextView tvShowMembers;
@@ -64,7 +69,6 @@ public class TourInfo extends AppCompatActivity {
     private ListStopPointAdapter listStopPointAdapter;
     private ListCommentAdapter listCommentAdapter;
     private ListMemberAdapter listMemberAdapter;
-    private Integer tourId = 22;
     private TextView tvName;
     private TextView tvCalendar;
     private TextView tvPeople;
@@ -77,6 +81,8 @@ public class TourInfo extends AppCompatActivity {
     private ImageButton imgPauseAudio;
     private ImageButton imgSendAudio;
     public static final int RequestPermissionCode = 1;
+    private static int userId;
+    private static int tourId;
 
 
     @Override
@@ -84,16 +90,21 @@ public class TourInfo extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tour_info);
 
+        Intent intent = getIntent();
+        userId = intent.getIntExtra("userId", -1);
+        tourId = intent.getIntExtra("tourId", -1);
+
         setWidget();
         LoadTourInfo();
         setEvent();
     }
 
     public void setWidget() {
-        btnFollow = (Button) findViewById(R.id.FollowButton);
-        btnChat = (Button) findViewById(R.id.ChatButton);
-        btnAudio = (Button) findViewById(R.id.AudioButton);
-        btnAddMember = (Button) findViewById(R.id.addMemberButton);
+        btnFollow = (ImageButton) findViewById(R.id.followImageButton);
+        btnChat = (ImageButton) findViewById(R.id.chatImageButton);
+        btnAudio = (ImageButton) findViewById(R.id.audioImageButton);
+        btnAddMember = (ImageButton) findViewById(R.id.inviteImageButton);
+        btnJoin = (Button) findViewById(R.id.joinTourButton);
         tvShowListStopPoint = (TextView) findViewById(R.id.showListStopPoint);
         tvShowComments = (TextView) findViewById(R.id.showListComment);
         tvShowMembers = (TextView) findViewById(R.id.showListMember);
@@ -102,9 +113,71 @@ public class TourInfo extends AppCompatActivity {
         tvHost = (TextView) findViewById(R.id.tvHost);
         tvMoney = (TextView) findViewById(R.id.tvMoney);
         tvPeople = (TextView) findViewById(R.id.tvPeople);
+        tvJoin = (TextView) findViewById(R.id.tvJoin);
     }
 
     public void setEvent() {
+        btnJoin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("tourId", tourId);
+                    jsonObject.put("invitedUserId", "");
+                    jsonObject.put("isInvited", false);
+
+                    final OkHttpClient httpClient = new OkHttpClient();
+                    RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
+                    final Request request = new Request.Builder()
+                            .url(API_ADDR + "tour/add/member")
+                            .addHeader("Authorization", ListTourActivity.token)
+                            .post(body)
+                            .build();
+
+                    @SuppressLint("StaticFieldLeak") AsyncTask <Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
+                        @Override
+                        protected String doInBackground(Void... voids) {
+                            try {
+                                Response response = httpClient.newCall(request).execute();
+
+                                if(!response.isSuccessful())
+                                    return null;
+
+                                return response.body().string();
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                return null;
+                            }
+                        }
+
+                        @Override
+                        protected void onPostExecute(String s) {
+                            if(s != null) {
+                                try {
+                                    JSONObject jsonObject1 = new JSONObject(s);
+                                    Toast.makeText(getApplicationContext(), jsonObject1.getString("message"), Toast.LENGTH_SHORT).show();
+                                    LoadTourInfo();
+                                    btnFollow.setEnabled(true);
+                                    btnChat.setEnabled(true);
+                                    btnAudio.setEnabled(true);
+                                    btnJoin.setVisibility(View.INVISIBLE);
+                                    tvJoin.setText("Have already joined");
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            else
+                                Toast.makeText(getApplicationContext(),"Invite Failed", Toast.LENGTH_SHORT).show();
+                        }
+                    };
+                    asyncTask.execute();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         btnFollow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,7 +188,10 @@ public class TourInfo extends AppCompatActivity {
         btnChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(TourInfo.this, ChatActivity.class);
+                intent.putExtra("userId", userId);
+                intent.putExtra("tourId", tourId);
+                startActivity(intent);
             }
         });
 
@@ -153,6 +229,27 @@ public class TourInfo extends AppCompatActivity {
                 DisplayPopupMemberDialog();
             }
         });
+    }
+
+    private void setStatusJoin() {
+        int isJoin = 0;
+        if (memberArrayList != null) {
+            for (int i = 0; i < memberArrayList.size(); i++) {
+                if (userId == memberArrayList.get(i).id)
+                    isJoin = 1;
+            }
+        }
+
+        if (isJoin == 0) {
+            btnFollow.setEnabled(false);
+            btnChat.setEnabled(false);
+            btnAudio.setEnabled(false);
+            btnJoin.setVisibility(View.VISIBLE);
+            tvJoin.setText("Haven't joined this tour yet?");
+        }
+        else {
+            return;
+        }
     }
 
     public void DisplayPopupStopPointDialog() {
@@ -311,7 +408,7 @@ public class TourInfo extends AppCompatActivity {
 
                 try {
                     JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("tourId", "5");
+                    jsonObject.put("tourId", tourId);
                     jsonObject.put("invitedUserId", edtUserIdInvite.getText().toString());
                     jsonObject.put("isInvited", true);
 
@@ -429,8 +526,8 @@ public class TourInfo extends AppCompatActivity {
                     String member = jsonObject.getString("members");
 
                     stopPointArrayList = new Gson().fromJson(stoppoint, new TypeToken<ArrayList<StopPoint>>() {}.getType());
-                    commentArrayList = new Gson().fromJson(comment, new TypeToken<ArrayList<Comment>>() {}.getType());
                     memberArrayList = new Gson().fromJson(member, new TypeToken<ArrayList<Member>>() {}.getType());
+                    commentArrayList = new Gson().fromJson(comment, new TypeToken<ArrayList<Comment>>() {}.getType());
 
                     tvName.setText(jsonObject.getString("name"));
 
@@ -442,7 +539,7 @@ public class TourInfo extends AppCompatActivity {
                     tvMoney.setText(jsonObject.getString("minCost") + " - " + jsonObject.getString("maxCost"));
                     tvPeople.setText("Adults: " + jsonObject.getInt("adults") + " - Childs: " + jsonObject.getInt("childs"));
 
-
+                    setStatusJoin();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

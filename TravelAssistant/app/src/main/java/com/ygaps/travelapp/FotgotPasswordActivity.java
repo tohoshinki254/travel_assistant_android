@@ -67,6 +67,7 @@ public class FotgotPasswordActivity extends AppCompatActivity {
                 isAlreadyHaveInfo = 0;
                 btnSubmit.setText("Send code");
                 typeSent = "phone";
+                edtNewPassword.setVisibility(View.GONE);
             }
         });
 
@@ -83,6 +84,8 @@ public class FotgotPasswordActivity extends AppCompatActivity {
                 isAlreadyHaveInfo = 0;
                 btnSubmit.setText("Send code");
                 typeSent = "email";
+                edtNewPassword.setVisibility(View.GONE);
+
             }
         });
 

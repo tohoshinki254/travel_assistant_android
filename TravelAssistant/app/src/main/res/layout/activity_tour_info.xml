@@ -173,95 +173,81 @@
             android:textColor="@color/colorOrange"
             android:clickable="true"/>
 
-        <LinearLayout
-            android:id="@+id/FollowAndChat"
+        <ImageButton
+            android:id="@+id/followImageButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/follow_icon"
+            android:background="@drawable/circle_image_button"
+            android:layout_below="@id/showListMember"
+            android:layout_toStartOf="@id/chatImageButton"
+            android:layout_margin="15dp"
+            android:visibility="visible"/>
+
+        <ImageButton
+            android:id="@+id/chatImageButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/chat_icon"
+            android:background="@drawable/circle_image_button"
+            android:layout_below="@id/showListMember"
+            android:layout_toStartOf="@id/audioImageButton"
+            android:layout_margin="15dp"
+            android:visibility="visible"/>
+
+        <ImageButton
+            android:id="@+id/audioImageButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/audio_icon"
+            android:background="@drawable/circle_image_button"
+            android:layout_below="@id/showListMember"
+            android:layout_toStartOf="@id/inviteImageButton"
+            android:layout_margin="15dp"
+            android:visibility="visible"/>
+
+        <ImageButton
+            android:id="@+id/inviteImageButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/add_member_icon"
+            android:background="@drawable/circle_image_button"
+            android:layout_below="@id/showListMember"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="15dp"
+            android:visibility="visible"/>
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="15dp"
-            android:padding="5dp"
-            android:layout_below="@id/showListMember">
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginRight="30dp">
-                <Button
-                    android:id="@+id/FollowButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="@drawable/border_button"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="20sp"
-                    android:text="Follow"
-                    android:drawableStart="@drawable/my_location_icon"
-                    android:padding="10dp"/>
-            </RelativeLayout>
+            android:layout_below="@id/audioImageButton"
+            android:layout_marginBottom="15dp">
 
-            <RelativeLayout
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/tvJoin"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginLeft="30dp">
-                <Button
-                    android:id="@+id/ChatButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="@drawable/border_button"
-                    android:textColor="@color/colorWhite"
-                    android:text="Chat"
-                    android:textSize="20sp"
-                    android:drawableStart="@drawable/chat_icon"
-                    android:padding="10dp"/>
-            </RelativeLayout>
-        </LinearLayout>
+                android:text="Have already join"
+                android:textSize="20sp"
+                android:textColor="@color/quantum_orange"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/joinTourButton"
+                android:layout_marginRight="20dp" />
 
-        <LinearLayout
-            android:id="@+id/AudioAnd"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="15dp"
-            android:padding="5dp"
-            android:layout_below="@id/FollowAndChat">
-            <RelativeLayout
-                android:layout_width="0dp"
+            <Button
+                android:id="@+id/joinTourButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginRight="30dp">
-                <Button
-                    android:id="@+id/AudioButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="@drawable/border_button"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="20sp"
-                    android:text="Audio"
-                    android:drawableStart="@drawable/audio_icon"
-                    android:padding="10dp"/>
-            </RelativeLayout>
+                android:text="Join"
+                android:textSize="20sp"
+                android:textColor="@color/quantum_white_100"
+                android:textStyle="bold"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/border_button"
+                android:layout_marginRight="10dp"
+                android:visibility="invisible"/>
 
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginLeft="30dp">
-                <Button
-                    android:id="@+id/addMemberButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="@drawable/border_button"
-                    android:textColor="@color/colorWhite"
-                    android:text="Member"
-                    android:textSize="20sp"
-                    android:drawableStart="@drawable/add_member_icon"
-                    android:padding="10dp"/>
-            </RelativeLayout>
-        </LinearLayout>
+        </RelativeLayout>
 
     </RelativeLayout>
 
