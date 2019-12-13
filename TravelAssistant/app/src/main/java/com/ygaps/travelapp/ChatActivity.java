@@ -63,18 +63,14 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 message = edtMessage.getText().toString();
-                if (message.equals("") == false) {
 
+                if (!message.equals("")) {
                     Chat c = new Chat("", "Sample", message, "");
-
-
                     listChat.add(c);
                     edtMessage.setText("");
                     saveListChat();
                     listChatAdapter.notifyDataSetChanged();
-
                 }
-
             }
         });
     }
@@ -95,7 +91,6 @@ public class ChatActivity extends AppCompatActivity {
                     Response response = httpClient.newCall(request).execute();
                     if(!response.isSuccessful())
                         return null;
-
                     return response.body().string();
                 } catch (Exception e) {
                     return null;
@@ -121,30 +116,23 @@ public class ChatActivity extends AppCompatActivity {
                     catch (Exception e)
                     {
                         e.printStackTrace();
-
                     }
                 }
             }
         };
         asyncTask.execute();
-
-
-
     }
 
     private void saveListChat()
     {
 
-        try{
+        try {
             final OkHttpClient httpClient = new OkHttpClient();
 
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("tourId",tourId);
             jsonObject.put("userId",userId);
             jsonObject.put("noti",message);
-
-
-
 
             RequestBody formBody = RequestBody.create(jsonObject.toString(), JSON);
 
@@ -171,16 +159,12 @@ public class ChatActivity extends AppCompatActivity {
                 }
 
             };
-
             asyncTask.execute();
-
-
         }
         catch (Exception e)
         {
 
         }
-
     }
 
     private void setWidget()
@@ -190,7 +174,6 @@ public class ChatActivity extends AppCompatActivity {
         edtMessage = (EditText) findViewById(R.id.chat_input_box);
         rcvListChat.setLayoutManager(new LinearLayoutManager(this));
         listChat = new ArrayList<Chat>();
-
     }
 
     private void reverseListChat()

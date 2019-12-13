@@ -82,8 +82,10 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
     ImageButton imbNoti;
     RelativeLayout layouSetting;
     User userInfo;
+    Button btnLogout;
     int statusTab = 0;
     public static String token = "";
+    SharedPreferences rememberMeSharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -438,6 +440,21 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
                 asyncTask.execute();
             }
         });
+
+        btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences.Editor rememberMeEditor = rememberMeSharedPreferences.edit();
+                rememberMeEditor.putBoolean("remember",false);
+                rememberMeEditor.putString("username","");
+                rememberMeEditor.putString("password","");
+                rememberMeEditor.commit();
+
+                Intent loginIntent = new Intent(ListTourActivity.this,MainActivity.class);
+                startActivity(loginIntent);
+            }
+        });
+
     }
     private void getWidget()
     {
@@ -458,6 +475,9 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
         layouSetting = (RelativeLayout) findViewById(R.id.layoutSetting);
         tvEditProfile = (TextView) findViewById(R.id.tvEditProfile);
         tvUpdatePassword = (TextView) findViewById(R.id.tvUpdatePassword);
+        btnLogout = (Button)findViewById(R.id.btnLogout);
+        rememberMeSharedPreferences = getSharedPreferences("Remembered_login_info",MODE_PRIVATE);
+
     }
 
     @Override
