@@ -130,21 +130,32 @@ public class MainActivity extends AppCompatActivity {
                         protected void onProgressUpdate(Void... values) {
                             dialog.show();
                         }
-                    };
-                    String temp;
-                    temp = asyncTask.execute().get();
-                    dialog.dismiss();
 
-                    if (temp != null) {
-                        JSONObject res = new JSONObject(temp);
-                        tokenLogin = res.getString("token");
-                        Toast.makeText(getApplicationContext(), "LOGIN SUCCESSFULLY!", Toast.LENGTH_SHORT).show();
-                        saveToken(tokenLogin);
-                        Intent intent = new Intent(MainActivity.this, ListTourActivity.class);
-                        intent.putExtra("token", tokenLogin);
-                        startActivity(intent);
-                    } else
-                        Toast.makeText(getApplicationContext(), "LOGIN FAILED!", Toast.LENGTH_SHORT).show();
+                        @Override
+                        protected void onPostExecute(String s) {
+                            if (s != null) {
+                                JSONObject res;
+                                try {
+                                    res = new JSONObject(s);
+                                    tokenLogin = res.getString("token");
+                                    Toast.makeText(getApplicationContext(), "LOGIN SUCCESSFULLY!", Toast.LENGTH_SHORT).show();
+                                    saveToken(tokenLogin);
+                                    Intent intent = new Intent(MainActivity.this, ListTourActivity.class);
+                                    intent.putExtra("token", tokenLogin);
+                                    dialog.dismiss();
+                                    startActivity(intent);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                            } else{
+                                Toast.makeText(getApplicationContext(), "LOGIN FAILED!", Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
+                            }
+                        }
+                    };
+
+                    asyncTask.execute();
 
                 } catch (Exception e) {
 

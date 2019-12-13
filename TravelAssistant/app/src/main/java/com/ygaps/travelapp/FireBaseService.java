@@ -16,6 +16,7 @@ import android.text.style.StyleSpan;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.RemoteInput;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -23,7 +24,6 @@ import java.util.Map;
 import java.util.Random;
 
 public class FireBaseService extends FirebaseMessagingService {
-
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -36,6 +36,7 @@ public class FireBaseService extends FirebaseMessagingService {
                 sendInviteNotification(data);
                 break;
             case "4":
+                sendStatusChatMessage();
                 sendChatNotification(data);
                 break;
         }
@@ -53,7 +54,7 @@ public class FireBaseService extends FirebaseMessagingService {
         title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         Spannable line = new SpannableString(notification);
-        line.setSpan(new StyleSpan(Typeface.BOLD_ITALIC), 0, line.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        line.setSpan(new StyleSpan(Typeface.ITALIC), 0, line.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         RemoteInput remoteInput = new RemoteInput.Builder(KEY_TEXT)
                 .setLabel("Type to reply...")
@@ -65,6 +66,7 @@ public class FireBaseService extends FirebaseMessagingService {
 
         Intent chatIntent = new Intent(this, ChatActivity.class);
         chatIntent.putExtra("tourId", tourId);
+        chatIntent.putExtra("FireBase", true);
         PendingIntent chatAcPending = PendingIntent.getActivity(this, 0, chatIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Action action = new NotificationCompat.Action.Builder(R.drawable.ic_launcher_background, "Reply", replyPending)
@@ -150,5 +152,11 @@ public class FireBaseService extends FirebaseMessagingService {
         Random r = new Random();
 
         notificationManager.notify(r.nextInt((1000000 - 1) + 1) + 1, notificationBuilder.build());
+    }
+
+    private void sendStatusChatMessage(){
+        Intent intent  = new Intent("MessageStatus");
+        intent.putExtra("isReceived", true);
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
     }
 }

@@ -3,11 +3,13 @@ package com.ygaps.travelapp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -72,6 +74,7 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
     CircleImageView profileAvatar;
     TextView tvFullname;
     TextView tvEditProfile;
+    TextView tvTotal;
     TextView tvUpdatePassword;
     ArrayList <Tour> tourArrayList;
     ArrayList <Tour> userTourArrayList;
@@ -81,6 +84,7 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
     ImageButton imbMenu;
     ImageButton imbSetting;
     ImageButton imbNoti;
+    int currentPage = 1;
     RelativeLayout layouSetting;
     User userInfo;
     int statusTab = 0;
@@ -101,7 +105,7 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
         else {
             registerFireBase(token);
             setStatusTab(statusTab);
-            loadListTour();
+            loadListTour(currentPage);
         }
         loadUserInfo();
         setEvent();
@@ -164,20 +168,25 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
         return true;
     }
 
-    private void loadListTour()
+    private void loadListTour(int pageNum)
     {
 
 
         final OkHttpClient httpClient = new OkHttpClient();
         final Request request = new Request.Builder()
-                .url(MainActivity.API_ADDR + "tour/list?rowPerPage=20&pageNum=1")
+                .url(MainActivity.API_ADDR + "tour/list?rowPerPage=20&pageNum=" + pageNum)
                 .addHeader("Authorization",token)
                 .build();
+
+        final ProgressDialog dialog = new ProgressDialog(ListTourActivity.this);
+        dialog.setTitle("Load more");
+        dialog.setMessage("Please wait ...");
 
         @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... voids) {
                 try {
+                    publishProgress();
                     Response response = httpClient.newCall(request).execute();
                     if(!response.isSuccessful())
                         return null;
@@ -201,15 +210,22 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
                     Moshi moshi = new Moshi.Builder().build();
                     Type tourType = Types.newParameterizedType(List.class, Tour.class);
                     final JsonAdapter<List<Tour>> jsonAdapter = moshi.adapter(tourType);
-
-
-                    tourArrayList = (ArrayList<Tour>) jsonAdapter.fromJson(s);
+                    ArrayList <Tour> temp = (ArrayList<Tour>) jsonAdapter.fromJson(s);
+                    int currentPosition = tourArrayList.size() - 1;
+                    appendListTour(temp);
+                    tvTotal.setText("" + tourArrayList.size() + "/" + jsonObject.getInt("total") + " tours");
                     tourAdapter = new TourAdapter(tourArrayList, ListTourActivity.this, ListTourActivity.this);
                     rcvListTour.setAdapter(tourAdapter);
-
+                    rcvListTour.scrollToPosition(currentPosition);
+                    dialog.dismiss();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            }
+
+            @Override
+            protected void onProgressUpdate(Void... values) {
+                dialog.show();
             }
         };
 
@@ -322,7 +338,7 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
                 statusTab = 0;
                 setStatusTab(statusTab);
                 setTitle("List Tour");
-                loadListTour();
+                loadListTour(currentPage);
             }
         });
 
@@ -362,11 +378,10 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
                         {
                             JSONObject jsonObject = new JSONObject(s);
                             s = jsonObject.getString("tours");
+                            tvTotal.setText("" + jsonObject.getInt("total"));
                             Moshi moshi = new Moshi.Builder().build();
                             Type tourType = Types.newParameterizedType(List.class, Tour.class);
                             final JsonAdapter<List<Tour>> jsonAdapter = moshi.adapter(tourType);
-
-
                             userTourArrayList = (ArrayList<Tour>) jsonAdapter.fromJson(s);
                             userTourAdapter = new TourAdapter(userTourArrayList, ListTourActivity.this, ListTourActivity.this);
                             rcvListTour.setAdapter(userTourAdapter);
@@ -396,6 +411,19 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
                 loadUserInfo();
             }
         });
+
+        rcvListTour.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+                if (!recyclerView.canScrollVertically(1) && newState==RecyclerView.SCROLL_STATE_IDLE) {
+
+                    currentPage++;
+                    loadListTour(currentPage);
+                }
+            }
+        });
     }
     private void getWidget()
     {
@@ -416,6 +444,9 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
         layouSetting = (RelativeLayout) findViewById(R.id.layoutSetting);
         tvEditProfile = (TextView) findViewById(R.id.tvEditProfile);
         tvUpdatePassword = (TextView) findViewById(R.id.tvUpdatePassword);
+        tvTotal = (TextView) findViewById(R.id.tvTotal);
+
+
     }
 
     @Override
@@ -450,6 +481,7 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
             case 0:
                 imbMenu.setImageResource(R.drawable.menu_on_icon);
                 layouSetting.setVisibility(View.GONE);
+                tvTotal.setVisibility(View.VISIBLE);
                 rcvListTour.setVisibility(View.VISIBLE);
                 edtSearch.setVisibility(View.VISIBLE);
                 break;
@@ -457,18 +489,21 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
                 imbHistory.setImageResource(R.drawable.time_on_icon);
                 layouSetting.setVisibility(View.GONE);
                 rcvListTour.setVisibility(View.VISIBLE);
+                tvTotal.setVisibility(View.VISIBLE);
                 edtSearch.setVisibility(View.VISIBLE);
                 break;
             case 2:
                 imbNoti.setImageResource(R.drawable.bell_on_icon);
                 edtSearch.setVisibility(View.GONE);
                 layouSetting.setVisibility(View.GONE);
+                tvTotal.setVisibility(View.GONE);
                 rcvListTour.setVisibility(View.VISIBLE);
                 break;
             case 3:
                 imbSetting.setImageResource(R.drawable.setting_on_icon);
                 edtSearch.setVisibility(View.GONE);
                 rcvListTour.setVisibility(View.GONE);
+                tvTotal.setVisibility(View.GONE);
                 layouSetting.setVisibility(View.VISIBLE);
                 break;
         }
@@ -760,4 +795,8 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
         dialog.show();
     }
 
+    private void appendListTour(ArrayList <Tour> ar){
+
+        tourArrayList.addAll(ar);
+    }
 }

@@ -56,7 +56,14 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
                 .error(R.drawable.background)
                 .into(holder.ivTourImg);
 
+        if (t.name.equals(""))
+            t.name = "Not Available!";
+
         holder.tvName.setText(t.name);
+
+        holder.tvTourId.setText("" + t.id);
+
+
         String temp = "";
         if (t.startDate != null && t.endDate != null) {
             DateFormat simple = new SimpleDateFormat("dd MMM yyyy");
@@ -84,6 +91,7 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
         public TextView tvCalendar;
         public TextView tvAdults;
         public TextView tvMoney;
+        public TextView tvTourId;
         public ImageView ivTourImg;
         public onItemClickListener itemClickListener;
 
@@ -95,6 +103,7 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
             tvAdults = (TextView) itemView.findViewById(R.id.tvAdults);
             tvMoney = (TextView) itemView.findViewById(R.id.tvMoney);
             ivTourImg = (ImageView) itemView.findViewById(R.id.ivTourImg);
+            tvTourId = (TextView) itemView.findViewById(R.id.tvTourId);
             this.itemClickListener = itemClickListener;
 
             itemView.setOnClickListener(this);
@@ -127,7 +136,7 @@ public class TourAdapter extends RecyclerView.Adapter<TourAdapter.TourViewHolder
 
                 for(int i = 0; i < toursOrigin.size(); i++)
                 {
-                    if(toursOrigin.get(i).name.toUpperCase().contains(filterString))
+                    if(toursOrigin.get(i).name.toUpperCase().contains(filterString) || ("" + toursOrigin.get(i).id).toUpperCase().contains(filterString))
                     {
                         Tour t = new Tour(toursOrigin.get(i));
                         filedList.add(t);

@@ -21,11 +21,36 @@
         android:paddingBottom="2dp"
         android:drawableLeft="@drawable/ic_search"
         android:background="@drawable/border_search_edit_text"/>
+
+    <LinearLayout
+        android:id="@+id/layoutTotal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edtSearch"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/total"
+            android:layout_marginTop="5dp"
+            android:textSize="18sp"
+            android:layout_marginLeft="8dp"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/tvTotal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
+            android:textSize="18sp"
+            android:layout_marginLeft="6dp"/>
+    </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcvListTour"
-        android:layout_below="@id/edtSearch"
+        android:layout_below="@id/layoutTotal"
         android:layout_width="match_parent"
         android:layout_marginBottom="8dp"
+        android:layout_marginTop="5dp"
         android:layout_height="match_parent"
         android:layout_above="@id/layoutBarBottom"
     />
