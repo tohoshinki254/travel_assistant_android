@@ -22,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -54,11 +55,12 @@ public class ChatActivity extends AppCompatActivity {
     private ChatAdapter listChatAdapter;
     private Button btnSend;
     private EditText edtMessage;
+    TextView tvChatTitle;
     RelativeLayout r;
 
     String message;
     String token;
-    private static int userId;
+    public static int userId;
     private static int tourId;
     private BroadcastReceiver chatMessage = new BroadcastReceiver() {
         @Override
@@ -77,21 +79,21 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
 
         Intent intent = getIntent();
-        if (intent.getBooleanExtra("FireBase", false)){
+        if (intent.getBooleanExtra("FireBase", false)) {
             tourId = Integer.parseInt(intent.getStringExtra("tourId"));
             SharedPreferences sharedPreferences = getSharedPreferences("tokenShare", MODE_PRIVATE);
             userId = sharedPreferences.getInt("userID", -1);
             token = sharedPreferences.getString("token", "");
-        }
-        else {
+        } else {
             userId = intent.getIntExtra("userId", -1);
             tourId = intent.getIntExtra("tourId", -1);
             token = ListTourActivity.token;
         }
 
+
         LocalBroadcastManager.getInstance(this).registerReceiver(chatMessage, new IntentFilter("MessageStatus"));
         setWidget();
-
+        tvChatTitle.setText("Tour ID: " + tourId);
 
         loadListChat();
 
@@ -100,18 +102,19 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick(View view) {
                 message = edtMessage.getText().toString();
 
-                if (message.equals("") == false) {
-
-                    Chat c = new Chat("", "You", message, "");
+                if (!message.equals("")) {
+                    Chat c = new Chat("" + userId, "You", message, "");
                     listChat.add(c);
                     edtMessage.setText("");
-                    listChatAdapter.notifyDataSetChanged();
+                    listChatAdapter = new ChatAdapter(listChat, ChatActivity.this);
+                    rcvListChat.setAdapter(listChatAdapter);
+                    rcvListChat.scrollToPosition(listChat.size() - 1);
 
                     FirebaseMessaging.getInstance().subscribeToTopic("tour-id-" + tourId)
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()){
+                                    if (task.isSuccessful()) {
                                         saveListChat();
                                     }
                                 }
@@ -136,9 +139,9 @@ public class ChatActivity extends AppCompatActivity {
                     }, 100);
                 }
             }
+
         });
     }
-
 
     private void loadListChat()
     {
@@ -155,7 +158,6 @@ public class ChatActivity extends AppCompatActivity {
                     Response response = httpClient.newCall(request).execute();
                     if(!response.isSuccessful())
                         return null;
-
                     return response.body().string();
                 } catch (Exception e) {
                     return null;
@@ -180,30 +182,24 @@ public class ChatActivity extends AppCompatActivity {
                     catch (Exception e)
                     {
                         e.printStackTrace();
-
                     }
                 }
             }
+
         };
         asyncTask.execute();
-
-
-
     }
 
     private void saveListChat()
     {
 
-        try{
+        try {
             final OkHttpClient httpClient = new OkHttpClient();
 
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("tourId",tourId);
             jsonObject.put("userId",userId);
             jsonObject.put("noti",message);
-
-
-
 
             RequestBody formBody = RequestBody.create(jsonObject.toString(), JSON);
 
@@ -229,17 +225,18 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 }
 
+                @Override
+                protected void onPostExecute(String s) {
+                    if (s != null)
+                        loadListChat();
+                }
             };
-
             asyncTask.execute();
-
-
         }
         catch (Exception e)
         {
             Log.d("ERROR", "ERROR: " + e.getMessage());
         }
-
     }
 
     private void setWidget()
@@ -250,11 +247,7 @@ public class ChatActivity extends AppCompatActivity {
         rcvListChat.setLayoutManager(new LinearLayoutManager(this));
         listChat = new ArrayList<Chat>();
         r = (RelativeLayout) findViewById(R.id.chatLayaout);
+        tvChatTitle = (TextView) findViewById(R.id.chat_title_name);
     }
 
-    @Override
-    protected void onDestroy() {
-        unregisterReceiver(chatMessage);
-        super.onDestroy();
-    }
 }

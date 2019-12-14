@@ -16,4 +16,11 @@ public class Comment {
         comment = cm.comment;
         avatar = cm.avatar;
     }
+
+    public Comment(Integer id, String name, String comment, String avatar) {
+        this.id = id;
+        this.name = name;
+        this.comment = comment;
+        this.avatar = avatar;
+    }
 }

@@ -1,9 +1,12 @@
 package com.ygaps.travelapp;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -33,6 +36,18 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     @Override
     public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
         Chat c = listChat.get(position);
+        if (c.userId.equals("" + ChatActivity.userId))
+        {
+            holder.tvUsername.setVisibility(View.GONE);
+
+            RelativeLayout.LayoutParams lp1 = (RelativeLayout.LayoutParams) holder.tvMessage.getLayoutParams();
+            lp1.addRule(RelativeLayout.ALIGN_PARENT_LEFT, 0);
+            lp1.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 1);
+            holder.tvMessage.setLayoutParams(lp1);
+
+            holder.tvMessage.setTextColor(Color.WHITE);
+            holder.tvMessage.setBackgroundResource(R.drawable.border_button);
+        }
         holder.tvUsername.setText(c.name);
         holder.tvMessage.setText(c.notification);
     }

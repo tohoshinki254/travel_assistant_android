@@ -1,254 +1,476 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".TourInfo">
 
-    <RelativeLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <ImageView
-            android:id="@+id/avatarOfATour"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginRight="10dp"
-            android:src="@drawable/background"/>
-
-        <LinearLayout
-            android:id="@+id/tourInfo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_below="@id/avatarOfATour" >
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:orientation="horizontal"
-                android:layout_marginTop="4dp">
-                <ImageView
-                    android:layout_width="25dp"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/location_icon"
-                    android:layout_marginStart="3dp"/>
-
-                <TextView
-                    android:id="@+id/tvName"
-                    android:layout_width="match_parent"
-                    android:layout_height="25dp"
-                    android:paddingTop="3dp"
-                    android:layout_marginStart="5dp"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:orientation="horizontal"
-                android:layout_marginTop="4dp">
-                <ImageView
-                    android:layout_width="25dp"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/calendar_icon"
-                    android:layout_marginStart="3dp"/>
-
-                <TextView
-                    android:id="@+id/tvCalendar"
-                    android:layout_width="match_parent"
-                    android:layout_height="25dp"
-                    android:paddingTop="3dp"
-                    android:layout_marginStart="5dp"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:orientation="horizontal"
-                android:layout_marginTop="4dp">
-                <ImageView
-                    android:layout_width="25dp"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/people_icon"
-                    android:layout_marginStart="3dp"/>
-
-                <TextView
-                    android:id="@+id/tvPeople"
-                    android:layout_width="match_parent"
-                    android:layout_height="25dp"
-                    android:paddingTop="3dp"
-                    android:layout_marginStart="5dp"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:orientation="horizontal"
-                android:layout_marginTop="4dp">
-                <ImageView
-                    android:layout_width="25dp"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/money_icon"
-                    android:layout_marginStart="3dp"/>
-
-                <TextView
-                    android:id="@+id/tvMoney"
-                    android:layout_width="match_parent"
-                    android:layout_height="25dp"
-                    android:paddingTop="3dp"
-                    android:layout_marginStart="5dp"/>
-            </LinearLayout>
-
-
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:orientation="horizontal"
-                android:layout_marginTop="4dp">
-                <ImageView
-                    android:layout_width="25dp"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/host_icon"
-                    android:layout_marginStart="3dp"/>
-
-                <TextView
-                    android:id="@+id/tvHost"
-                    android:layout_width="match_parent"
-                    android:layout_height="25dp"
-                    android:paddingTop="3dp"
-                    android:layout_marginStart="5dp"/>
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/showListStopPoint"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tourInfo"
-            android:layout_marginTop="15dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:text="Show List Stop Point"
-            android:textSize="23sp"
-            android:padding="5dp"
-            android:background="@drawable/border_edit_text_rectangle"
-            android:textColor="@color/colorOrange"
-            android:clickable="true" />
-
-        <TextView
-            android:id="@+id/showListComment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/showListStopPoint"
-            android:layout_marginTop="15dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:text="Show Comments"
-            android:textSize="23sp"
-            android:padding="5dp"
-            android:background="@drawable/border_edit_text_rectangle"
-            android:textColor="@color/colorOrange"
-            android:clickable="true" />
-
-        <TextView
-            android:id="@+id/showListMember"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/showListComment"
-            android:layout_marginTop="15dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:text="Show Members"
-            android:textSize="23sp"
-            android:padding="5dp"
-            android:background="@drawable/border_edit_text_rectangle"
-            android:textColor="@color/colorOrange"
-            android:clickable="true"/>
-
-        <ImageButton
-            android:id="@+id/followImageButton"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/follow_icon"
-            android:background="@drawable/circle_image_button"
-            android:layout_below="@id/showListMember"
-            android:layout_toStartOf="@id/chatImageButton"
-            android:layout_margin="15dp"
-            android:visibility="visible"/>
-
-        <ImageButton
-            android:id="@+id/chatImageButton"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/chat_icon"
-            android:background="@drawable/circle_image_button"
-            android:layout_below="@id/showListMember"
-            android:layout_toStartOf="@id/audioImageButton"
-            android:layout_margin="15dp"
-            android:visibility="visible"/>
-
-        <ImageButton
-            android:id="@+id/audioImageButton"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/audio_icon"
-            android:background="@drawable/circle_image_button"
-            android:layout_below="@id/showListMember"
-            android:layout_toStartOf="@id/inviteImageButton"
-            android:layout_margin="15dp"
-            android:visibility="visible"/>
-
-        <ImageButton
-            android:id="@+id/inviteImageButton"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/add_member_icon"
-            android:background="@drawable/circle_image_button"
-            android:layout_below="@id/showListMember"
-            android:layout_alignParentEnd="true"
-            android:layout_margin="15dp"
-            android:visibility="visible"/>
+        android:layout_height="match_parent"
+        android:visibility="visible">
 
         <RelativeLayout
+            android:id="@+id/tourInfoActivity"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/audioImageButton"
-            android:layout_marginBottom="15dp">
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/avatarOfATour"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="10dp"
+                android:src="@drawable/background"/>
+
+            <LinearLayout
+                android:id="@+id/tourInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_below="@id/avatarOfATour" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="4dp">
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/location_icon"
+                        android:layout_marginStart="3dp"/>
+
+                    <TextView
+                        android:id="@+id/tvName"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:paddingTop="3dp"
+                        android:layout_marginStart="5dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="4dp">
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/calendar_icon"
+                        android:layout_marginStart="3dp"/>
+
+                    <TextView
+                        android:id="@+id/tvCalendar"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:paddingTop="3dp"
+                        android:layout_marginStart="5dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="4dp">
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/people_icon"
+                        android:layout_marginStart="3dp"/>
+
+                    <TextView
+                        android:id="@+id/tvPeople"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:paddingTop="3dp"
+                        android:layout_marginStart="5dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="4dp">
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/money_icon"
+                        android:layout_marginStart="3dp"/>
+
+                    <TextView
+                        android:id="@+id/tvMoney"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:paddingTop="3dp"
+                        android:layout_marginStart="5dp"/>
+                </LinearLayout>
+
+
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="4dp">
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/host_icon"
+                        android:layout_marginStart="3dp"/>
+
+                    <TextView
+                        android:id="@+id/tvHost"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:paddingTop="3dp"
+                        android:layout_marginStart="5dp"/>
+                </LinearLayout>
+
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/tvJoin"
-                android:layout_width="wrap_content"
+                android:id="@+id/showListStopPoint"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Have already join"
-                android:textSize="20sp"
-                android:textColor="@color/quantum_orange"
-                android:layout_centerVertical="true"
-                android:layout_toStartOf="@id/joinTourButton"
-                android:layout_marginRight="20dp" />
-
-            <Button
-                android:id="@+id/joinTourButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Join"
-                android:textSize="20sp"
-                android:textColor="@color/quantum_white_100"
-                android:textStyle="bold"
-                android:layout_alignParentEnd="true"
-                android:background="@drawable/border_button"
+                android:layout_below="@id/tourInfo"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:visibility="invisible"/>
+                android:text="Show List Stop Point"
+                android:textSize="23sp"
+                android:padding="5dp"
+                android:background="@drawable/border_edit_text_rectangle"
+                android:textColor="@color/colorOrange"
+                android:clickable="true" />
 
+            <TextView
+                android:id="@+id/showListMember"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/showListStopPoint"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:text="Show Members"
+                android:textSize="23sp"
+                android:padding="5dp"
+                android:background="@drawable/border_edit_text_rectangle"
+                android:textColor="@color/colorOrange"
+                android:clickable="true"/>
+
+            <ImageButton
+                android:id="@+id/reviewImageButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/review_icon"
+                android:background="@drawable/circle_image_button"
+                android:layout_below="@id/showListMember"
+                android:layout_toStartOf="@id/audioImageButton"
+                android:layout_margin="9dp"
+                android:visibility="visible"/>
+
+            <ImageButton
+                android:id="@+id/commentImageButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/comment_icon"
+                android:background="@drawable/circle_image_button"
+                android:layout_below="@id/showListMember"
+                android:layout_toStartOf="@id/reviewImageButton"
+                android:layout_margin="9dp"
+                android:visibility="visible"/>
+
+            <ImageButton
+                android:id="@+id/followImageButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/follow_icon"
+                android:background="@drawable/circle_image_button"
+                android:layout_below="@id/showListMember"
+                android:layout_toStartOf="@id/chatImageButton"
+                android:layout_margin="9dp"
+                android:visibility="visible"/>
+
+            <ImageButton
+                android:id="@+id/chatImageButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/chat_icon"
+                android:background="@drawable/circle_image_button"
+                android:layout_below="@id/showListMember"
+                android:layout_toStartOf="@id/commentImageButton"
+                android:layout_margin="9dp"
+                android:visibility="visible"/>
+
+            <ImageButton
+                android:id="@+id/audioImageButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/audio_icon"
+                android:background="@drawable/circle_image_button"
+                android:layout_below="@id/showListMember"
+                android:layout_toStartOf="@id/inviteImageButton"
+                android:layout_margin="9dp"
+                android:visibility="visible"/>
+
+            <ImageButton
+                android:id="@+id/inviteImageButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/add_member_icon"
+                android:background="@drawable/circle_image_button"
+                android:layout_below="@id/showListMember"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="9dp"
+                android:visibility="visible"/>
+
+            <RelativeLayout
+                android:id="@+id/joinTourField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/audioImageButton"
+                android:layout_marginBottom="15dp">
+
+                <TextView
+                    android:id="@+id/tvJoin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Have already joined"
+                    android:textSize="20sp"
+                    android:textColor="@color/quantum_orange"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@id/joinTourButton"
+                    android:layout_marginRight="20dp" />
+
+                <Button
+                    android:id="@+id/joinTourButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Join"
+                    android:textSize="20sp"
+                    android:textColor="@color/quantum_white_100"
+                    android:textStyle="bold"
+                    android:layout_alignParentEnd="true"
+                    android:background="@drawable/border_button"
+                    android:layout_marginRight="10dp"
+                    android:visibility="invisible"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/ratedPointField"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/joinTourField"
+                android:layout_centerHorizontal="true">
+
+                <ImageView
+                    android:id="@+id/oneStarImageView"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/white_star_icon"
+                    android:background="@android:color/transparent"
+                    android:layout_margin="5dp"/>
+
+                <ImageView
+                    android:id="@+id/twoStarImageView"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/white_star_icon"
+                    android:background="@android:color/transparent"
+                    android:layout_toEndOf="@id/oneStarImageView"
+                    android:layout_margin="5dp" />
+
+                <ImageView
+                    android:id="@+id/threeStarImageView"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/white_star_icon"
+                    android:background="@android:color/transparent"
+                    android:layout_toEndOf="@id/twoStarImageView"
+                    android:layout_margin="5dp" />
+
+                <ImageView
+                    android:id="@+id/fourStarImageView"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/white_star_icon"
+                    android:background="@android:color/transparent"
+                    android:layout_toEndOf="@id/threeStarImageView"
+                    android:layout_margin="5dp" />
+
+                <ImageView
+                    android:id="@+id/fiveStarImageView"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/white_star_icon"
+                    android:background="@android:color/transparent"
+                    android:layout_toEndOf="@id/fourStarImageView"
+                    android:layout_margin="5dp" />
+            </RelativeLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rcvListReview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ratedPointField"
+                android:layout_margin="7dp"/>
         </RelativeLayout>
+    </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/commentActivity"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:id="@+id/tour_name_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tour Name"
+            android:textSize="20sp"
+            android:textColor="@color/colorGray"
+            android:layout_centerHorizontal="true"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/show_list_comment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/tour_name_title"
+            android:layout_above="@id/comment_input_box"
+            android:layout_margin="5dp"/>
+
+        <EditText
+            android:id="@+id/comment_input_box"
+            android:layout_margin="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_alignParentBottom="true"
+            android:layout_toStartOf="@id/comment_send_button"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:textSize="20sp"
+            android:background="@drawable/border_rectangle_edit_text"
+            android:inputType="text" />
+        <Button
+            android:id="@+id/comment_send_button"
+            android:layout_margin="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/border_button"
+            android:textColor="#FFFFFF"
+            android:text="Send" />
 
     </RelativeLayout>
 
-</ScrollView>
+    <RelativeLayout
+        android:id="@+id/reviewActivity"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/reviewTourActivityTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Review Tour"
+            android:textSize="20sp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"/>
+
+        <RelativeLayout
+            android:id="@+id/starField"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp"
+            android:layout_below="@id/reviewTourActivityTitle">
+
+            <ImageButton
+                android:id="@+id/oneStarImageButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/white_star_icon"
+                android:background="@android:color/transparent"
+                android:layout_margin="5dp" />
+
+            <ImageButton
+                android:id="@+id/twoStarImageButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/white_star_icon"
+                android:background="@android:color/transparent"
+                android:layout_toEndOf="@id/oneStarImageButton"
+                android:layout_margin="5dp" />
+
+            <ImageButton
+                android:id="@+id/threeStarImageButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/white_star_icon"
+                android:layout_margin="5dp"
+                android:background="@android:color/transparent"
+                android:layout_toEndOf="@id/twoStarImageButton" />
+
+            <ImageButton
+                android:id="@+id/fourStarImageButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/white_star_icon"
+                android:background="@android:color/transparent"
+                android:layout_toEndOf="@id/threeStarImageButton"
+                android:layout_margin="5dp" />
+
+            <ImageButton
+                android:id="@+id/fiveStarImageButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/white_star_icon"
+                android:background="@android:color/transparent"
+                android:layout_toEndOf="@id/fourStarImageButton"
+                android:layout_margin="5dp" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/inputReviewField"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_below="@id/starField"
+            android:background="@drawable/border_edit_text"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:padding="10dp">
+        <EditText
+            android:id="@+id/inputReviewBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/sendReviewButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_button"
+            android:text="send review"
+            android:textColor="@color/colorWhite"
+            android:padding="10dp"
+            android:textSize="15sp"
+            android:layout_below="@id/inputReviewField"
+            android:layout_marginTop="40dp"
+            android:layout_centerHorizontal="true"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

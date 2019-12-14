@@ -74,12 +74,14 @@
         android:background="@color/colorGray50"
         android:layout_alignParentBottom="true"
         android:layout_above="@id/edtSearch"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:weightSum="6">
         <ImageButton
             android:id="@+id/imgbMenu"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginLeft="65dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="25dp"
+            android:layout_marginLeft="50dp"
             android:layout_marginTop="8dp"
             android:src="@drawable/menu_icon"
             android:scaleType="fitXY"
@@ -88,8 +90,9 @@
 
         <ImageButton
             android:id="@+id/imgbHistory"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="25dp"
             android:layout_marginLeft="65dp"
             android:layout_marginTop="8dp"
             android:adjustViewBounds="true"
@@ -100,8 +103,9 @@
 
         <ImageButton
             android:id="@+id/imgbBell"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="25dp"
             android:layout_marginLeft="65dp"
             android:layout_marginTop="8dp"
             android:src="@drawable/bell_icon"
@@ -111,8 +115,9 @@
 
         <ImageButton
             android:id="@+id/imgbSetting"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="25dp"
             android:layout_marginLeft="65dp"
             android:layout_marginTop="8dp"
             android:src="@drawable/setting_icon"
@@ -154,6 +159,7 @@
                 android:text="@string/fullnameTitle"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
+                android:textSize="20sp"
                 android:textColor="@color/quantum_black_100"/>
 
             <TextView
@@ -161,7 +167,7 @@
                 android:layout_width="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:layout_height="wrap_content"
-                android:text="abc"
+                android:textSize="20sp"
                 android:textStyle="italic"
                 android:textColor="@color/colorGray"/>
         </LinearLayout>
@@ -182,6 +188,7 @@
                 android:text="@string/IdTitle"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
+                android:textSize="20sp"
                 android:textColor="@color/quantum_black_100"/>
 
             <TextView
@@ -189,7 +196,7 @@
                 android:layout_width="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:layout_height="wrap_content"
-                android:text="abc"
+                android:textSize="20sp"
                 android:textStyle="italic"
                 android:textColor="@color/colorGray"/>
         </LinearLayout>

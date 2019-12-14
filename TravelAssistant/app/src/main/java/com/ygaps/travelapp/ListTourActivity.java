@@ -87,8 +87,13 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
     int currentPage = 1;
     RelativeLayout layouSetting;
     User userInfo;
+    Button btnLogout;
+    int totalTours;
+    int totalMytour;
+    LinearLayout layoutTotal;
     int statusTab = 0;
     public static String token = "";
+    SharedPreferences rememberMeSharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,27 +118,54 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
 
     @Override
     public void onBackPressed() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(ListTourActivity.this);
-        builder.setTitle(R.string.title_dialog);
-        builder.setMessage(R.string.message_dialog);
-        builder.setCancelable(true);
-        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int k) {
-                dialogInterface.cancel();
-                finishAffinity();
+        if (statusTab > 0)
+        {
+            statusTab--;
+            switch (statusTab)
+            {
+                case 0:
+                    setStatusTab(0);
+                    rcvListTour.setAdapter(tourAdapter);
+                    tvTotal.setText(tourArrayList.size() + "/" + totalTours + " tours");
+                    setTitle("List Tours");
+                    break;
+                case 1:
+                    setStatusTab(1);
+                    rcvListTour.setAdapter(userTourAdapter);
+                    tvTotal.setText(totalMytour + " tours");
+                    setTitle("My Tours");
+                    break;
+                case 2:
+                    setStatusTab(2);
+                    setTitle("Invitation");
+                    rcvListTour.setAdapter(invitationAdapter);
+                    break;
             }
-        });
+        }
+        else
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder(ListTourActivity.this);
+            builder.setTitle(R.string.title_dialog);
+            builder.setMessage(R.string.message_dialog);
+            builder.setCancelable(true);
+            builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int k) {
+                    dialogInterface.cancel();
+                    finishAffinity();
+                }
+            });
 
-        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int k) {
-                dialogInterface.cancel();
-            }
-        });
+            builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int k) {
+                    dialogInterface.cancel();
+                }
+            });
 
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }
     }
 
     @Override
@@ -141,27 +173,54 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
         switch (item.getItemId())
         {
             case android.R.id.home:
-                AlertDialog.Builder builder = new AlertDialog.Builder(ListTourActivity.this);
-                builder.setTitle(R.string.title_dialog);
-                builder.setMessage(R.string.message_dialog);
-                builder.setCancelable(true);
-                builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int k) {
-                        dialogInterface.cancel();
-                        finishAffinity();
+                if (statusTab > 0)
+                {
+                    statusTab--;
+                    switch (statusTab)
+                    {
+                        case 0:
+                            setStatusTab(0);
+                            rcvListTour.setAdapter(tourAdapter);
+                            setTitle("List Tours");
+                            tvTotal.setText(tourArrayList.size() + "/" + totalTours + " tours");
+                            break;
+                        case 1:
+                            setStatusTab(1);
+                            rcvListTour.setAdapter(userTourAdapter);
+                            setTitle("My Tours");
+                            tvTotal.setText(totalMytour + " tours");
+                            break;
+                        case 2:
+                            setStatusTab(2);
+                            rcvListTour.setAdapter(invitationAdapter);
+                            setTitle("Invitaion");
+                            break;
                     }
-                });
+                }
+                else
+                {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(ListTourActivity.this);
+                    builder.setTitle(R.string.title_dialog);
+                    builder.setMessage(R.string.message_dialog);
+                    builder.setCancelable(true);
+                    builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int k) {
+                            dialogInterface.cancel();
+                            finishAffinity();
+                        }
+                    });
 
-                builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int k) {
-                        dialogInterface.cancel();
-                    }
-                });
+                    builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int k) {
+                            dialogInterface.cancel();
+                        }
+                    });
 
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
+                }
                 break;
         }
 
@@ -170,8 +229,6 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
 
     private void loadListTour(int pageNum)
     {
-
-
         final OkHttpClient httpClient = new OkHttpClient();
         final Request request = new Request.Builder()
                 .url(MainActivity.API_ADDR + "tour/list?rowPerPage=20&pageNum=" + pageNum)
@@ -213,7 +270,8 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
                     ArrayList <Tour> temp = (ArrayList<Tour>) jsonAdapter.fromJson(s);
                     int currentPosition = tourArrayList.size() - 1;
                     appendListTour(temp);
-                    tvTotal.setText("" + tourArrayList.size() + "/" + jsonObject.getInt("total") + " tours");
+                    totalTours = jsonObject.getInt("total");
+                    tvTotal.setText("" + tourArrayList.size() + "/" + totalTours + " tours");
                     tourAdapter = new TourAdapter(tourArrayList, ListTourActivity.this, ListTourActivity.this);
                     rcvListTour.setAdapter(tourAdapter);
                     rcvListTour.scrollToPosition(currentPosition);
@@ -337,7 +395,7 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
             public void onClick(View v) {
                 statusTab = 0;
                 setStatusTab(statusTab);
-                setTitle("List Tour");
+                setTitle("List Tours");
                 loadListTour(currentPage);
             }
         });
@@ -378,7 +436,8 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
                         {
                             JSONObject jsonObject = new JSONObject(s);
                             s = jsonObject.getString("tours");
-                            tvTotal.setText("" + jsonObject.getInt("total"));
+                            totalMytour = jsonObject.getInt("total");
+                            tvTotal.setText("" + totalMytour + " tours");
                             Moshi moshi = new Moshi.Builder().build();
                             Type tourType = Types.newParameterizedType(List.class, Tour.class);
                             final JsonAdapter<List<Tour>> jsonAdapter = moshi.adapter(tourType);
@@ -419,11 +478,29 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
 
                 if (!recyclerView.canScrollVertically(1) && newState==RecyclerView.SCROLL_STATE_IDLE) {
 
-                    currentPage++;
-                    loadListTour(currentPage);
+                    if (statusTab == 0)
+                    {
+                        currentPage++;
+                        loadListTour(currentPage);
+                    }
                 }
             }
         });
+
+        btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences.Editor rememberMeEditor = rememberMeSharedPreferences.edit();
+                rememberMeEditor.putBoolean("remember",false);
+                rememberMeEditor.putString("username","");
+                rememberMeEditor.putString("password","");
+                rememberMeEditor.apply();
+                unRegisterFireBase(token);
+                Intent loginIntent = new Intent(ListTourActivity.this,MainActivity.class);
+                startActivity(loginIntent);
+            }
+        });
+
     }
     private void getWidget()
     {
@@ -445,7 +522,9 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
         tvEditProfile = (TextView) findViewById(R.id.tvEditProfile);
         tvUpdatePassword = (TextView) findViewById(R.id.tvUpdatePassword);
         tvTotal = (TextView) findViewById(R.id.tvTotal);
-
+        btnLogout = (Button)findViewById(R.id.btnLogout);
+        rememberMeSharedPreferences = getSharedPreferences("Remembered_login_info",MODE_PRIVATE);
+        layoutTotal = (LinearLayout) findViewById(R.id.layoutTotal);
 
     }
 
@@ -453,15 +532,16 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
     public void onItemClick(int i) {
         if(statusTab == 0)
         {
-            Tour tour = tourArrayList.get(i);
+            Tour tour = tourAdapter.toursResult.get(i);
             Intent intent = new Intent(ListTourActivity.this, TourInfo.class);
             intent.putExtra("userId", userInfo.id);
+            intent.putExtra("nameOfUser", userInfo.fullName);
             intent.putExtra("tourId", tour.id);
             startActivity(intent);
         }
         else
         {
-            Tour tour = userTourArrayList.get(i);
+            Tour tour = userTourAdapter.toursResult.get(i);
             Intent intent = new Intent(ListTourActivity.this, TourInfo.class);
             intent.putExtra("userId", userInfo.id);
             intent.putExtra("tourId", tour.id);
@@ -481,7 +561,7 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
             case 0:
                 imbMenu.setImageResource(R.drawable.menu_on_icon);
                 layouSetting.setVisibility(View.GONE);
-                tvTotal.setVisibility(View.VISIBLE);
+                layoutTotal.setVisibility(View.VISIBLE);
                 rcvListTour.setVisibility(View.VISIBLE);
                 edtSearch.setVisibility(View.VISIBLE);
                 break;
@@ -489,21 +569,21 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
                 imbHistory.setImageResource(R.drawable.time_on_icon);
                 layouSetting.setVisibility(View.GONE);
                 rcvListTour.setVisibility(View.VISIBLE);
-                tvTotal.setVisibility(View.VISIBLE);
+                layoutTotal.setVisibility(View.VISIBLE);
                 edtSearch.setVisibility(View.VISIBLE);
                 break;
             case 2:
                 imbNoti.setImageResource(R.drawable.bell_on_icon);
                 edtSearch.setVisibility(View.GONE);
                 layouSetting.setVisibility(View.GONE);
-                tvTotal.setVisibility(View.GONE);
+                layoutTotal.setVisibility(View.GONE);
                 rcvListTour.setVisibility(View.VISIBLE);
                 break;
             case 3:
                 imbSetting.setImageResource(R.drawable.setting_on_icon);
                 edtSearch.setVisibility(View.GONE);
                 rcvListTour.setVisibility(View.GONE);
-                tvTotal.setVisibility(View.GONE);
+                layoutTotal.setVisibility(View.GONE);
                 layouSetting.setVisibility(View.VISIBLE);
                 break;
         }
@@ -529,6 +609,55 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
 
                         final Request request = new Request.Builder()
                                 .url(MainActivity.API_ADDR + "user/notification/put-token")
+                                .addHeader("Authorization", userToken)
+                                .post(body)
+                                .build();
+
+                        @SuppressLint("StaticFieldLeak") AsyncTask <Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
+                            @Override
+                            protected String doInBackground(Void... voids) {
+                                try {
+                                    Response response = httpClient.newCall(request).execute();
+                                    if (!response.isSuccessful())
+                                        return null;
+
+                                    return response.body().string();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                    return null;
+                                }
+
+                            }
+                        };
+
+                        asyncTask.execute();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
+    private void unRegisterFireBase(final String userToken){
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+            @Override
+            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                if (task.isSuccessful())
+                {
+                    String fcmToken = task.getResult().getToken();
+                    String id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+                    final OkHttpClient httpClient = new OkHttpClient();
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("fcmToken", fcmToken);
+                        jsonObject.put("deviceId", id);
+                        jsonObject.put("platform", 1);
+                        jsonObject.put ("appVersion", "1");
+                        RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
+
+                        final Request request = new Request.Builder()
+                                .url(MainActivity.API_ADDR + "user/notification/remove-token")
                                 .addHeader("Authorization", userToken)
                                 .post(body)
                                 .build();

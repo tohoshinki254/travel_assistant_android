@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.media.RingtoneManager;
@@ -13,6 +14,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.StyleSpan;
+import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.RemoteInput;
@@ -36,6 +38,11 @@ public class FireBaseService extends FirebaseMessagingService {
                 sendInviteNotification(data);
                 break;
             case "4":
+                SharedPreferences sharedPreferences = getSharedPreferences("tokenShare", MODE_PRIVATE);
+                int userId = sharedPreferences.getInt("userID", -1);
+                String senderId = (String) data.get("userId");
+                if (senderId.equals("" + userId))
+                    break;
                 sendStatusChatMessage();
                 sendChatNotification(data);
                 break;
@@ -50,7 +57,7 @@ public class FireBaseService extends FirebaseMessagingService {
         String notification = (String) data.get("notification");
 
 
-        Spannable title  = new SpannableString("You have a new massgage in tour " + tourId);
+        Spannable title  = new SpannableString("New massgage in tour " + tourId);
         title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         Spannable line = new SpannableString(notification);

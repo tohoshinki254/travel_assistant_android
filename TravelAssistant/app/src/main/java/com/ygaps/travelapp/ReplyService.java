@@ -25,6 +25,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -127,6 +128,7 @@ public class ReplyService extends IntentService {
 
                 @Override
                 protected void onPostExecute(String s) {
+                    sendStatusChatMessage();
                     sendReplyNotification(tourId, noti);
                     stopSelf();
                 }
@@ -192,5 +194,11 @@ public class ReplyService extends IntentService {
 
 
         notificationManager.notify(Integer.parseInt(tourId), notificationBuilder.build());
+    }
+
+    private void sendStatusChatMessage(){
+        Intent intent  = new Intent("MessageStatus");
+        intent.putExtra("isReceived", true);
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
     }
 }

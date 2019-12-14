@@ -16,22 +16,26 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="30dp" android:orientation="horizontal"
-        android:layout_marginTop="4dp">
+        android:layout_marginTop="4dp"
+        android:weightSum="10">
         <ImageView
-            android:layout_width="25dp"
+            android:layout_width="0dp"
+            android:layout_weight="0.7"
             android:layout_height="match_parent"
             android:src="@drawable/location_icon"
             android:layout_marginLeft="3dp"/>
 
         <TextView
             android:id="@+id/tvName"
-            android:layout_width="260dp"
+            android:layout_weight="5.7"
+            android:layout_width="0dp"
             android:layout_height="25dp"
             android:paddingTop="3dp"
             android:layout_marginLeft="5dp"/>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="0.6"
             android:layout_height="25dp"
             android:textStyle="bold"
             android:layout_marginLeft="4dp"
@@ -39,7 +43,8 @@
 
         <TextView
             android:id="@+id/tvTourId"
-            android:layout_width="wrap_content"
+            android:layout_weight="3"
+            android:layout_width="0dp"
             android:layout_height="25dp"
             android:layout_marginLeft="4dp"/>
 
@@ -48,16 +53,19 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="30dp" android:orientation="horizontal"
-        android:layout_marginTop="4dp">
+        android:layout_marginTop="4dp"
+        android:weightSum="10">
         <ImageView
-            android:layout_width="25dp"
+            android:layout_width="0dp"
+            android:layout_weight="0.7"
             android:layout_height="match_parent"
             android:src="@drawable/calendar_icon"
             android:layout_marginLeft="3dp"/>
 
         <TextView
             android:id="@+id/tvCalendar"
-            android:layout_width="match_parent"
+            android:layout_weight="9.3"
+            android:layout_width="0dp"
             android:layout_height="25dp"
             android:paddingTop="3dp"
             android:layout_marginLeft="5dp"/>
@@ -66,16 +74,19 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="30dp" android:orientation="horizontal"
-        android:layout_marginTop="4dp">
+        android:layout_marginTop="4dp"
+        android:weightSum="10">
         <ImageView
-            android:layout_width="25dp"
+            android:layout_width="0dp"
+            android:layout_weight="0.7"
             android:layout_height="match_parent"
             android:src="@drawable/people_group_icon"
             android:layout_marginLeft="3dp"/>
 
         <TextView
             android:id="@+id/tvAdults"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="9.7"
             android:layout_height="25dp"
             android:paddingTop="3dp"
             android:layout_marginLeft="5dp"/>
@@ -84,16 +95,19 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="30dp" android:orientation="horizontal"
-        android:layout_marginTop="4dp">
+        android:layout_marginTop="4dp"
+        android:weightSum="10">
         <ImageView
-            android:layout_width="25dp"
+            android:layout_width="0dp"
+            android:layout_weight="0.7"
             android:layout_height="match_parent"
             android:src="@drawable/money_icon"
             android:layout_marginLeft="3dp"/>
 
         <TextView
             android:id="@+id/tvMoney"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="9.7"
             android:layout_height="25dp"
             android:paddingTop="3dp"
             android:layout_marginLeft="5dp"/>

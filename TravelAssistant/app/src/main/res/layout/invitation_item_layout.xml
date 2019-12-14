@@ -112,11 +112,13 @@
         android:layout_width="match_parent"
         android:layout_below="@id/ln03"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:weightSum="2">
 
         <Button
             android:id="@+id/btnConfirm"
-            android:layout_width="140dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
             android:layout_height="30dp"
             android:background="@drawable/border_button"
             android:text="Confirm"
@@ -124,7 +126,8 @@
 
         <Button
             android:id="@+id/btnDelete"
-            android:layout_width="140dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
             android:layout_marginLeft="15dp"
             android:layout_height="30dp"
             android:background="@drawable/border_button_1"
