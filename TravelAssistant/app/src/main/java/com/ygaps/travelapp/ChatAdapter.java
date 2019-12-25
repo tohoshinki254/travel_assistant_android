@@ -48,6 +48,17 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             holder.tvMessage.setTextColor(Color.WHITE);
             holder.tvMessage.setBackgroundResource(R.drawable.border_button);
         }
+        else
+        {
+            holder.tvUsername.setVisibility(View.VISIBLE);
+            RelativeLayout.LayoutParams lp1 = (RelativeLayout.LayoutParams) holder.tvMessage.getLayoutParams();
+            lp1.addRule(RelativeLayout.ALIGN_PARENT_LEFT, 1);
+            lp1.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 0);
+            holder.tvMessage.setLayoutParams(lp1);
+
+            holder.tvMessage.setTextColor(Color.BLACK);
+            holder.tvMessage.setBackgroundResource(R.drawable.border_button_1);
+        }
         holder.tvUsername.setText(c.name);
         holder.tvMessage.setText(c.notification);
     }

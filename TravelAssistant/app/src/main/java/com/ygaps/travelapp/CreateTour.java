@@ -214,6 +214,14 @@ public class CreateTour extends AppCompatActivity {
                         id = res.getInt("id");
                         Intent intent = new Intent(CreateTour.this, StopPointMap.class);
                         Bundle bundle = new Bundle();
+                        listStopPoints.get(0).name = "Origin Point";
+                        listStopPoints.get(0).arrivalAt = millis_start;
+                        listStopPoints.get(0).leaveAt = millis_start;
+                        listStopPoints.get(0).serviceTypeId = 1;
+                        listStopPoints.get(1).arrivalAt = millis_end;
+                        listStopPoints.get(1).leaveAt = millis_end;
+                        listStopPoints.get(1).serviceTypeId = 1;
+                        listStopPoints.get(1).name = "Destination Point";
                         bundle.putInt("id", id);
                         bundle.putParcelableArrayList("list_stop_point", listStopPoints);
                         intent.putExtras(bundle);

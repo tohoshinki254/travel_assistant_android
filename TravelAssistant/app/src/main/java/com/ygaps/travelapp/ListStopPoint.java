@@ -41,7 +41,7 @@ public class ListStopPoint extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         listStopPoints = bundle.getParcelableArrayList("list_stop_points");
-        listStopPointAdapter = new ListStopPointAdapter(listStopPoints, ListStopPoint.this);
+        listStopPointAdapter = new ListStopPointAdapter(getListStopPoints(listStopPoints), ListStopPoint.this);
         rcvListStopPoint.setAdapter(listStopPointAdapter);
 
 
@@ -99,7 +99,20 @@ public class ListStopPoint extends AppCompatActivity {
             }
         });
     }
+    public static ArrayList <StopPoint> getListStopPoints (ArrayList<StopPoint> list){
+        if (list.size() <= 2)
+            return new ArrayList<StopPoint>();
+        else
+        {
+            ArrayList<StopPoint> res = new ArrayList<StopPoint>();
+            for (int i = 1; i < list.size() - 1; i++)
+            {
+                res.add(list.get(i));
+            }
+            return res;
+        }
 
+    }
     private void setWidget() {
         btnSave = (Button) findViewById(R.id.btnSave);
         rcvListStopPoint = (RecyclerView)findViewById(R.id.rcvListStopPoint);

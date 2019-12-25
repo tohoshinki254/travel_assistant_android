@@ -665,4 +665,7 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
         dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
 
     }
+
+    //Get list stop points without origin and destination
+
 }

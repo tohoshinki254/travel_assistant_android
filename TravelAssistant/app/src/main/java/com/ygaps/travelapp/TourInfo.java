@@ -1,5 +1,6 @@
 package com.ygaps.travelapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.media.Image;
 import android.media.MediaPlayer;
@@ -29,6 +31,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -115,17 +120,32 @@ public class TourInfo extends AppCompatActivity {
     private ImageView imvFourStar;
     private ImageView imvFiveStar;
     private RecyclerView rcvListReview;
+
+    String token;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tour_info);
 
-        Intent intent = getIntent();
-        userId = intent.getIntExtra("userId", -1);
-        fullName = intent.getStringExtra("nameOfUser");
-        tourId = intent.getIntExtra("tourId", -1);
-
         setWidget();
+        Intent intent = getIntent();
+        if (intent.getBooleanExtra("FireBase", false))
+        {
+            tourId = Integer.parseInt(intent.getStringExtra("tourId"));
+            SharedPreferences sharedPreferences = getSharedPreferences("tokenShare", MODE_PRIVATE);
+            userId = sharedPreferences.getInt("userID", -1);
+            token = sharedPreferences.getString("token", "");
+            rltTourInfo.setVisibility(View.GONE);
+            rltComment.setVisibility(View.VISIBLE);
+        }
+        else {
+            userId = intent.getIntExtra("userId", -1);
+            fullName = intent.getStringExtra("nameOfUser");
+            tourId = intent.getIntExtra("tourId", -1);
+            token = ListTourActivity.token;
+        }
+
+
         LoadTourInfo();
         LoadListReview();
         LoadPointReviewRating();
@@ -233,7 +253,7 @@ public class TourInfo extends AppCompatActivity {
                     RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
                     final Request request = new Request.Builder()
                             .url(API_ADDR + "tour/add/review")
-                            .addHeader("Authorization", ListTourActivity.token)
+                            .addHeader("Authorization", token)
                             .post(body)
                             .build();
 
@@ -287,64 +307,23 @@ public class TourInfo extends AppCompatActivity {
         btnSendComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String a_comment = edtInputComment.getText().toString();
+                final String a_comment = edtInputComment.getText().toString();
                 if (!a_comment.equals("")) {
                     Comment c = new Comment(userId, fullName, a_comment, null);
-
-                    try {
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("tourId", tourId);
-                        jsonObject.put("userId", userId);
-                        jsonObject.put("comment", a_comment);
-
-                        final OkHttpClient httpClient = new OkHttpClient();
-                        RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
-                        final Request request = new Request.Builder()
-                                .url(API_ADDR + "tour/comment")
-                                .addHeader("Authorization", ListTourActivity.token)
-                                .post(body)
-                                .build();
-
-                        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
-                            @Override
-                            protected String doInBackground(Void... voids) {
-                                try {
-                                    Response response = httpClient.newCall(request).execute();
-
-                                    if (!response.isSuccessful())
-                                        return null;
-
-                                    return response.body().string();
-                                }
-                                catch (IOException ex) {
-                                    ex.printStackTrace();
-                                    return null;
-                                }
-                            }
-
-                            protected void onPostExecute(String s) {
-                                if(s != null) {
-                                    try {
-                                        JSONObject jsonObject1 = new JSONObject(s);
-                                        Toast.makeText(getApplicationContext(), jsonObject1.getString("message"), Toast.LENGTH_SHORT).show();
-                                        LoadTourInfo();
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                else
-                                    Toast.makeText(getApplicationContext(),"Failed", Toast.LENGTH_SHORT).show();
-                            }
-                        };
-                        asyncTask.execute();
-                    }
-                    catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-
                     commentArrayList.add(c);
                     edtInputComment.setText("");
                     listCommentAdapter.notifyDataSetChanged();
+
+                    FirebaseMessaging.getInstance().subscribeToTopic("tour-id" + tourId)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful())
+                                    {
+                                        sendComment(a_comment);
+                                    }
+                                }
+                            });
                 }
             }
         });
@@ -362,7 +341,7 @@ public class TourInfo extends AppCompatActivity {
                     RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
                     final Request request = new Request.Builder()
                             .url(API_ADDR + "tour/add/member")
-                            .addHeader("Authorization", ListTourActivity.token)
+                            .addHeader("Authorization", token)
                             .post(body)
                             .build();
 
@@ -414,7 +393,13 @@ public class TourInfo extends AppCompatActivity {
         btnFollow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(TourInfo.this, FollowMap.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList("list_stop_points", stopPointArrayList);
+                intent.putExtras(bundle);
+                intent.putExtra("tourId", tourId);
+                intent.putExtra("userId", userId);
+                startActivity(intent);
             }
         });
 
@@ -622,7 +607,7 @@ public class TourInfo extends AppCompatActivity {
                     RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
                     final Request request = new Request.Builder()
                             .url(API_ADDR + "tour/add/member")
-                            .addHeader("Authorization", ListTourActivity.token)
+                            .addHeader("Authorization", token)
                             .post(body)
                             .build();
 
@@ -701,7 +686,7 @@ public class TourInfo extends AppCompatActivity {
         final OkHttpClient httpClient = new OkHttpClient();
         final Request request = new Request.Builder()
                 .url(MainActivity.API_ADDR + "tour/info?tourId=" + tourId)
-                .addHeader("Authorization",ListTourActivity.token)
+                .addHeader("Authorization",token)
                 .build();
 
         @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
@@ -762,7 +747,7 @@ public class TourInfo extends AppCompatActivity {
         final OkHttpClient okHttpClient = new OkHttpClient();
         final Request request = new Request.Builder()
                 .url(API_ADDR + "tour/get/review-list?tourId=" + tourId + "&pageIndex=1&pageSize=1000")
-                .addHeader("Authorization", ListTourActivity.token)
+                .addHeader("Authorization", token)
                 .build();
 
         @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
@@ -805,7 +790,7 @@ public class TourInfo extends AppCompatActivity {
         final OkHttpClient httpClient = new OkHttpClient();
         final Request request = new Request.Builder()
                 .url(API_ADDR + "tour/get/review-point-stats?tourId=" + tourId)
-                .addHeader("Authorization", ListTourActivity.token)
+                .addHeader("Authorization", token)
                 .build();
 
         @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
@@ -893,5 +878,52 @@ public class TourInfo extends AppCompatActivity {
             imgFourStar.setImageResource(R.drawable.orange_star_icon);
         if (fiveSelected)
             imgFiveStar.setImageResource(R.drawable.orange_star_icon);
+    }
+
+    private void sendComment(String comment){
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("tourId", tourId);
+            jsonObject.put("userId", userId);
+            jsonObject.put("comment", comment);
+
+            final OkHttpClient httpClient = new OkHttpClient();
+            RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
+            final Request request = new Request.Builder()
+                    .url(API_ADDR + "tour/comment")
+                    .addHeader("Authorization", token)
+                    .post(body)
+                    .build();
+
+            @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
+                @Override
+                protected String doInBackground(Void... voids) {
+                    try {
+                        Response response = httpClient.newCall(request).execute();
+
+                        if (!response.isSuccessful())
+                            return null;
+
+                        return response.body().string();
+                    }
+                    catch (IOException ex) {
+                        ex.printStackTrace();
+                        return null;
+                    }
+                }
+
+                @Override
+                protected void onPostExecute(String s) {
+                    if (s != null)
+                    {
+                        Toast.makeText(getApplicationContext(), "successfull", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            };
+            asyncTask.execute();
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }
