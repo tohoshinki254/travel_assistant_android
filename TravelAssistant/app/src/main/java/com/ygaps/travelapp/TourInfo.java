@@ -3,6 +3,7 @@ package com.ygaps.travelapp;
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,8 +14,13 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
@@ -87,6 +93,11 @@ public class TourInfo extends AppCompatActivity implements ListStopPointAdapter.
     private TextView tvMoney;
     private TextView tvHost;
 
+    private MediaRecorder myAudioRecorder;
+    private ImageButton imgStartAudio;
+    private ImageButton imgPauseAudio;
+    private ImageButton imgSendAudio;
+    public static final int RequestPermissionCode = 1;
     private static int userId;
     private static int tourId;
     private static String fullName;
@@ -133,6 +144,9 @@ public class TourInfo extends AppCompatActivity implements ListStopPointAdapter.
     private boolean isPrivate = false;
     private ArrayList<StopPoint> startEndPoint;
     String token;
+    boolean isRecording = false;
+    MediaRecorder mediaRecorder = null;
+    MediaPlayer mediaPlayer = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -674,7 +688,12 @@ public class TourInfo extends AppCompatActivity implements ListStopPointAdapter.
         btnAudio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                int YOUR_REQUEST_CODE = 200; // could be something else..
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) //check if permission request is necessary
+                {
+                    ActivityCompat.requestPermissions(TourInfo.this, new String[] {android.Manifest.permission.RECORD_AUDIO,
+                            android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE}, YOUR_REQUEST_CODE);
+                }
             }
         });
 
@@ -778,6 +797,83 @@ public class TourInfo extends AppCompatActivity implements ListStopPointAdapter.
         dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
     }
 
+
+    public void DisplayPopupAudioDialog() {
+        dialog = new Dialog(TourInfo.this);
+        dialog.setContentView(R.layout.send_audio);
+        final String outputFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/audio.3gp";
+
+        final ImageButton imgbStart = (ImageButton) dialog.findViewById(R.id.startRecordingBtn);
+        ImageButton imgbPlay = (ImageButton) dialog.findViewById(R.id.playRecordingBtn);
+        ImageButton imgbExit = (ImageButton) dialog.findViewById(R.id.send_audio_popup_exit_button);
+
+        imgbExit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        imgbStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isRecording)
+                {
+                    isRecording = false;
+                    mediaRecorder.stop();
+                    mediaRecorder.release();
+                    mediaRecorder = null;
+                    Toast.makeText(getApplicationContext(), "Audio Recorder successfully", Toast.LENGTH_SHORT).show();
+                    imgbStart.setImageResource(R.drawable.mic_off_icon);
+                }
+                else{
+                    isRecording = true;
+                    imgbStart.setImageResource(R.drawable.mic_on_icon);
+                    mediaRecorder = new MediaRecorder();
+                    mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+                    mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+                    mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
+                    mediaRecorder.setOutputFile(outputFile);
+
+                    try {
+                        mediaRecorder.prepare();
+                        mediaRecorder.start();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (mediaPlayer != null && mediaPlayer.isPlaying())
+                        mediaPlayer.stop();
+
+                    Toast.makeText(getApplicationContext(), "Recording Started", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        imgbPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isRecording)
+                {
+                    Toast.makeText(getApplicationContext(), "You must turn off recorder!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else{
+                    mediaPlayer = new MediaPlayer();
+                    try {
+                        mediaPlayer.setDataSource(outputFile);
+                        mediaPlayer.prepare();
+                        mediaPlayer.start();
+                        Toast.makeText(getApplicationContext(), "Playing audio", Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+
+                    }
+
+                }
+            }
+        });
+        dialog.show();
+    }
     public void DisplayPopupAddMemberDialog() {
         dialog = new Dialog(TourInfo.this);
         dialog.setContentView(R.layout.add_member_popup);
@@ -1178,6 +1274,19 @@ public class TourInfo extends AppCompatActivity implements ListStopPointAdapter.
         });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            if (requestCode == 200)
+            {
+                DisplayPopupAudioDialog();
+            }
+        }
+        else{
+            Toast.makeText(getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

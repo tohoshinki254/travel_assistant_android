@@ -9,6 +9,7 @@ public class Tour {
     public String maxCost;
     public int adults;
     public int childs;
+    public int status;
     public String avatar;
 
     public Tour(Tour t)
@@ -21,6 +22,7 @@ public class Tour {
         maxCost = t.maxCost;
         adults = t.adults;
         childs = t.childs;
+        status = t.status;
         avatar = t.avatar;
     }
 }

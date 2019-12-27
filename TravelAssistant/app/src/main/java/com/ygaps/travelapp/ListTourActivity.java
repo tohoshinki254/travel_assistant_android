@@ -450,13 +450,14 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
                         {
                             JSONObject jsonObject = new JSONObject(s);
                             s = jsonObject.getString("tours");
-                            totalMytour = jsonObject.getInt("total");
-                            tvTotal.setText("" + totalMytour + " tours");
                             Moshi moshi = new Moshi.Builder().build();
                             Type tourType = Types.newParameterizedType(List.class, Tour.class);
                             final JsonAdapter<List<Tour>> jsonAdapter = moshi.adapter(tourType);
                             userTourArrayList = (ArrayList<Tour>) jsonAdapter.fromJson(s);
-                            userTourAdapter = new TourAdapter(userTourArrayList, ListTourActivity.this, ListTourActivity.this);
+                            ArrayList <Tour> userAvaibleTours = getAvaibleUserTours();
+                            totalMytour = userAvaibleTours.size();
+                            tvTotal.setText("" + totalMytour + " tours");
+                            userTourAdapter = new TourAdapter(userAvaibleTours, ListTourActivity.this, ListTourActivity.this);
                             rcvListTour.setAdapter(userTourAdapter);
                             dialog.dismiss();
                         } catch (Exception e) {
@@ -1041,6 +1042,18 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
         stopPointArrayList.addAll(ar);
     }
 
+    private ArrayList<Tour> getAvaibleUserTours(){
+        ArrayList<Tour> res = new ArrayList<>();
+        for (int i = 0; i < userTourArrayList.size(); i++)
+        {
+            if (userTourArrayList.get(i).status != -1)
+            {
+                res.add(userTourArrayList.get(i));
+            }
+        }
+
+        return res;
+    }
     @Override
     public void onStopPointClick(int i) {
         Intent intent = new Intent(ListTourActivity.this, StopPointInfo.class);
