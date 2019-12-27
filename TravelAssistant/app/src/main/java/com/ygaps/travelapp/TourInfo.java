@@ -16,6 +16,7 @@ import android.media.Image;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.ContactsContract;
@@ -87,7 +88,6 @@ public class TourInfo extends AppCompatActivity implements ListStopPointAdapter.
     private TextView tvHost;
 
     private MediaRecorder myAudioRecorder;
-    private String outputFile;
     private ImageButton imgStartAudio;
     private ImageButton imgPauseAudio;
     private ImageButton imgSendAudio;
@@ -122,6 +122,9 @@ public class TourInfo extends AppCompatActivity implements ListStopPointAdapter.
     private RecyclerView rcvListReview;
 
     String token;
+    boolean isRecording = false;
+    MediaRecorder mediaRecorder = null;
+    MediaPlayer mediaPlayer = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -416,7 +419,12 @@ public class TourInfo extends AppCompatActivity implements ListStopPointAdapter.
         btnAudio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DisplayPopupAudioDialog();
+                int YOUR_REQUEST_CODE = 200; // could be something else..
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) //check if permission request is necessary
+                {
+                    ActivityCompat.requestPermissions(TourInfo.this, new String[] {android.Manifest.permission.RECORD_AUDIO,
+                            android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE}, YOUR_REQUEST_CODE);
+                }
             }
         });
 
@@ -506,73 +514,82 @@ public class TourInfo extends AppCompatActivity implements ListStopPointAdapter.
         dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
     }
 
+
+
     public void DisplayPopupAudioDialog() {
         dialog = new Dialog(TourInfo.this);
         dialog.setContentView(R.layout.send_audio);
+        final String outputFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/audio.3gp";
 
-        ImageButton imgExitPopupAudio = (ImageButton) dialog.findViewById(R.id.list_members_popup_exit_button);
-        imgStartAudio = (ImageButton) dialog.findViewById(R.id.startAudio);
-        imgPauseAudio = (ImageButton) dialog.findViewById(R.id.pauseAudio);
-        imgSendAudio = (ImageButton) dialog.findViewById(R.id.sendAudio);
-        imgPauseAudio.setEnabled(false);
-        imgSendAudio.setEnabled(false);
+        final ImageButton imgbStart = (ImageButton) dialog.findViewById(R.id.startRecordingBtn);
+        ImageButton imgbPlay = (ImageButton) dialog.findViewById(R.id.playRecordingBtn);
+        ImageButton imgbExit = (ImageButton) dialog.findViewById(R.id.send_audio_popup_exit_button);
 
-        outputFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/recording.3gp";
-        MediaRecorderReady();
-
-        imgStartAudio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (checkPermission()) {
-                    try {
-                        myAudioRecorder.prepare();
-                        myAudioRecorder.start();
-                    } catch (IllegalStateException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        //make something
-                    }
-                    imgStartAudio.setEnabled(false);
-                    imgPauseAudio.setEnabled(true);
-                }
-                else {
-                    requestPermission();
-                }
-            }
-        });
-
-        imgPauseAudio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                myAudioRecorder.stop();
-                myAudioRecorder.release();
-                imgStartAudio.setEnabled(true);
-                imgPauseAudio.setEnabled(false);
-                imgSendAudio.setEnabled(true);
-            }
-        });
-
-        imgSendAudio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MediaPlayer mediaPlayer = new MediaPlayer();
-                try {
-                    mediaPlayer.setDataSource(outputFile);
-                    mediaPlayer.prepare();
-                    mediaPlayer.start();
-                } catch (Exception e) {
-                    // make something
-                }
-            }
-        });
-
-        imgExitPopupAudio.setOnClickListener(new View.OnClickListener() {
+        imgbExit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
             }
         });
 
+        imgbStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isRecording)
+                {
+                    isRecording = false;
+                    mediaRecorder.stop();
+                    mediaRecorder.release();
+                    mediaRecorder = null;
+                    Toast.makeText(getApplicationContext(), "Audio Recorder successfully", Toast.LENGTH_SHORT).show();
+                    imgbStart.setImageResource(R.drawable.mic_off_icon);
+                }
+                else{
+                    isRecording = true;
+                    imgbStart.setImageResource(R.drawable.mic_on_icon);
+                    mediaRecorder = new MediaRecorder();
+                    mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+                    mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+                    mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
+                    mediaRecorder.setOutputFile(outputFile);
+
+                    try {
+                        mediaRecorder.prepare();
+                        mediaRecorder.start();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (mediaPlayer != null && mediaPlayer.isPlaying())
+                        mediaPlayer.stop();
+
+                    Toast.makeText(getApplicationContext(), "Recording Started", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        imgbPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isRecording)
+                {
+                    Toast.makeText(getApplicationContext(), "You must turn off recorder!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else{
+                    mediaPlayer = new MediaPlayer();
+                    try {
+                        mediaPlayer.setDataSource(outputFile);
+                        mediaPlayer.prepare();
+                        mediaPlayer.start();
+                        Toast.makeText(getApplicationContext(), "Playing audio", Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+
+                    }
+
+                }
+            }
+        });
         dialog.show();
     }
 
@@ -653,34 +670,6 @@ public class TourInfo extends AppCompatActivity implements ListStopPointAdapter.
         dialog.show();
     }
 
-    public void MediaRecorderReady(){
-        myAudioRecorder = new MediaRecorder();
-        myAudioRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        myAudioRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        myAudioRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
-        myAudioRecorder.setOutputFile(outputFile);
-    }
-
-    private void requestPermission() {
-        ActivityCompat.requestPermissions(TourInfo.this, new
-                String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}, RequestPermissionCode);
-    }
-
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        if (requestCode == RequestPermissionCode && grantResults.length > 0) {
-            boolean StoragePermission = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-            boolean RecordPermission = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-        }
-    }
-
-    public boolean checkPermission() {
-        int result = ContextCompat.checkSelfPermission(getApplicationContext(),
-                WRITE_EXTERNAL_STORAGE);
-        int result1 = ContextCompat.checkSelfPermission(getApplicationContext(),
-                RECORD_AUDIO);
-        return result == PackageManager.PERMISSION_GRANTED &&
-                result1 == PackageManager.PERMISSION_GRANTED;
-    }
 
     private void LoadTourInfo() {
         final OkHttpClient httpClient = new OkHttpClient();
@@ -924,6 +913,19 @@ public class TourInfo extends AppCompatActivity implements ListStopPointAdapter.
         }
         catch (Exception ex) {
             ex.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            if (requestCode == 200)
+            {
+                DisplayPopupAudioDialog();
+            }
+        }
+        else{
+            Toast.makeText(getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -9,7 +9,7 @@
         android:id="@+id/sendAudio_labelTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Send Audio"
+        android:text="Recording Audio"
         android:layout_marginBottom="10dp"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -24,53 +24,41 @@
         android:src="@drawable/exit_icon"
         android:background="#00000000" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <RelativeLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="15dp"
+        android:layout_centerHorizontal="true"
         android:padding="5dp"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/border_button"
         android:layout_below="@id/sendAudio_labelTitle">
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginLeft="30dp">
-            <ImageButton
-                android:id="@+id/startAudio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/border_button"
-                android:src="@drawable/start_audio_icon"/>
-        </RelativeLayout>
 
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginLeft="30dp">
-            <ImageButton
-                android:id="@+id/pauseAudio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/border_button"
-                android:src="@drawable/pause_audio_icon"/>
-        </RelativeLayout>
+        <ImageButton
+            android:id="@+id/startRecordingBtn"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/mic_off_icon"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
+            />
 
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginLeft="30dp">
-            <ImageButton
-                android:id="@+id/sendAudio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/border_button_forgot_password"
-                android:src="@drawable/send_audio_icon"/>
-        </RelativeLayout>
-    </LinearLayout>
+        <ImageButton
+            android:id="@+id/playRecordingBtn"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/play_icon"
+            android:layout_marginLeft="25dp"
+            android:adjustViewBounds="true"
+            android:layout_toRightOf="@id/startRecordingBtn"
+            android:scaleType="fitXY"
+            />
+
+    </RelativeLayout>
 
 </RelativeLayout>
