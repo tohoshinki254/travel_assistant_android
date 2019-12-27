@@ -9,6 +9,9 @@ public class StopPoint implements Parcelable {
     public Integer id;
     public String name;
     public Integer provinceId;
+    public Integer serviceId;
+    public String contact;
+    public Integer selfStarRatings;
 
     @SerializedName("lat")
     public Double Lat;
@@ -40,6 +43,9 @@ public class StopPoint implements Parcelable {
         serviceTypeId = sp.serviceTypeId;
         avatar = sp.avatar;
         address = sp.address;
+        serviceId = sp.serviceId;
+        contact = sp.contact;
+        selfStarRatings = sp.selfStarRatings;
     }
 
     protected StopPoint(Parcel in) {

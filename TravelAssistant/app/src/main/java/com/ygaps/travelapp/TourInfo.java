@@ -1,5 +1,6 @@
 package com.ygaps.travelapp;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -7,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -17,15 +19,22 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,9 +46,12 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -69,11 +81,11 @@ public class TourInfo extends AppCompatActivity {
     private ArrayList<StopPoint> stopPointArrayList;
     private ArrayList<Comment> commentArrayList;
     private ArrayList<Member> memberArrayList;
-    private ArrayList<Comment> reviewArrayList;
+    private ArrayList<Review> reviewArrayList;
     private ArrayList<PointStats> pointStatsArrayList;
     private ListStopPointAdapter listStopPointAdapter;
     private ListCommentAdapter listCommentAdapter;
-    private ListCommentAdapter listReviewAdapter;
+    private ListReviewAdapter listReviewAdapter;
     private ListMemberAdapter listMemberAdapter;
     private TextView tvName;
     private TextView tvCalendar;
@@ -99,22 +111,39 @@ public class TourInfo extends AppCompatActivity {
     private RelativeLayout rltTourInfo;
     private RelativeLayout rltComment;
     private RelativeLayout rltReview;
+    private ScrollView scvUpdateInfo;
 
-    private ImageButton imgOneStar;
-    private ImageButton imgTwoStar;
-    private ImageButton imgThreeStar;
-    private ImageButton imgFourStar;
-    private ImageButton imgFiveStar;
+    private RatingBar rtbSendStar;
+    private RatingBar rtbGetStar;
     private EditText edtContentReview;
     private Button btnSendReview;
-    private int pointReview = 0;
-
-    private ImageView imvOneStar;
-    private ImageView imvTwoStar;
-    private ImageView imvThreeStar;
-    private ImageView imvFourStar;
-    private ImageView imvFiveStar;
     private RecyclerView rcvListReview;
+
+    private TextView tvUpdateTourInfo;
+    private DatePickerDialog datePickerDialog;
+    private EditText edtTourname;
+    private EditText edtStartDate;
+    private EditText edtEndDate;
+    private ImageButton imgCalendarStart;
+    private ImageButton imgCalendarEnd;
+    private Button btnChoosePlace;
+    private EditText edtAdults;
+    private EditText edtChildren;
+    private EditText edtMinCost;
+    private EditText edtMaxCost;
+    private RadioButton rdbPrivate;
+    private Button updateInfoButton;
+    private TextView tvStartPlace;
+    private TextView tvEndPlace;
+    private int year, month, day;
+    private Calendar calendar;
+    private static final int REQUEST_CODE = 2000;
+    private Spinner spnStatus;
+    private Long millis_start;
+    private Long millis_end;
+    private boolean isPrivate = false;
+    private ArrayList<StopPoint> startEndPoint;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,6 +158,7 @@ public class TourInfo extends AppCompatActivity {
         LoadTourInfo();
         LoadListReview();
         LoadPointReviewRating();
+        LoadListComment();
         setEvent();
     }
 
@@ -155,68 +185,239 @@ public class TourInfo extends AppCompatActivity {
         rltComment = (RelativeLayout) findViewById(R.id.commentActivity);
         rltReview = (RelativeLayout) findViewById(R.id.reviewActivity);
         tvTourNameTitle = (TextView) findViewById(R.id.tour_name_title);
-        imgOneStar = (ImageButton) findViewById(R.id.oneStarImageButton);
-        imgTwoStar = (ImageButton) findViewById(R.id.twoStarImageButton);
-        imgThreeStar = (ImageButton) findViewById(R.id.threeStarImageButton);
-        imgFourStar = (ImageButton) findViewById(R.id.fourStarImageButton);
-        imgFiveStar = (ImageButton) findViewById(R.id.fiveStarImageButton);
+        rtbSendStar = (RatingBar) findViewById(R.id.ratingFieldReviewActivity);
+        rtbGetStar = (RatingBar) findViewById(R.id.ratingStar);
         edtContentReview = (EditText) findViewById(R.id.inputReviewBox);
         btnSendReview = (Button) findViewById(R.id.sendReviewButton);
-        imvOneStar = (ImageView) findViewById(R.id.oneStarImageView);
-        imvTwoStar = (ImageView) findViewById(R.id.twoStarImageView);
-        imvThreeStar = (ImageView) findViewById(R.id.threeStarImageView);
-        imvFourStar = (ImageView) findViewById(R.id.fourStarImageView);
-        imvFiveStar = (ImageView) findViewById(R.id.fiveStarImageView);
         rcvListReview = (RecyclerView) findViewById(R.id.rcvListReview);
         rcvListReview.setLayoutManager(new LinearLayoutManager(TourInfo.this));
+        tvUpdateTourInfo = (TextView) findViewById(R.id.updateTourInfoClick);
+        edtTourname = (EditText)findViewById(R.id.inputTourNameForUpdate);
+        edtStartDate = (EditText)findViewById(R.id.inputStaDateUpdate);
+        edtEndDate = (EditText)findViewById(R.id.inputEndDateUpdate);
+        imgCalendarStart = (ImageButton)findViewById(R.id.startDateSelectUpdate);
+        imgCalendarEnd = (ImageButton)findViewById(R.id.EndDateSelectUpdate);
+        edtAdults = (EditText)findViewById(R.id.inputAdultsUpdate);
+        edtChildren = (EditText)findViewById(R.id.inputChildrenUpdate);
+        edtMinCost = (EditText)findViewById(R.id.inputMinCostUpdate);
+        edtMaxCost = (EditText)findViewById(R.id.inputMaxCostUpdate);
+        btnChoosePlace = (Button)findViewById(R.id.choosePlaceButtonUpdate);
+        tvStartPlace = (TextView)findViewById(R.id.inputStartPlaceUpdate);
+        tvEndPlace = (TextView)findViewById(R.id.inputEndPlaceUpdate);
+        updateInfoButton = (Button)findViewById(R.id.updateInfoTourButton);
+        rdbPrivate = (RadioButton) findViewById(R.id.privateTripButtonUpdate);
+
+        spnStatus = (Spinner) findViewById(R.id.selectStatusTour);
+        List<String> status = new ArrayList<String>();
+        status.add("Canceled");
+        status.add("Open");
+        status.add("Started");
+        status.add("Closed");
+
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, status);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spnStatus.setAdapter(spinnerAdapter);
+
+        scvUpdateInfo = (ScrollView) findViewById(R.id.updateTourInfoActivity);
     }
 
     public void setEvent() {
+        tvUpdateTourInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rltTourInfo.setVisibility(View.GONE);
+                scvUpdateInfo.setVisibility(View.VISIBLE);
+            }
+        });
+
+        imgCalendarStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calendar = Calendar.getInstance();
+                year = calendar.get(Calendar.YEAR);
+                month = calendar.get(Calendar.MONTH);
+                day = calendar.get(Calendar.DAY_OF_MONTH);
+                datePickerDialog = new DatePickerDialog(TourInfo.this,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                edtStartDate.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
+                            }
+                        }, year, month, day);
+                datePickerDialog.show();
+            }
+        });
+
+        imgCalendarEnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calendar = Calendar.getInstance();
+                year = calendar.get(Calendar.YEAR);
+                month = calendar.get(Calendar.MONTH);
+                day = calendar.get(Calendar.DAY_OF_MONTH);
+                datePickerDialog = new DatePickerDialog(TourInfo.this,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                edtEndDate.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
+                            }
+                        }, year, month, day);
+                datePickerDialog.show();
+            }
+        });
+
+        btnChoosePlace.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
+
+                Intent intent = new Intent(TourInfo.this, Map.class);
+                startActivityForResult(intent, REQUEST_CODE);
+            }
+        });
+
+        rdbPrivate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (rdbPrivate.isSelected()) {
+                    rdbPrivate.setChecked(false);
+                    rdbPrivate.setSelected(false);
+                }
+                else {
+                    rdbPrivate.setChecked(true);
+                    rdbPrivate.setSelected(true);
+                }
+            }
+        });
+
+        updateInfoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
+
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy");
+                String dateInString = edtStartDate.getText().toString();
+                try {
+                    if (!dateInString.equals("")) {
+                        Date date = sdf.parse(dateInString);
+                        millis_start = new Long(date.getTime() + 25200000);
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                dateInString = edtEndDate.getText().toString();
+                try {
+                    if (!dateInString.equals("")) {
+                        Date date = sdf.parse(dateInString);
+                        millis_end = new Long(date.getTime() + 25200000);
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                if (rdbPrivate.isSelected())
+                    isPrivate = true;
+
+                try {
+                    final OkHttpClient httpClient = new OkHttpClient();
+
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("id", tourId);
+                    if (!edtTourname.getText().toString().equals(""))
+                        jsonObject.put("name", edtTourname.getText().toString());
+                    if (!edtStartDate.getText().toString().equals(""))
+                        jsonObject.put("startDate", millis_start);
+                    if (!edtEndDate.getText().toString().equals(""))
+                        jsonObject.put("endDate", millis_end);
+                    if (!tvStartPlace.getText().toString().equals("")) {
+                        jsonObject.put("sourceLat", startEndPoint.get(0).Lat);
+                        jsonObject.put("sourceLong", startEndPoint.get(0).Long);
+                    }
+                    if (!tvEndPlace.getText().toString().equals("")) {
+                        jsonObject.put("desLat", startEndPoint.get(1).Lat);
+                        jsonObject.put("desLong", startEndPoint.get(1).Long);
+                    }
+                    if (!edtAdults.getText().toString().equals(""))
+                        jsonObject.put("adults", Integer.parseInt(edtAdults.getText().toString()));
+                    if (!edtChildren.getText().toString().equals(""))
+                        jsonObject.put("childs", Integer.parseInt(edtChildren.getText().toString()));
+                    if (!edtMinCost.getText().toString().equals(""))
+                        jsonObject.put("minCost", Integer.parseInt(edtMinCost.getText().toString()));
+                    if (!edtMaxCost.getText().toString().equals(""))
+                        jsonObject.put("maxCost", Integer.parseInt(edtMaxCost.getText().toString()));
+                    jsonObject.put("isPrivate", isPrivate);
+                    if (String.valueOf(spnStatus.getSelectedItem()).equals("Canceled"))
+                        jsonObject.put("status", -1);
+                    else if (String.valueOf(spnStatus.getSelectedItem()).equals("Open"))
+                        jsonObject.put("status", 0);
+                    else if (String.valueOf(spnStatus.getSelectedItem()).equals("Started"))
+                        jsonObject.put("status", 1);
+                    else
+                        jsonObject.put("status", 2);
+
+                    RequestBody formBody = RequestBody.create(jsonObject.toString(), JSON);
+
+                    final Request request = new Request.Builder()
+                            .url(API_ADDR + "tour/update-tour")
+                            .addHeader("Authorization", ListTourActivity.token)
+                            .post(formBody)
+                            .build();
+
+                    @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
+                        @Override
+                        protected String doInBackground(Void... voids) {
+                            try {
+                                Response response = httpClient.newCall(request).execute();
+
+                                if (!response.isSuccessful())
+                                    return null;
+
+                                return  response.body().string();
+                            }
+                            catch (IOException e) {
+                                e.printStackTrace();
+                                return null;
+                            }
+                        }
+
+                        protected void onPostExecute(String s) {
+                            if (s != null) {
+                                try {
+                                    JSONObject object = new JSONObject(s);
+                                    Toast.makeText(getApplicationContext(), object.getString("message"), Toast.LENGTH_SHORT).show();
+                                    edtTourname.setText("");
+                                    edtStartDate.setText("");
+                                    edtEndDate.setText("");
+                                    tvStartPlace.setText("");
+                                    tvEndPlace.setText("");
+                                    edtAdults.setText("");
+                                    edtChildren.setText("");
+                                    edtMinCost.setText("");
+                                    edtMaxCost.setText("");
+                                    rdbPrivate.setChecked(false);
+                                }
+                                catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            else
+                                Toast.makeText(getApplicationContext(), "Update Failed!", Toast.LENGTH_SHORT).show();
+                        }
+                    };
+                    asyncTask.execute();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         btnReview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 rltTourInfo.setVisibility(View.GONE);
                 rltReview.setVisibility(View.VISIBLE);
-            }
-        });
-
-        imgOneStar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setStarInReview(true, false, false, false, false);
-                pointReview = 1;
-            }
-        });
-
-        imgTwoStar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setStarInReview(true, true, false, false, false);
-                pointReview = 2;
-            }
-        });
-
-        imgThreeStar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setStarInReview(true, true, true, false, false);
-                pointReview = 3;
-            }
-        });
-
-        imgFourStar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setStarInReview(true, true, true, true, false);
-                pointReview = 4;
-            }
-        });
-
-        imgFiveStar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setStarInReview(true, true, true, true, true);
-                pointReview = 5;
             }
         });
 
@@ -226,7 +427,7 @@ public class TourInfo extends AppCompatActivity {
                 try {
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("tourId", tourId);
-                    jsonObject.put("point", pointReview);
+                    jsonObject.put("point", (int)(rtbSendStar.getRating()));
                     jsonObject.put("review", edtContentReview.getText().toString());
 
                     final OkHttpClient httpClient = new OkHttpClient();
@@ -327,7 +528,7 @@ public class TourInfo extends AppCompatActivity {
                                     try {
                                         JSONObject jsonObject1 = new JSONObject(s);
                                         Toast.makeText(getApplicationContext(), jsonObject1.getString("message"), Toast.LENGTH_SHORT).show();
-                                        LoadTourInfo();
+                                        LoadListComment();
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
@@ -455,6 +656,20 @@ public class TourInfo extends AppCompatActivity {
                 DisplayPopupMemberDialog();
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Bundle bundle = data.getExtras();
+                startEndPoint = bundle.getParcelableArrayList("list_stop_points");
+                assert startEndPoint != null;
+                tvStartPlace.setText(startEndPoint.get(0).address);
+                tvEndPlace.setText(startEndPoint.get(1).address);
+            }
+        }
     }
 
     private void setStatusJoin() {
@@ -728,15 +943,10 @@ public class TourInfo extends AppCompatActivity {
                 {
                     JSONObject jsonObject = new JSONObject(s);
                     String stoppoint = jsonObject.getString("stopPoints");
-                    String comment = jsonObject.getString("comments");
                     String member = jsonObject.getString("members");
 
                     stopPointArrayList = new Gson().fromJson(stoppoint, new TypeToken<ArrayList<StopPoint>>() {}.getType());
                     memberArrayList = new Gson().fromJson(member, new TypeToken<ArrayList<Member>>() {}.getType());
-                    commentArrayList = new Gson().fromJson(comment, new TypeToken<ArrayList<Comment>>() {}.getType());
-                    rcvComments.setLayoutManager(new LinearLayoutManager(TourInfo.this));
-                    listCommentAdapter = new ListCommentAdapter(commentArrayList, TourInfo.this);
-                    rcvComments.setAdapter(listCommentAdapter);
 
                     tvName.setText(jsonObject.getString("name"));
                     tvTourNameTitle.setText(tvName.getText().toString());
@@ -752,6 +962,50 @@ public class TourInfo extends AppCompatActivity {
                     setStatusJoin();
                 } catch (Exception e) {
                     e.printStackTrace();
+                }
+            }
+        };
+        asyncTask.execute();
+    }
+
+    private void LoadListComment() {
+        final OkHttpClient httpClient = new OkHttpClient();
+        final Request request = new Request.Builder()
+                .url(API_ADDR + "tour/comment-list?tourId=" + tourId + "&pageIndex=1&pageSize=1000")
+                .addHeader("Authorization", ListTourActivity.token)
+                .build();
+
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... voids) {
+                try {
+                    Response response = httpClient.newCall(request).execute();
+
+                    if (!response.isSuccessful())
+                        return null;
+
+                    return response.body().string();
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+
+                if (s != null) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(s);
+                        commentArrayList = new Gson().fromJson(jsonObject.getString("commentList"), new TypeToken<ArrayList<Comment>>() {}.getType());
+                        rcvComments.setLayoutManager(new LinearLayoutManager(TourInfo.this));
+                        listCommentAdapter = new ListCommentAdapter(commentArrayList, TourInfo.this);
+                        rcvComments.setAdapter(listCommentAdapter);
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         };
@@ -787,9 +1041,9 @@ public class TourInfo extends AppCompatActivity {
 
                 if (s != null) {
                     try {
-                        JSONObject jsonObject = new JSONObject();
-                        reviewArrayList = new Gson().fromJson(jsonObject.getString("reviews"), new TypeToken<ArrayList<Comment>>() {}.getType());
-                        listReviewAdapter = new ListCommentAdapter(reviewArrayList, TourInfo.this);
+                        JSONObject jsonObject = new JSONObject(s);
+                        reviewArrayList = new Gson().fromJson(jsonObject.getString("reviewList"), new TypeToken<ArrayList<Review>>() {}.getType());
+                        listReviewAdapter = new ListReviewAdapter(reviewArrayList, TourInfo.this);
                         rcvListReview.setAdapter(listReviewAdapter);
                     }
                     catch (Exception e) {
@@ -833,25 +1087,14 @@ public class TourInfo extends AppCompatActivity {
                         JSONObject jsonObject = new JSONObject(s);
                         pointStatsArrayList = new Gson().fromJson(jsonObject.getString("pointStats"), new TypeToken<ArrayList<PointStats>>() {}.getType());
 
-                        int ratingPoint = 0;
+                        float ratingPoint = 0;
                         int totalReview = 0;
                         for (int i = 0; i < pointStatsArrayList.size(); i++) {
                             ratingPoint = ratingPoint + pointStatsArrayList.get(i).point * pointStatsArrayList.get(i).total;
                             totalReview = totalReview + pointStatsArrayList.get(i).total;
                         }
                         ratingPoint = ratingPoint / totalReview;
-
-                        if (ratingPoint >= 1)
-                            imvOneStar.setImageResource(R.drawable.orange_star_icon);
-                        if (ratingPoint >= 2)
-                            imvTwoStar.setImageResource(R.drawable.orange_star_icon);
-                        if (ratingPoint >= 3)
-                            imvThreeStar.setImageResource(R.drawable.orange_star_icon);
-                        if (ratingPoint >= 4)
-                            imvFourStar.setImageResource(R.drawable.orange_star_icon);
-                        if (ratingPoint == 5)
-                            imvFiveStar.setImageResource(R.drawable.orange_star_icon);
-
+                        rtbGetStar.setRating(ratingPoint);
                     }
                     catch (Exception e) {
                         e.printStackTrace();
@@ -870,28 +1113,14 @@ public class TourInfo extends AppCompatActivity {
         }else if (rltReview.getVisibility() == View.VISIBLE) {
             rltReview.setVisibility(View.GONE);
             rltTourInfo.setVisibility(View.VISIBLE);
+            edtContentReview.setText("");
+            rtbSendStar.setRating(0);
             LoadListReview();
             LoadPointReviewRating();
-        }else
+        } else if (scvUpdateInfo.getVisibility() == View.VISIBLE) {
+            scvUpdateInfo.setVisibility(View.GONE);
+            rltTourInfo.setVisibility(View.VISIBLE);
+        } else
             super.onBackPressed();
-    }
-
-    private void setStarInReview(Boolean oneSelected, Boolean twoSelected, Boolean threeSelected, Boolean fourSelected, Boolean fiveSelected) {
-        imgOneStar.setImageResource(R.drawable.white_star_icon);
-        imgTwoStar.setImageResource(R.drawable.white_star_icon);
-        imgThreeStar.setImageResource(R.drawable.white_star_icon);
-        imgFourStar.setImageResource(R.drawable.white_star_icon);
-        imgFiveStar.setImageResource(R.drawable.white_star_icon);
-
-        if (oneSelected)
-            imgOneStar.setImageResource(R.drawable.orange_star_icon);
-        if (twoSelected)
-            imgTwoStar.setImageResource(R.drawable.orange_star_icon);
-        if (threeSelected)
-            imgThreeStar.setImageResource(R.drawable.orange_star_icon);
-        if (fourSelected)
-            imgFourStar.setImageResource(R.drawable.orange_star_icon);
-        if (fiveSelected)
-            imgFiveStar.setImageResource(R.drawable.orange_star_icon);
     }
 }

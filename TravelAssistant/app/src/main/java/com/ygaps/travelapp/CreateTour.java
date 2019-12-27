@@ -149,7 +149,6 @@ public class CreateTour extends AppCompatActivity {
                     Date date = sdf.parse(dateInString);
                     assert date != null;
                     millis_start = new Long(date.getTime() + 25200000);
-                    millis_end = millis_start;
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }

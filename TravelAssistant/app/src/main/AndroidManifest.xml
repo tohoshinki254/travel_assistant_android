@@ -8,10 +8,9 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.STORAGE"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -20,25 +19,25 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-
         android:usesCleartextTraffic="true">
+        <activity android:name=".StopPointInfo"
+            android:label="Stop Point Information"
+            android:theme="@style/AppTheme" />
         <activity
-            android:name="com.ygaps.travelapp.TourInfo"
-            android:theme="@style/AppTheme"
-            android:label="Tour Information"></activity>
-        <activity android:name="com.ygaps.travelapp.Map"></activity>
-
-        <activity android:name="com.ygaps.travelapp.ChatActivity"
-            android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustResize">
-
-        </activity>
+            android:name=".TourInfo"
+            android:label="Tour Information"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".Map" />
         <activity
-            android:name="com.ygaps.travelapp.ListStopPoint"
+            android:name=".ChatActivity"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustResize"></activity>
+        <activity
+            android:name=".ListStopPoint"
             android:label="@string/list_stop_point_label"
             android:theme="@style/AppTheme" />
         <activity
-            android:name="com.ygaps.travelapp.CreateTour"
+            android:name=".CreateTour"
             android:label="@string/create_tour_str"
             android:theme="@style/AppTheme" />
         <!--
@@ -54,11 +53,11 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name="com.ygaps.travelapp.StopPointMap"
+            android:name=".StopPointMap"
             android:label="@string/title_activity_stop_point_map"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name="com.ygaps.travelapp.ListTourActivity"
+            android:name=".ListTourActivity"
             android:label="@string/list_tour"
             android:theme="@style/AppTheme">
             <meta-data
@@ -66,7 +65,7 @@
                 android:value="com.ygaps.travelapp.MainActivity" />
         </activity>
         <activity
-            android:name="com.ygaps.travelapp.FotgotPasswordActivity"
+            android:name=".FotgotPasswordActivity"
             android:label="@string/forgot_password"
             android:theme="@style/AppTheme">
             <meta-data
@@ -74,7 +73,7 @@
                 android:value="com.ygaps.travelapp.MainActivity" />
         </activity>
         <activity
-            android:name="com.ygaps.travelapp.RegisterActivity"
+            android:name=".RegisterActivity"
             android:label="@string/sign_up"
             android:theme="@style/AppTheme">
             <meta-data
@@ -82,7 +81,7 @@
                 android:value="com.ygaps.travelapp.MainActivity" />
         </activity>
         <activity
-            android:name="com.ygaps.travelapp.MainActivity"
+            android:name=".MainActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -111,11 +110,13 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <service android:name="com.ygaps.travelapp.FireBaseService"
-            android:exported="false" >
+
+        <service
+            android:name=".FireBaseService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
         <service android:name=".ReplyService" />

@@ -208,6 +208,6 @@
     <string name="IdTitle">ID: </string>
     <string name="editProfile">Edit Profile</string>
     <string name="logout">Logout</string>
-    <string name="invitationTitle" ><strong>You have a new invitation!!</strong></string>
+    <string name="invitationTitle"><strong>You have a new invitation!!</strong></string>
     <string name="total">Total: </string>
 </resources>

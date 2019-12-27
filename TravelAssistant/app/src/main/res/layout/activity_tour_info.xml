@@ -110,9 +110,6 @@
                         android:layout_marginStart="5dp"/>
                 </LinearLayout>
 
-
-
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
@@ -135,10 +132,23 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/updateTourInfoClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Update Tour Info"
+                android:textStyle="italic"
+                android:textSize="17sp"
+                android:layout_below="@id/tourInfo"
+                android:layout_marginTop="5dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:clickable="true"/>
+
+            <TextView
                 android:id="@+id/showListStopPoint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/tourInfo"
+                android:layout_below="@id/updateTourInfoClick"
                 android:layout_marginTop="15dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
@@ -164,77 +174,105 @@
                 android:textColor="@color/colorOrange"
                 android:clickable="true"/>
 
-            <ImageButton
-                android:id="@+id/reviewImageButton"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/review_icon"
-                android:background="@drawable/circle_image_button"
+            <LinearLayout
+                android:id="@+id/functionField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:layout_below="@id/showListMember"
-                android:layout_toStartOf="@id/audioImageButton"
-                android:layout_margin="9dp"
-                android:visibility="visible"/>
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp">
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center">
+                    <ImageButton
+                        android:id="@+id/reviewImageButton"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/review_icon"
+                        android:background="@drawable/circle_image_button"
+                        android:visibility="visible"/>
+                </RelativeLayout>
 
-            <ImageButton
-                android:id="@+id/commentImageButton"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/comment_icon"
-                android:background="@drawable/circle_image_button"
-                android:layout_below="@id/showListMember"
-                android:layout_toStartOf="@id/reviewImageButton"
-                android:layout_margin="9dp"
-                android:visibility="visible"/>
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center">
+                    <ImageButton
+                        android:id="@+id/commentImageButton"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/comment_icon"
+                        android:background="@drawable/circle_image_button"
+                        android:visibility="visible"/>
+                </RelativeLayout>
 
-            <ImageButton
-                android:id="@+id/followImageButton"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/follow_icon"
-                android:background="@drawable/circle_image_button"
-                android:layout_below="@id/showListMember"
-                android:layout_toStartOf="@id/chatImageButton"
-                android:layout_margin="9dp"
-                android:visibility="visible"/>
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center">
+                    <ImageButton
+                        android:id="@+id/followImageButton"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/follow_icon"
+                        android:background="@drawable/circle_image_button"
+                        android:visibility="visible"/>
+                </RelativeLayout>
 
-            <ImageButton
-                android:id="@+id/chatImageButton"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/chat_icon"
-                android:background="@drawable/circle_image_button"
-                android:layout_below="@id/showListMember"
-                android:layout_toStartOf="@id/commentImageButton"
-                android:layout_margin="9dp"
-                android:visibility="visible"/>
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center">
+                    <ImageButton
+                        android:id="@+id/chatImageButton"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/chat_icon"
+                        android:background="@drawable/circle_image_button"
+                        android:visibility="visible"/>
+                </RelativeLayout>
 
-            <ImageButton
-                android:id="@+id/audioImageButton"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/audio_icon"
-                android:background="@drawable/circle_image_button"
-                android:layout_below="@id/showListMember"
-                android:layout_toStartOf="@id/inviteImageButton"
-                android:layout_margin="9dp"
-                android:visibility="visible"/>
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center">
+                    <ImageButton
+                        android:id="@+id/audioImageButton"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/audio_icon"
+                        android:background="@drawable/circle_image_button"
+                        android:visibility="visible"/>
+                </RelativeLayout>
 
-            <ImageButton
-                android:id="@+id/inviteImageButton"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/add_member_icon"
-                android:background="@drawable/circle_image_button"
-                android:layout_below="@id/showListMember"
-                android:layout_alignParentEnd="true"
-                android:layout_margin="9dp"
-                android:visibility="visible"/>
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center">
+                    <ImageButton
+                        android:id="@+id/inviteImageButton"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/add_member_icon"
+                        android:background="@drawable/circle_image_button"
+                        android:visibility="visible"/>
+                </RelativeLayout>
+            </LinearLayout>
 
             <RelativeLayout
                 android:id="@+id/joinTourField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/audioImageButton"
+                android:layout_below="@id/functionField"
                 android:layout_marginBottom="15dp">
 
                 <TextView
@@ -262,64 +300,23 @@
                     android:visibility="invisible"/>
 
             </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/ratedPointField"
+            
+            <RatingBar
+                android:id="@+id/ratingStar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:numStars="5"
+                android:saveEnabled="true"
                 android:layout_below="@id/joinTourField"
-                android:layout_centerHorizontal="true">
-
-                <ImageView
-                    android:id="@+id/oneStarImageView"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:src="@drawable/white_star_icon"
-                    android:background="@android:color/transparent"
-                    android:layout_margin="5dp"/>
-
-                <ImageView
-                    android:id="@+id/twoStarImageView"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:src="@drawable/white_star_icon"
-                    android:background="@android:color/transparent"
-                    android:layout_toEndOf="@id/oneStarImageView"
-                    android:layout_margin="5dp" />
-
-                <ImageView
-                    android:id="@+id/threeStarImageView"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:src="@drawable/white_star_icon"
-                    android:background="@android:color/transparent"
-                    android:layout_toEndOf="@id/twoStarImageView"
-                    android:layout_margin="5dp" />
-
-                <ImageView
-                    android:id="@+id/fourStarImageView"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:src="@drawable/white_star_icon"
-                    android:background="@android:color/transparent"
-                    android:layout_toEndOf="@id/threeStarImageView"
-                    android:layout_margin="5dp" />
-
-                <ImageView
-                    android:id="@+id/fiveStarImageView"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:src="@drawable/white_star_icon"
-                    android:background="@android:color/transparent"
-                    android:layout_toEndOf="@id/fourStarImageView"
-                    android:layout_margin="5dp" />
-            </RelativeLayout>
+                android:layout_centerHorizontal="true"
+                style="@style/CustomRatingBar"
+                android:isIndicator="true"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rcvListReview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/ratedPointField"
+                android:layout_below="@id/ratingStar"
                 android:layout_margin="7dp"/>
         </RelativeLayout>
     </ScrollView>
@@ -388,64 +385,21 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"/>
 
-        <RelativeLayout
-            android:id="@+id/starField"
+        <RatingBar
+            android:id="@+id/ratingFieldReviewActivity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/reviewTourActivityTitle"
+            android:layout_marginTop="30dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="40dp"
-            android:layout_below="@id/reviewTourActivityTitle">
-
-            <ImageButton
-                android:id="@+id/oneStarImageButton"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/white_star_icon"
-                android:background="@android:color/transparent"
-                android:layout_margin="5dp" />
-
-            <ImageButton
-                android:id="@+id/twoStarImageButton"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/white_star_icon"
-                android:background="@android:color/transparent"
-                android:layout_toEndOf="@id/oneStarImageButton"
-                android:layout_margin="5dp" />
-
-            <ImageButton
-                android:id="@+id/threeStarImageButton"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/white_star_icon"
-                android:layout_margin="5dp"
-                android:background="@android:color/transparent"
-                android:layout_toEndOf="@id/twoStarImageButton" />
-
-            <ImageButton
-                android:id="@+id/fourStarImageButton"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/white_star_icon"
-                android:background="@android:color/transparent"
-                android:layout_toEndOf="@id/threeStarImageButton"
-                android:layout_margin="5dp" />
-
-            <ImageButton
-                android:id="@+id/fiveStarImageButton"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/white_star_icon"
-                android:background="@android:color/transparent"
-                android:layout_toEndOf="@id/fourStarImageButton"
-                android:layout_margin="5dp" />
-        </RelativeLayout>
+            android:numStars="5"
+            style="@style/CustomRatingBar" />
 
         <LinearLayout
             android:id="@+id/inputReviewField"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:layout_below="@id/starField"
+            android:layout_below="@id/ratingFieldReviewActivity"
             android:background="@drawable/border_edit_text"
             android:layout_marginTop="30dp"
             android:layout_marginLeft="10dp"
@@ -472,5 +426,359 @@
             android:layout_centerHorizontal="true"/>
 
     </RelativeLayout>
+
+    <ScrollView
+        android:id="@+id/updateTourInfoActivity"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp">
+
+            <TextView
+                android:id="@+id/updateTourInfoTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Update Tour Info"
+                android:textSize="20sp"
+                android:layout_marginTop="10dp"
+                android:layout_centerHorizontal="true"/>
+
+            <TextView
+                android:id="@+id/tourNameLabelUpdateInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tour_name_label"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorGray"
+                android:layout_marginTop="10dp"
+                android:layout_below="@id/updateTourInfoTitle"/>
+
+            <EditText
+                android:id="@+id/inputTourNameForUpdate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tourNameLabelUpdateInfo"
+                android:background="@drawable/border_edit_text"
+                android:textSize="20sp"
+                android:inputType="text"
+                android:padding="10sp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp" />
+
+            <LinearLayout
+                android:id="@+id/startDateUpdate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@id/inputTourNameForUpdate">
+                <RelativeLayout
+                    android:id="@+id/startDateFieldUpdate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginRight="30dp">
+                    <TextView
+                        android:id="@+id/startDateLabelUpdate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/start_date_label"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorGray" />
+                    <EditText
+                        android:id="@+id/inputStaDateUpdate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/startDateLabelUpdate"
+                        android:background="@drawable/border_edit_text_rectangle"
+                        android:textSize="15sp"
+                        android:textColor="@color/colorBlack"
+                        android:inputType="datetime"
+                        android:padding="10sp"
+                        android:hint="@string/select_date_hint"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:enabled="false"/>
+                    <ImageButton
+                        android:id="@+id/startDateSelectUpdate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/calendar_icon"
+                        android:layout_toEndOf="@id/inputStaDateUpdate"
+                        android:background="@color/colorWhite"
+                        android:layout_marginTop="22dp"
+                        android:layout_marginLeft="4dp"/>
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="30dp">
+                    <TextView
+                        android:id="@+id/endDayLabelUpdate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/end_day_label"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorGray" />
+                    <EditText
+                        android:id="@+id/inputEndDateUpdate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/endDayLabelUpdate"
+                        android:background="@drawable/border_edit_text_rectangle"
+                        android:textSize="15sp"
+                        android:textColor="@color/colorBlack"
+                        android:inputType="datetime"
+                        android:padding="10sp"
+                        android:hint="@string/select_date_hint"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:enabled="false"/>
+                    <ImageButton
+                        android:id="@+id/EndDateSelectUpdate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/calendar_icon"
+                        android:layout_toEndOf="@id/inputEndDateUpdate"
+                        android:background="@color/colorWhite"
+                        android:layout_marginTop="22dp"
+                        android:layout_marginLeft="4dp"/>
+                </RelativeLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/startPlaceLabelUpdate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/start_place_label"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorGray"
+                android:layout_below="@id/startDateUpdate" />
+
+            <TextView
+                android:id="@+id/inputStartPlaceUpdate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/startPlaceLabelUpdate"
+                android:background="@drawable/border_edit_text"
+                android:textSize="20sp"
+                android:padding="10sp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"
+                android:maxLines="1"/>
+
+            <TextView
+                android:id="@+id/endPlaceLabelUpdate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/end_place_label"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorGray"
+                android:layout_below="@id/inputStartPlaceUpdate" />
+
+            <TextView
+                android:id="@+id/inputEndPlaceUpdate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/endPlaceLabelUpdate"
+                android:background="@drawable/border_edit_text"
+                android:textSize="20sp"
+                android:padding="10sp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"
+                android:maxLines="1"/>
+
+            <Button
+                android:id="@+id/choosePlaceButtonUpdate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/inputEndPlaceUpdate"
+                android:text="@string/hint_to_select_start_end_place"
+                android:textSize="20sp"
+                android:textAllCaps="false"
+                android:textColor="@color/colorWhite"
+                android:background="@drawable/border_button"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:drawableStart="@mipmap/map_icon8"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"/>
+
+            <LinearLayout
+                android:id="@+id/adultsChildrenUpdate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@id/choosePlaceButtonUpdate">
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginRight="30dp">
+                    <TextView
+                        android:id="@+id/adultsLabelUpdate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/adults_label"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorGray" />
+
+                    <EditText
+                        android:id="@+id/inputAdultsUpdate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/adultsLabelUpdate"
+                        android:inputType="number"
+                        android:background="@drawable/border_edit_text"
+                        android:textSize="20sp"
+                        android:padding="10sp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="30dp">
+                    <TextView
+                        android:id="@+id/childrenLabelUpdate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/children_label"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorGray" />
+
+                    <EditText
+                        android:id="@+id/inputChildrenUpdate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/childrenLabelUpdate"
+                        android:inputType="number"
+                        android:background="@drawable/border_edit_text"
+                        android:textSize="20sp"
+                        android:padding="10sp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"/>
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/minMaxCostUpdate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@id/adultsChildrenUpdate">
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginRight="30dp">
+                    <TextView
+                        android:id="@+id/minCostLabelUpdate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/min_cost_label"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorGray" />
+
+
+                    <EditText
+                        android:id="@+id/inputMinCostUpdate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/minCostLabelUpdate"
+                        android:inputType="number"
+                        android:background="@drawable/border_edit_text"
+                        android:textSize="20sp"
+                        android:padding="10sp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"/>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="30dp">
+                    <TextView
+                        android:id="@+id/maxCostLabelUpdate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/max_cost_label"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorGray" />
+
+                    <EditText
+                        android:id="@+id/inputMaxCostUpdate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/maxCostLabelUpdate"
+                        android:inputType="number"
+                        android:background="@drawable/border_edit_text"
+                        android:textSize="20sp"
+                        android:padding="10sp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"/>
+                </RelativeLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/selectStatusTourLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Status"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorGray"
+                android:layout_below="@+id/minMaxCostUpdate"/>
+
+            <Spinner
+                android:id="@+id/selectStatusTour"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_below="@id/selectStatusTourLabel"
+                android:layout_marginTop="5dp" />
+
+            <RadioButton
+                android:id="@+id/privateTripButtonUpdate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_button_create_tour"
+                android:layout_below="@id/selectStatusTour"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorGray"
+                android:layout_marginTop="10dp" />
+
+            <Button
+                android:id="@+id/updateInfoTourButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/privateTripButtonUpdate"
+                android:text="Update"
+                android:textSize="20sp"
+                android:textAllCaps="false"
+                android:textColor="@color/colorWhite"
+                android:background="@drawable/border_button"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="40dp"/>
+
+        </RelativeLayout>
+    </ScrollView>
 
 </RelativeLayout>
