@@ -62,12 +62,13 @@ import okhttp3.Response;
 import static com.ygaps.travelapp.ListStopPoint.JSON;
 import static com.ygaps.travelapp.RegisterActivity.API_ADDR;
 
-public class ListTourActivity extends AppCompatActivity implements TourAdapter.onItemClickListener {
+public class ListTourActivity extends AppCompatActivity implements TourAdapter.onItemClickListener, ListStopPointAdapter.onStopPointClickListener {
 
 
     RecyclerView rcvListTour;
     TourAdapter tourAdapter;
     TourAdapter userTourAdapter;
+    ListStopPointAdapter stopPointAdapter;
     InvitationAdapter invitationAdapter;
     EditText edtSearch;
     TextView tvId;
@@ -78,17 +79,21 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
     TextView tvUpdatePassword;
     ArrayList <Tour> tourArrayList;
     ArrayList <Tour> userTourArrayList;
+    ArrayList <StopPoint> stopPointArrayList;
     ArrayList <InvitationModel> invitationModelArrayList;
     ImageButton imbCreate;
     ImageButton imbHistory;
     ImageButton imbMenu;
     ImageButton imbSetting;
     ImageButton imbNoti;
+    ImageButton imbExplore;
     int currentPage = 1;
+    int currentPageSp = 1;
     RelativeLayout layouSetting;
     User userInfo;
     Button btnLogout;
     int totalTours;
+    int totalSP;
     int totalMytour;
     LinearLayout layoutTotal;
     int statusTab = 0;
@@ -110,7 +115,7 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
         else {
             registerFireBase(token);
             setStatusTab(statusTab);
-            loadListTour(currentPage);
+            loadListTour(currentPage, "");
         }
         loadUserInfo();
         setEvent();
@@ -227,23 +232,19 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
         return true;
     }
 
-    private void loadListTour(int pageNum)
+    private void loadListTour(int pageNum, String searchKey)
     {
         final OkHttpClient httpClient = new OkHttpClient();
         final Request request = new Request.Builder()
-                .url(MainActivity.API_ADDR + "tour/list?rowPerPage=20&pageNum=" + pageNum)
+                .url(MainActivity.API_ADDR + "tour/search?searchKey=" + searchKey + "&pageSize=30&pageIndex=" + pageNum)
                 .addHeader("Authorization",token)
                 .build();
 
-        final ProgressDialog dialog = new ProgressDialog(ListTourActivity.this);
-        dialog.setTitle("Load more");
-        dialog.setMessage("Please wait ...");
 
         @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... voids) {
                 try {
-                    publishProgress();
                     Response response = httpClient.newCall(request).execute();
                     if(!response.isSuccessful())
                         return null;
@@ -269,21 +270,20 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
                     final JsonAdapter<List<Tour>> jsonAdapter = moshi.adapter(tourType);
                     ArrayList <Tour> temp = (ArrayList<Tour>) jsonAdapter.fromJson(s);
                     int currentPosition = tourArrayList.size() - 1;
+
+                    if (currentPage == 1)
+                        tourArrayList.clear();
+
                     appendListTour(temp);
                     totalTours = jsonObject.getInt("total");
                     tvTotal.setText("" + tourArrayList.size() + "/" + totalTours + " tours");
                     tourAdapter = new TourAdapter(tourArrayList, ListTourActivity.this, ListTourActivity.this);
                     rcvListTour.setAdapter(tourAdapter);
-                    rcvListTour.scrollToPosition(currentPosition);
-                    dialog.dismiss();
+                    if (currentPage > 1)
+                        rcvListTour.scrollToPosition(currentPosition);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
-
-            @Override
-            protected void onProgressUpdate(Void... values) {
-                dialog.show();
             }
         };
 
@@ -370,7 +370,14 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
                 {
                     if (statusTab == 0)
                     {
-                        tourAdapter.getFilter().filter(s);
+                        currentPage = 1;
+                        loadListTour(currentPage, s.toString());
+                    }
+                    else{
+                        if (statusTab == 4){
+                            currentPageSp = 1;
+                            loadStopPointsInSystem(currentPageSp, s.toString());
+                        }
                     }
                 }
             }
@@ -396,7 +403,8 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
                 statusTab = 0;
                 setStatusTab(statusTab);
                 setTitle("List Tours");
-                loadListTour(currentPage);
+                currentPage = 1;
+                loadListTour(currentPage, edtSearch.getText().toString());
             }
         });
 
@@ -412,10 +420,16 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
                         .addHeader("Authorization",token)
                         .build();
 
+
+                final ProgressDialog dialog = new ProgressDialog(ListTourActivity.this);
+                dialog.setTitle("Loading");
+                dialog.setMessage("Please wait ...");
+
                 @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
                     @Override
                     protected String doInBackground(Void... voids) {
                         try {
+                            publishProgress();
                             Response response = httpClient.newCall(request).execute();
                             if(!response.isSuccessful())
                                 return null;
@@ -444,9 +458,15 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
                             userTourArrayList = (ArrayList<Tour>) jsonAdapter.fromJson(s);
                             userTourAdapter = new TourAdapter(userTourArrayList, ListTourActivity.this, ListTourActivity.this);
                             rcvListTour.setAdapter(userTourAdapter);
+                            dialog.dismiss();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+                    }
+
+                    @Override
+                    protected void onProgressUpdate(Void... values) {
+                        dialog.show();
                     }
                 };
 
@@ -471,6 +491,16 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
             }
         });
 
+        imbExplore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                statusTab = 4;
+                setStatusTab(statusTab);
+                setTitle("Stop Points");
+                currentPageSp = 1;
+                loadStopPointsInSystem(currentPageSp, edtSearch.getText().toString() );
+            }
+        });
         rcvListTour.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -480,8 +510,19 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
 
                     if (statusTab == 0)
                     {
+                        if (totalTours == tourArrayList.size())
+                            return;
                         currentPage++;
-                        loadListTour(currentPage);
+                        loadListTour(currentPage, edtSearch.getText().toString());
+                    }
+                    else{
+                        if (statusTab == 4){
+                            if (totalSP == stopPointArrayList.size())
+                                return;
+
+                            currentPageSp++;
+                            loadStopPointsInSystem(currentPageSp, edtSearch.getText().toString());
+                        }
                     }
                 }
             }
@@ -525,7 +566,8 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
         btnLogout = (Button)findViewById(R.id.btnLogout);
         rememberMeSharedPreferences = getSharedPreferences("Remembered_login_info",MODE_PRIVATE);
         layoutTotal = (LinearLayout) findViewById(R.id.layoutTotal);
-
+        imbExplore = (ImageButton) findViewById(R.id.imgbExplore);
+        stopPointArrayList = new ArrayList<>();
     }
 
     @Override
@@ -555,6 +597,8 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
         imbSetting.setImageResource(R.drawable.setting_icon);
         imbHistory.setImageResource(R.drawable.time_icon);
         imbMenu.setImageResource(R.drawable.menu_icon);
+        imbExplore.setImageResource(R.drawable.explore_off_icon);
+
 
         switch (s)
         {
@@ -586,9 +630,73 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
                 layoutTotal.setVisibility(View.GONE);
                 layouSetting.setVisibility(View.VISIBLE);
                 break;
+            case 4:
+                imbExplore.setImageResource(R.drawable.explore_on_icon);
+                layouSetting.setVisibility(View.GONE);
+                rcvListTour.setVisibility(View.VISIBLE);
+                layoutTotal.setVisibility(View.VISIBLE);
+                edtSearch.setVisibility(View.VISIBLE);
+                break;
         }
     }
 
+    private void loadStopPointsInSystem(int pageNum, String searchKey){
+        final OkHttpClient httpClient = new OkHttpClient();
+        final Request request = new Request.Builder()
+                .url(MainActivity.API_ADDR + "tour/search/service?searchKey=" + searchKey + "&pageSize=30&pageIndex=" + pageNum)
+                .addHeader("Authorization", token)
+                .build();
+
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... voids) {
+                Response response = null;
+                try {
+                    response = httpClient.newCall(request).execute();
+                    if (!response.isSuccessful())
+                        return null;
+
+                    return response.body().string();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                if (s != null){
+                    try {
+                        JSONObject jsonObject = new JSONObject(s);
+                        String stoppoints = jsonObject.getString("stopPoints");
+                        ArrayList <StopPoint> temp = new Gson().fromJson(stoppoints,new TypeToken<ArrayList<StopPoint>>(){}.getType());
+
+                        int currentPosition = stopPointArrayList.size() - 1;
+
+                        if (currentPageSp == 1)
+                            stopPointArrayList.clear();
+
+                        appendListStopPoints(temp);
+                        totalSP = jsonObject.getInt("total");
+                        tvTotal.setText("" + stopPointArrayList.size() + "/" + totalSP + " Stop points");
+                        stopPointAdapter = new ListStopPointAdapter(stopPointArrayList, ListTourActivity.this, ListTourActivity.this);
+                        rcvListTour.setAdapter(stopPointAdapter);
+                        if (currentPageSp > 1)
+                        {
+                            rcvListTour.scrollToPosition(currentPosition);
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        };
+        asyncTask.execute();
+
+    }
 
     private void registerFireBase(final String userToken){
         FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
@@ -927,5 +1035,14 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
     private void appendListTour(ArrayList <Tour> ar){
 
         tourArrayList.addAll(ar);
+    }
+
+    private void appendListStopPoints(ArrayList <StopPoint> ar){
+        stopPointArrayList.addAll(ar);
+    }
+
+    @Override
+    public void onStopPointClick(int i) {
+        Toast.makeText(getApplicationContext(), "" + i, Toast.LENGTH_SHORT).show();
     }
 }

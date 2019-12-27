@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -21,8 +22,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
@@ -46,6 +50,7 @@ import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.maps.android.PolyUtil;
@@ -61,8 +66,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class FollowMap extends FragmentActivity implements OnMapReadyCallback {
@@ -72,23 +79,54 @@ public class FollowMap extends FragmentActivity implements OnMapReadyCallback {
     private boolean mLocationPermissionGranted = false;
     private ArrayList<MemberLocaltion> memberLocaltions;
     private ArrayList<Marker> memberMarkers;
-    private LocationCallback locationCallback;
     public static int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     final static String keyAPI = "AIzaSyDA0nzuUp9-hXSMcNliQrzKmlbFudlRQNQ";
     final static String keyAPIHTTP = "AIzaSyC6HrlfZJ18_N9kZBKKnqXZCCfVGqqff74";
+    boolean warningSpeedOn = false;
+    int mSpeedLimit;
+    ImageButton imgWarningSpeed;
+    ImageButton imgbMessage;
 
     private BroadcastReceiver dataMessage =  new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getBooleanExtra("isReceived", false))
             {
-                String data = intent.getStringExtra("data");
-                memberLocaltions = new Gson().fromJson(data,new TypeToken<ArrayList<MemberLocaltion>>(){}.getType());
-                if (mMap != null) {
-                    try {
-                        updateMemberMarkers();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                if (intent.getBooleanExtra("isWarningSpeed", false))
+                {
+                    double Lat = Double.parseDouble(intent.getStringExtra("lat"));
+                    double Long = Double.parseDouble(intent.getStringExtra("long"));
+                    LatLng latLng = new LatLng(Lat, Long);
+                    String speedLimit = intent.getStringExtra("speedLimit");
+                    if (intent.getStringExtra("isOff").equals("1"))
+                    {
+                        mMap.addMarker(new MarkerOptions().position(latLng).title( "Limit " + speedLimit + " km/h removed")
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.speed_warning_map)));
+                    }
+                    else
+                    {
+                        mMap.addMarker(new MarkerOptions().position(latLng).title( speedLimit + " km/h")
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.speed_warning_off)));
+                    }
+                }
+                else {
+                    if (intent.getBooleanExtra("isWarningText", false))
+                    {
+                        String senderId = intent.getStringExtra("senderId");
+                        String content = intent.getStringExtra("content");
+                        displayMessageReceive(senderId, content);
+                    }
+                    else {
+                        String data = intent.getStringExtra("data");
+                        memberLocaltions = new Gson().fromJson(data, new TypeToken<ArrayList<MemberLocaltion>>() {
+                        }.getType());
+                        if (mMap != null) {
+                            try {
+                                updateMemberMarkers();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 }
             }
@@ -180,6 +218,48 @@ public class FollowMap extends FragmentActivity implements OnMapReadyCallback {
                 getLocationPermission();
                 updateLocationUI();
                 getDeviceLocation();
+            }
+        });
+
+        imgWarningSpeed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (warningSpeedOn)
+                {
+                    warningSpeedOn = false;
+                    setStatusWarningSpeed();
+                    Task locationResult = mFusedLocationProviderClient.getLastLocation();
+                    locationResult.addOnCompleteListener( new OnCompleteListener() {
+                        @Override
+                        public void onComplete(@NonNull Task task) {
+                            if (task.isSuccessful()) {
+                                String speedLimit = "" + mSpeedLimit;
+                                Location myLocation = (Location) task.getResult();
+                                LatLng latLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
+                                if (!warningSpeedOn) {
+                                    mMap.addMarker(new MarkerOptions().position(latLng).title("Limit " + speedLimit + " km/h removed")
+                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.speed_warning_map)));
+                                }
+                                sendSpeedWarning(myLocation, speedLimit, !warningSpeedOn);
+                            } else {
+
+                            }
+                        }
+                    });
+
+                }
+                else {
+
+                    displayInputSpeedPopUp();
+                }
+            }
+        });
+
+
+        imgbMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                displaySendMessagePopup();
             }
         });
     }
@@ -330,7 +410,6 @@ public class FollowMap extends FragmentActivity implements OnMapReadyCallback {
                     @Override
                     public void onComplete(@NonNull Task task) {
                         if (task.isSuccessful()) {
-                            // Set the map's camera position to the current location of the device.
                             Location myLocation = (Location) task.getResult();
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                     new LatLng(myLocation.getLatitude(),
@@ -464,6 +543,225 @@ public class FollowMap extends FragmentActivity implements OnMapReadyCallback {
 
 
     }
+    private void displayInputSpeedPopUp(){
+        final Dialog dialog = new Dialog(FollowMap.this);
+        dialog.setContentView(R.layout.input_speed_warning);
+
+        final EditText edtInputSpeed = (EditText) dialog.findViewById(R.id.inputSpeedEdt);
+        Button btnSendSpeed = (Button) dialog.findViewById(R.id.sendSpeed);
+        ImageButton imgExitSpeedDialog = (ImageButton) dialog.findViewById(R.id.btnExit);
+
+        imgExitSpeedDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        btnSendSpeed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseMessaging.getInstance().subscribeToTopic("tour-id-" + tourId)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()){
+                                    final String speedLimit = edtInputSpeed.getText().toString();
+                                    if (speedLimit.length() == 0)
+                                    {
+                                        Toast.makeText(getApplicationContext(), "You must input the speed limit", Toast.LENGTH_SHORT).show();
+                                    }
+                                    else{
+                                        dialog.dismiss();
+                                        warningSpeedOn = true;
+                                        setStatusWarningSpeed();
+                                        mSpeedLimit = Integer.parseInt(speedLimit);
+                                        Task locationResult = mFusedLocationProviderClient.getLastLocation();
+                                        locationResult.addOnCompleteListener( new OnCompleteListener() {
+                                            @Override
+                                            public void onComplete(@NonNull Task task) {
+                                                if (task.isSuccessful()) {
+                                                    Location myLocation = (Location) task.getResult();
+                                                    LatLng latLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
+                                                    if (warningSpeedOn) {
+                                                        mMap.addMarker(new MarkerOptions().position(latLng).title(speedLimit + " km/h")
+                                                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.speed_warning_off)));
+                                                    }
+                                                    sendSpeedWarning(myLocation, speedLimit, !warningSpeedOn);
+                                                } else {
+
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+                        });
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void sendSpeedWarning(Location l, String limitValue, boolean isOff){
+        final OkHttpClient httpClient =  new OkHttpClient();
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("lat", l.getLatitude());
+            jsonObject.put("long", l.getLongitude());
+            jsonObject.put("tourId", tourId);
+            jsonObject.put("userId", userId);
+            jsonObject.put("notificationType", 3);
+            jsonObject.put("speed", Integer.parseInt(limitValue));
+
+            if (isOff)
+                jsonObject.put("note", "1");
+            else
+                jsonObject.put("note", "0");
+
+
+            RequestBody body = RequestBody.create(jsonObject.toString(), ListStopPoint.JSON);
+            final Request request = new Request.Builder()
+                    .url(MainActivity.API_ADDR + "tour/add/notification-on-road")
+                    .addHeader("Authorization", ListTourActivity.token)
+                    .post(body)
+                    .build();
+
+            @SuppressLint("StaticFieldLeak") AsyncTask <Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
+                @Override
+                protected String doInBackground(Void... voids) {
+                    try {
+                        Response response = httpClient.newCall(request).execute();
+
+                        if (!response.isSuccessful())
+                            return null;
+
+                        return response.body().string();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                }
+
+            };
+
+            asyncTask.execute();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    private void setStatusWarningSpeed(){
+        if (warningSpeedOn)
+            imgWarningSpeed.setImageResource(R.drawable.speed_on);
+        else
+            imgWarningSpeed.setImageResource(R.drawable.speed_off);
+    }
+    private void displayMessageReceive(String id, String content){
+        final Dialog dialog = new Dialog(FollowMap.this);
+        dialog.setContentView(R.layout.text_receive_popup);
+
+        TextView tvSenderId = (TextView) dialog.findViewById(R.id.tvUserId);
+        TextView tvContent = (TextView) dialog.findViewById(R.id.tvMessage);
+        Button btnOK = (Button) dialog.findViewById(R.id.okButton);
+
+        tvSenderId.setText("Member ID " + id + " : ");
+        tvContent.setText(content);
+
+        btnOK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+
+    }
+    private void displaySendMessagePopup(){
+        final Dialog dialog = new Dialog(FollowMap.this);
+        dialog.setContentView(R.layout.send_text_popup);
+
+        final EditText edtContent = (EditText) dialog.findViewById(R.id.contentEdt);
+        Button btnSend = (Button) dialog.findViewById(R.id.sendSpeed);
+        ImageButton imgbExit = (ImageButton) dialog.findViewById(R.id.btnExit_);
+
+        imgbExit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        btnSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                final String contetnt  = edtContent.getText().toString();
+                if (contetnt.length() == 0)
+                {
+                    Toast.makeText(getApplicationContext(), "You must input the content", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                FirebaseMessaging.getInstance().subscribeToTopic("tour-id-" + tourId)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful())
+                                {
+                                    dialog.dismiss();
+                                    sendMessageToMember(contetnt);
+                                }
+                            }
+                        });
+            }
+        });
+
+        dialog.show();
+
+    }
+
+    private void sendMessageToMember(String content){
+        final OkHttpClient httpClient = new OkHttpClient();
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("lat", 0);
+            jsonObject.put("long", 0);
+            jsonObject.put("tourId", tourId);
+            jsonObject.put("userId", userId);
+            jsonObject.put("notificationType", 2);
+            jsonObject.put("note", content);
+
+            RequestBody body = RequestBody.create(jsonObject.toString(), ListStopPoint.JSON);
+
+            final Request request = new Request.Builder()
+                    .url(MainActivity.API_ADDR + "tour/add/notification-on-road")
+                    .post(body)
+                    .addHeader("Authorization", ListTourActivity.token)
+                    .build();
+
+            @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
+                @Override
+                protected String doInBackground(Void... voids) {
+                    try {
+                        Response response = httpClient.newCall(request).execute();
+                        if (!response.isSuccessful())
+                            return null;
+
+                        return response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                }
+            };
+
+            asyncTask.execute();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
     private void setWidget()
     {
         stopPointArrayList = new ArrayList<StopPoint>();
@@ -473,5 +771,7 @@ public class FollowMap extends FragmentActivity implements OnMapReadyCallback {
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         imgbMyLocation = (ImageButton) findViewById(R.id.imgbMyLocationFollowMap);
         memberMarkers =  new ArrayList<Marker>();
+        imgWarningSpeed = (ImageButton) findViewById(R.id.imgbWarningSpeed);
+        imgbMessage = (ImageButton) findViewById(R.id.imgbMessageIcon);
     }
 }

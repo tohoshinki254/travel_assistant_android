@@ -17,10 +17,12 @@ import java.util.Date;
 public class ListStopPointAdapter extends RecyclerView.Adapter<ListStopPointAdapter.ListStopPointViewHolder> {
     private ArrayList<StopPoint> listStopPoint;
     private Context context;
+    private onStopPointClickListener mStopPointClickListener;
 
-    public  ListStopPointAdapter(ArrayList<StopPoint> stopPoints, Context context) {
+    public  ListStopPointAdapter(ArrayList<StopPoint> stopPoints, Context context, onStopPointClickListener stopPointClickListener) {
         this.listStopPoint = stopPoints;
         this.context = context;
+        this.mStopPointClickListener = stopPointClickListener;
     }
 
     @NonNull
@@ -29,20 +31,24 @@ public class ListStopPointAdapter extends RecyclerView.Adapter<ListStopPointAdap
 
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.stop_point_layout, parent, false);
-        return new ListStopPointViewHolder(itemView);
+        return new ListStopPointViewHolder(itemView, mStopPointClickListener);
     }
 
     public void onBindViewHolder(@NonNull ListStopPointViewHolder holder, int position) {
         StopPoint sp = listStopPoint.get(position);
+        String temp;
 
         holder.tvName.setText(sp.name);
-
-        DateFormat simple = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
-        Date dateArrive = new Date(sp.arrivalAt);
-        Date dateLeave = new Date(sp.leaveAt);
-        String temp = simple.format(dateArrive) + " - " + simple.format(dateLeave);
-        holder.tvCalendar.setText(temp);
-
+        if (sp.arrivalAt != null && sp.leaveAt != null) {
+            DateFormat simple = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
+            Date dateArrive = new Date(sp.arrivalAt);
+            Date dateLeave = new Date(sp.leaveAt);
+            temp = simple.format(dateArrive) + " - " + simple.format(dateLeave);
+            holder.tvCalendar.setText(temp);
+        }
+        else{
+            holder.tvCalendar.setText("Not Available");
+        }
         temp = "" + sp.address;
         holder.tvAddress.setText(temp);
 
@@ -64,13 +70,15 @@ public class ListStopPointAdapter extends RecyclerView.Adapter<ListStopPointAdap
         return listStopPoint.size();
     }
 
-    public class ListStopPointViewHolder extends RecyclerView.ViewHolder {
+    public class ListStopPointViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public TextView tvName;
         public TextView tvCalendar;
         public TextView tvAddress;
         public TextView tvMoney;
         public TextView tvService;
-        public ListStopPointViewHolder(@NonNull View itemView) {
+        public onStopPointClickListener stopPointClickListener;
+
+        public ListStopPointViewHolder(@NonNull View itemView, onStopPointClickListener stopPointClickListener) {
             super(itemView);
 
             tvName = (TextView) itemView.findViewById(R.id.tvName);
@@ -78,6 +86,17 @@ public class ListStopPointAdapter extends RecyclerView.Adapter<ListStopPointAdap
             tvAddress = (TextView) itemView.findViewById(R.id.tvAddress);
             tvMoney = (TextView) itemView.findViewById(R.id.tvMoney);
             tvService = (TextView) itemView.findViewById(R.id.tvService);
+            this.stopPointClickListener = stopPointClickListener;
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View v) {
+            stopPointClickListener.onStopPointClick(getAdapterPosition());
+        }
+    }
+
+    public interface onStopPointClickListener{
+        void onStopPointClick(int i);
     }
 }

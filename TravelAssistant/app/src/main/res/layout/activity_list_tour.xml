@@ -75,13 +75,13 @@
         android:layout_alignParentBottom="true"
         android:layout_above="@id/edtSearch"
         android:orientation="horizontal"
-        android:weightSum="6">
+        android:weightSum="7">
         <ImageButton
             android:id="@+id/imgbMenu"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="25dp"
-            android:layout_marginLeft="50dp"
+            android:layout_marginLeft="35dp"
             android:layout_marginTop="8dp"
             android:src="@drawable/menu_icon"
             android:scaleType="fitXY"
@@ -93,7 +93,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="25dp"
-            android:layout_marginLeft="65dp"
+            android:layout_marginLeft="54dp"
             android:layout_marginTop="8dp"
             android:adjustViewBounds="true"
             android:background="@android:color/transparent"
@@ -102,23 +102,37 @@
 
 
         <ImageButton
+            android:id="@+id/imgbExplore"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="25dp"
+            android:layout_marginLeft="54dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/explore_off_icon"
+            android:background="@android:color/transparent"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"/>
+
+        <ImageButton
             android:id="@+id/imgbBell"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="25dp"
-            android:layout_marginLeft="65dp"
+            android:layout_marginLeft="54dp"
             android:layout_marginTop="8dp"
             android:src="@drawable/bell_icon"
             android:background="@android:color/transparent"
             android:scaleType="fitXY"
             android:adjustViewBounds="true"/>
 
+
+
         <ImageButton
             android:id="@+id/imgbSetting"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="25dp"
-            android:layout_marginLeft="65dp"
+            android:layout_marginLeft="54dp"
             android:layout_marginTop="8dp"
             android:src="@drawable/setting_icon"
             android:background="@android:color/transparent"

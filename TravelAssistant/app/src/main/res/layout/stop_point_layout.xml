@@ -51,11 +51,12 @@
         android:layout_height="30dp"
         android:orientation="horizontal"
         android:layout_marginTop="4dp">
+
         <ImageView
-            android:layout_width="25dp"
+            android:layout_width="20dp"
             android:layout_height="match_parent"
-            android:src="@drawable/calendar_icon"
-            android:layout_marginStart="3dp"/>
+            android:layout_marginStart="3dp"
+            android:src="@drawable/calendar_icon" />
 
         <TextView
             android:id="@+id/tvCalendar"

@@ -56,7 +56,7 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.ygaps.travelapp.ListStopPoint.JSON;
 import static com.ygaps.travelapp.RegisterActivity.API_ADDR;
 
-public class TourInfo extends AppCompatActivity {
+public class TourInfo extends AppCompatActivity implements ListStopPointAdapter.onStopPointClickListener {
 
     public Dialog dialog;
     private RecyclerView rcvStopPoints;
@@ -471,7 +471,7 @@ public class TourInfo extends AppCompatActivity {
         ImageButton imgExitListStopPoint = (ImageButton) dialog.findViewById(R.id.list_stop_point_popup_exit_button);
         rcvStopPoints = (RecyclerView) dialog.findViewById(R.id.rcvListStopPoint);
         rcvStopPoints.setLayoutManager(new LinearLayoutManager(this));
-        listStopPointAdapter = new ListStopPointAdapter(stopPointArrayList, TourInfo.this);
+        listStopPointAdapter = new ListStopPointAdapter(stopPointArrayList, TourInfo.this, TourInfo.this);
         rcvStopPoints.setAdapter(listStopPointAdapter);
 
         imgExitListStopPoint.setOnClickListener(new View.OnClickListener() {
@@ -925,5 +925,10 @@ public class TourInfo extends AppCompatActivity {
         catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    @Override
+    public void onStopPointClick(int i) {
+
     }
 }

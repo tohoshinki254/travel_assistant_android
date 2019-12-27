@@ -25,7 +25,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class ListStopPoint extends AppCompatActivity {
+public class ListStopPoint extends AppCompatActivity implements ListStopPointAdapter.onStopPointClickListener {
 
     private ArrayList<StopPoint> listStopPoints;
     private ListStopPointAdapter listStopPointAdapter;
@@ -41,7 +41,7 @@ public class ListStopPoint extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         listStopPoints = bundle.getParcelableArrayList("list_stop_points");
-        listStopPointAdapter = new ListStopPointAdapter(getListStopPoints(listStopPoints), ListStopPoint.this);
+        listStopPointAdapter = new ListStopPointAdapter(getListStopPoints(listStopPoints), ListStopPoint.this, ListStopPoint.this);
         rcvListStopPoint.setAdapter(listStopPointAdapter);
 
 
@@ -118,6 +118,11 @@ public class ListStopPoint extends AppCompatActivity {
         rcvListStopPoint = (RecyclerView)findViewById(R.id.rcvListStopPoint);
         rcvListStopPoint.setLayoutManager(new LinearLayoutManager(this));
         listStopPoints = new ArrayList<>();
+
+    }
+
+    @Override
+    public void onStopPointClick(int i) {
 
     }
 }

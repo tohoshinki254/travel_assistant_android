@@ -31,16 +31,37 @@ public class FireBaseService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         Map data = remoteMessage.getData();
         String type = (String) data.get("type");
+        SharedPreferences sharedPreferences = getSharedPreferences("tokenShare", MODE_PRIVATE);
+        int userId = sharedPreferences.getInt("userID", -1);
+        String senderId = (String) data.get("userId");
+
+        Log.d("XXX", "XXX: " + data.toString());
 
         switch (type)
         {
+            case "2":
+                sharedPreferences = getSharedPreferences("tokenShare", MODE_PRIVATE);
+                userId = sharedPreferences.getInt("userID", -1);
+                senderId = (String) data.get("userId");
+                if (senderId.equals("" + userId))
+                    break;
+                sendWarningText(data);
+                break;
             case "6":
                 sendInviteNotification(data);
                 break;
+            case "3":
+                sharedPreferences = getSharedPreferences("tokenShare", MODE_PRIVATE);
+                userId = sharedPreferences.getInt("userID", -1);
+                senderId = (String) data.get("userId");
+                if (senderId.equals("" + userId))
+                    break;
+                sendWarningSpeed(data);
+                break;
             case "4":
-                SharedPreferences sharedPreferences = getSharedPreferences("tokenShare", MODE_PRIVATE);
-                int userId = sharedPreferences.getInt("userID", -1);
-                String senderId = (String) data.get("userId");
+                sharedPreferences = getSharedPreferences("tokenShare", MODE_PRIVATE);
+                userId = sharedPreferences.getInt("userID", -1);
+                senderId = (String) data.get("userId");
                 if (senderId.equals("" + userId))
                     break;
                 sendStatusChatMessage();
@@ -49,6 +70,7 @@ public class FireBaseService extends FirebaseMessagingService {
             case "5":
                 sendCommentNotification(data);
                 break;
+
         }
     }
 
@@ -228,6 +250,27 @@ public class FireBaseService extends FirebaseMessagingService {
     private void sendStatusChatMessage(){
         Intent intent  = new Intent("MessageStatus");
         intent.putExtra("isReceived", true);
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+    }
+
+    private void sendWarningSpeed(Map data){
+        Intent intent = new Intent("MemberStatus");
+        intent.putExtra("isReceived", true);
+        intent.putExtra("isWarningSpeed", true);
+        intent.putExtra("speedLimit", (String) data.get("speed"));
+        intent.putExtra("lat", (String) data.get("lat"));
+        intent.putExtra("long", (String) data.get("long"));
+        intent.putExtra("isOff", (String) data.get("note"));
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+
+    }
+
+    private void sendWarningText(Map data){
+        Intent intent = new Intent("MemberStatus");
+        intent.putExtra("isReceived", true);
+        intent.putExtra("isWarningText", true);
+        intent.putExtra("senderId", (String) data.get("userId"));
+        intent.putExtra("content", (String) data.get("note"));
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
     }
 }

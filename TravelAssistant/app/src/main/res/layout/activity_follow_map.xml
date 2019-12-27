@@ -40,6 +40,30 @@
         android:layout_marginBottom="18dp"
         android:layout_marginRight="14dp"/>
 
+    <ImageButton
+        android:id="@+id/imgbWarningSpeed"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitXY"
+        android:src="@drawable/speed_off"
+        android:layout_above="@id/imgbMyLocationFollowMap"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="14dp" />
+
+    <ImageButton
+        android:id="@+id/imgbMessageIcon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitXY"
+        android:src="@drawable/message_icon"
+        android:layout_above="@id/imgbWarningSpeed"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="14dp" />
+
 
 
 </RelativeLayout>
