@@ -6,8 +6,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
@@ -84,56 +86,51 @@ public class StopPointInfo extends AppCompatActivity {
     private ImageButton imbSelectLeave;
     private int year, month, day;
     private Calendar calendar;
-    private String[] arrServiceName = getResources().getStringArray(R.array.list_service);
+    private String[] arrServiceName = {"Select Service", "Restaurant", "Hotel", "Rest Station", "Other"};
     private ArrayList<String> arrListService = new ArrayList<String>(Arrays.asList(arrServiceName));
     private Long millis_start;
     private Long millis_end;
     private ArrayList<StopPoint> listStopPoints;
     private StopPoint spUnModified;
-    private Integer tourId;
-    private Integer serviceId;
+    private Integer tourId = -1;
+    private Integer serviceIdStopPoint = -1;
+    private Boolean isPublicStopPoint = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stop_point_info);
 
+        Intent intent = getIntent();
+        if (intent.getBooleanExtra("isPublic", false)) {
+            serviceIdStopPoint = intent.getIntExtra("serviceId", -1);
+            isPublicStopPoint = true;
+        }
+        else {
+            Bundle bundle = intent.getExtras();
+            tourId = bundle.getInt("tourId", -1);
+            spUnModified = bundle.getParcelable("stop-point-info");
+        }
+
         setWidget();
         setEvent();
+        getDetailOfService(serviceIdStopPoint);
         LoadListFeedBack();
         getFeedBackPointStats();
+        setDisplay();
     }
 
     private void setWidget() {
         stopPointInfoActivity = (ScrollView) findViewById(R.id.StopPointInfoActivity);
         tvTourId = (TextView) findViewById(R.id.tourIdContentSP);
-        tvTourId.setText(tourId);
         tvStopPointId = (TextView) findViewById(R.id.stopPointIdContentSP);
-        tvStopPointId.setText(spUnModified.id);
         tvName = (TextView) findViewById(R.id.nameContentSP);
-        tvName.setText(spUnModified.name);
         tvAddress = (TextView) findViewById(R.id.addressContentSP);
-        tvAddress.setText(spUnModified.address);
         tvService = (TextView) findViewById(R.id.serviceTypeContentSP);
-        if (spUnModified.serviceTypeId == 1)
-            tvService.setText("Restaurant");
-        else if (spUnModified.serviceTypeId == 2)
-            tvService.setText("Hotel");
-        else if (spUnModified.serviceTypeId == 3)
-            tvService.setText("Rest Station");
-        else
-            tvService.setText("Other");
-        DateFormat simple = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
-        Date dateArrive = new Date(spUnModified.arrivalAt);
-        Date dateLeave = new Date(spUnModified.leaveAt);
         tvArrivalAt = (TextView) findViewById(R.id.arrivalContentSP);
-        tvArrivalAt.setText(simple.format(dateArrive));
         tvLeaveAt = (TextView) findViewById(R.id.leaveContentSP);
-        tvLeaveAt.setText(simple.format(dateLeave));
         tvMinCost = (TextView) findViewById(R.id.minCostContentSP);
-        tvMinCost.setText(spUnModified.minCost);
         tvMaxCost = (TextView) findViewById(R.id.maxCostContentSP);
-        tvMaxCost.setText(spUnModified.maxCost);
         rtbStar = (RatingBar) findViewById(R.id.ratingStarStopPoint);
         btnUpdate = (Button) findViewById(R.id.updateButtonSP);
         btnFeedback = (Button) findViewById(R.id.feedBackButtonSP);
@@ -161,6 +158,43 @@ public class StopPointInfo extends AppCompatActivity {
         spnServiceType.setAdapter(adapter_service);
     }
 
+    private void setDisplay() {
+        if (tourId != -1)
+            tvTourId.setText(tourId.toString());
+        if (isPublicStopPoint)
+            tvStopPointId.setText(serviceIdStopPoint.toString());
+        else
+            tvStopPointId.setText(spUnModified.id.toString());
+        if (spUnModified.name != null && !spUnModified.name.equals(""))
+            tvName.setText(spUnModified.name);
+        if (spUnModified.address != null && !spUnModified.address.equals(""))
+            tvAddress.setText(spUnModified.address);
+        if (spUnModified.serviceTypeId != null && !spUnModified.serviceTypeId.equals("")) {
+            if (spUnModified.serviceTypeId == 1)
+                tvService.setText("Restaurant");
+            else if (spUnModified.serviceTypeId == 2)
+                tvService.setText("Hotel");
+            else if (spUnModified.serviceTypeId == 3)
+                tvService.setText("Rest Station");
+            else
+                tvService.setText("Other");
+        }
+        if (spUnModified.arrivalAt != null && !spUnModified.arrivalAt.equals("")) {
+            DateFormat simple = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
+            Date dateArrive = new Date(spUnModified.arrivalAt);
+            tvArrivalAt.setText(simple.format(dateArrive));
+        }
+        if (spUnModified.leaveAt != null && !spUnModified.leaveAt.equals("")) {
+            DateFormat simple = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
+            Date dateLeave = new Date(spUnModified.leaveAt);
+            tvLeaveAt.setText(simple.format(dateLeave));
+        }
+        if (spUnModified.minCost != null && !spUnModified.minCost.equals(""))
+            tvMinCost.setText(spUnModified.minCost);
+        if (spUnModified.maxCost != null && !spUnModified.maxCost.equals(""))
+            tvMaxCost.setText(spUnModified.maxCost);
+    }
+
     private void setEvent() {
         //Stop Point Info Activity
         btnUpdate.setOnClickListener(new View.OnClickListener() {
@@ -183,15 +217,10 @@ public class StopPointInfo extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 try {
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("stopPointId", tvStopPointId.getText().toString());
-
                     final OkHttpClient httpClient = new OkHttpClient();
-                    RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
                     final Request request = new Request.Builder()
-                            .url(API_ADDR + "tour/remove-stop-point")
+                            .url(API_ADDR + "tour/remove-stop-point?stopPointId=" + spUnModified.id)
                             .addHeader("Authorization", ListTourActivity.token)
-                            .post(body)
                             .build();
 
                     @SuppressLint("StaticFieldLeak")AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
@@ -201,7 +230,7 @@ public class StopPointInfo extends AppCompatActivity {
                                 Response response = httpClient.newCall(request).execute();
 
                                 if (!response.isSuccessful())
-                                    return null;
+                                    return response.body().string();
 
                                 return response.body().string();
                             }
@@ -222,8 +251,6 @@ public class StopPointInfo extends AppCompatActivity {
                                     e.printStackTrace();
                                 }
                             }
-                            else
-                                Toast.makeText(getApplicationContext(), "Remove Failed", Toast.LENGTH_SHORT).show();
                         }
                     };
                     asyncTask.execute();
@@ -240,9 +267,11 @@ public class StopPointInfo extends AppCompatActivity {
         btnSendFeedBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
                 try {
                     JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("serviceId", spUnModified.serviceId);
+                    jsonObject.put("serviceId", serviceIdStopPoint);
                     jsonObject.put("feedback", edtContentFeedBack.getText().toString());
                     jsonObject.put("point", (int)(rtbSendStar.getRating()));
 
@@ -279,6 +308,8 @@ public class StopPointInfo extends AppCompatActivity {
                                     Toast.makeText(getApplicationContext(), object.getString("message"), Toast.LENGTH_SHORT).show();
                                     LoadListFeedBack();
                                     getFeedBackPointStats();
+                                    edtContentFeedBack.setText("");
+                                    rtbSendStar.setRating(0);
                                 }
                                 catch (Exception e) {
                                     e.printStackTrace();
@@ -341,34 +372,56 @@ public class StopPointInfo extends AppCompatActivity {
                 inputMethodManager.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
 
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy");
-                String dateInString = edtArrivalAt.getText().toString();
-                try {
-                    Date date = sdf.parse(dateInString);
-                    assert date != null;
-                    millis_start = new Long(date.getTime() + 25200000);
-                } catch (ParseException e) {
-                    e.printStackTrace();
+                if (edtArrivalAt.getText().toString() != null && !edtArrivalAt.getText().toString().equals("")) {
+                    String dateInString = edtArrivalAt.getText().toString();
+                    try {
+                        Date date = sdf.parse(dateInString);
+                        assert date != null;
+                        millis_start = new Long(date.getTime() + 25200000);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                 }
-                dateInString = edtLeaveAt.getText().toString();
-                try {
-                    Date date = sdf.parse(dateInString);
-                    assert date != null;
-                    millis_end = new Long(date.getTime() + 25200000);
-                } catch (ParseException e) {
-                    e.printStackTrace();
+                else
+                    millis_start = spUnModified.arrivalAt;
+                if (edtLeaveAt.getText().toString() != null && !edtLeaveAt.getText().toString().equals("")) {
+                    String dateInString = edtLeaveAt.getText().toString();
+                    try {
+                        Date date = sdf.parse(dateInString);
+                        assert date != null;
+                        millis_end = new Long(date.getTime() + 25200000);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                 }
+                else
+                    millis_end = spUnModified.leaveAt;
 
-                StopPoint stopPoint = new StopPoint();
-                stopPoint.id = Integer.parseInt(tvStopPointId.getText().toString());
-                stopPoint.name = edtNameStopPoint.getText().toString();
+                final StopPoint stopPoint = new StopPoint();
+                if (isPublicStopPoint)
+                    stopPoint.id = serviceIdStopPoint;
+                else
+                    stopPoint.id = Integer.parseInt(tvStopPointId.getText().toString());
+                if (edtNameStopPoint.getText().toString() != null && !edtNameStopPoint.getText().toString().equals(""))
+                    stopPoint.name = edtNameStopPoint.getText().toString();
+                else
+                    stopPoint.name = spUnModified.name;
                 stopPoint.provinceId = spUnModified.provinceId;
                 stopPoint.Lat = spUnModified.Lat;
                 stopPoint.Long = spUnModified.Long;
                 stopPoint.arrivalAt = millis_start;
                 stopPoint.leaveAt = millis_end;
-                stopPoint.minCost = Integer.parseInt(edtMinCost.getText().toString());
-                stopPoint.maxCost = Integer.parseInt(edtMaxCost.getText().toString());
-                if (spnServiceType.getSelectedItem().equals("Restaurant"))
+                if (edtMinCost.getText().toString() != null && !edtMinCost.getText().toString().equals(""))
+                    stopPoint.minCost = edtMinCost.getText().toString();
+                else
+                    stopPoint.minCost = spUnModified.minCost;
+                if (edtMaxCost.getText().toString() != null && !edtMaxCost.getText().toString().equals(""))
+                    stopPoint.maxCost = edtMaxCost.getText().toString();
+                else
+                    stopPoint.maxCost = spUnModified.maxCost;
+                if (spnServiceType.getSelectedItem().equals("Select Service"))
+                    stopPoint.serviceTypeId = spUnModified.serviceTypeId;
+                else if (spnServiceType.getSelectedItem().equals("Restaurant"))
                     stopPoint.serviceTypeId = 1;
                 else if (spnServiceType.getSelectedItem().equals("Hotel"))
                     stopPoint.serviceTypeId = 2;
@@ -376,6 +429,8 @@ public class StopPointInfo extends AppCompatActivity {
                     stopPoint.serviceTypeId = 3;
                 else
                     stopPoint.serviceTypeId = 4;
+                stopPoint.address = spUnModified.address;
+                listStopPoints = new ArrayList<StopPoint>();
                 listStopPoints.add(stopPoint);
 
                 String stopPointsArray = new Gson().toJson(listStopPoints);
@@ -400,9 +455,6 @@ public class StopPointInfo extends AppCompatActivity {
                             try {
                                 Response response = httpClient.newCall(request).execute();
 
-                                if(!response.isSuccessful())
-                                    return null;
-
                                 return response.body().string();
 
                             } catch (IOException e) {
@@ -422,13 +474,12 @@ public class StopPointInfo extends AppCompatActivity {
                                     edtLeaveAt.setText("");
                                     edtMinCost.setText("");
                                     edtMaxCost.setText("");
+                                    finish();
                                 }
                                 catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             }
-                            else
-                                Toast.makeText(getApplicationContext(), "Update Failed", Toast.LENGTH_SHORT).show();
                         }
                     };
                     asyncTask.execute();
@@ -443,7 +494,7 @@ public class StopPointInfo extends AppCompatActivity {
     private void LoadListFeedBack() {
         final OkHttpClient httpClient = new OkHttpClient();
         final Request request = new Request.Builder()
-                .url(API_ADDR + "tour/get/feedback-service?serviceId=" + spUnModified.serviceId + "&pageIndex=1&pageSize=1000")
+                .url(API_ADDR + "tour/get/feedback-service?serviceId=" + serviceIdStopPoint + "&pageIndex=1&pageSize=1000")
                 .addHeader("Authorization", ListTourActivity.token)
                 .build();
 
@@ -487,7 +538,7 @@ public class StopPointInfo extends AppCompatActivity {
     private void getFeedBackPointStats() {
         final OkHttpClient httpClient = new OkHttpClient();
         final Request request = new Request.Builder()
-                .url(API_ADDR + "tour/get/feedback-point-stats?serviceId=" + spUnModified.serviceId)
+                .url(API_ADDR + "tour/get/feedback-point-stats?serviceId=" + serviceIdStopPoint)
                 .addHeader("Authorization", ListTourActivity.token)
                 .build();
 
@@ -559,24 +610,17 @@ public class StopPointInfo extends AppCompatActivity {
                         return null;
                     }
                 }
-
-                @Override
-                protected void onPostExecute(String s) {
-                    super.onPostExecute(s);
-
-                    if (s != null) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(s);
-                            spUnModified = new Gson().fromJson(jsonObject.toString(), StopPoint.class);
-
-                        }
-                        catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
             };
-            asyncTask.execute();
+            String s = asyncTask.execute().get();
+            if (s != null) {
+                try {
+                    JSONObject jsonObject = new JSONObject(s);
+                    spUnModified = new Gson().fromJson(jsonObject.toString(), StopPoint.class);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
         catch (Exception e) {
             e.printStackTrace();

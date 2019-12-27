@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_margin="10dp">
+
+    <TextView
+        android:id="@+id/input_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enter the limit speed"
+        android:layout_marginBottom="10dp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textAlignment="center" />
+    <ImageButton
+        android:id="@+id/btnExit"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/exit_icon"
+        android:background="#00000000" />
+
+    <EditText
+        android:id="@+id/inputSpeedEdt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border_edit_text"
+        android:layout_below="@id/input_label"
+        android:textSize="20sp"
+        android:inputType="number"
+        android:textAlignment="center"
+        android:padding="5dp"
+        android:hint="Limit speed"/>
+
+    <Button
+        android:id="@+id/sendSpeed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/inputSpeedEdt"
+        android:layout_marginTop="10dp"
+        android:text="Send"
+        android:textSize="20sp"
+        android:textColor="@color/colorWhite"
+        android:background="@drawable/border_button"/>
+
+</RelativeLayout>

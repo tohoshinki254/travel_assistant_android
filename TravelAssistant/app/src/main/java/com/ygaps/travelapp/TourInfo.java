@@ -1,26 +1,20 @@
 package com.ygaps.travelapp;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.media.Image;
-import android.media.MediaPlayer;
-import android.media.MediaRecorder;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.ContactsContract;
-import android.provider.MediaStore;
-import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
@@ -28,7 +22,6 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RatingBar;
@@ -38,9 +31,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -58,12 +53,10 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static android.Manifest.permission.RECORD_AUDIO;
-import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.ygaps.travelapp.ListStopPoint.JSON;
 import static com.ygaps.travelapp.RegisterActivity.API_ADDR;
 
-public class TourInfo extends AppCompatActivity {
+public class TourInfo extends AppCompatActivity implements ListStopPointAdapter.onStopPointClickListener {
 
     public Dialog dialog;
     private RecyclerView rcvStopPoints;
@@ -74,6 +67,7 @@ public class TourInfo extends AppCompatActivity {
     private ImageButton btnAddMember;
     private ImageButton btnComment;
     private ImageButton btnReview;
+    private ImageButton imbRefresh;
     private Button btnJoin;
     private TextView tvJoin;
     private TextView tvShowListStopPoint;
@@ -93,12 +87,6 @@ public class TourInfo extends AppCompatActivity {
     private TextView tvMoney;
     private TextView tvHost;
 
-    private MediaRecorder myAudioRecorder;
-    private String outputFile;
-    private ImageButton imgStartAudio;
-    private ImageButton imgPauseAudio;
-    private ImageButton imgSendAudio;
-    public static final int RequestPermissionCode = 1;
     private static int userId;
     private static int tourId;
     private static String fullName;
@@ -120,6 +108,7 @@ public class TourInfo extends AppCompatActivity {
     private RecyclerView rcvListReview;
 
     private TextView tvUpdateTourInfo;
+    private TextView tvRemoveTour;
     private DatePickerDialog datePickerDialog;
     private EditText edtTourname;
     private EditText edtStartDate;
@@ -143,18 +132,32 @@ public class TourInfo extends AppCompatActivity {
     private Long millis_end;
     private boolean isPrivate = false;
     private ArrayList<StopPoint> startEndPoint;
+    String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tour_info);
 
-        Intent intent = getIntent();
-        userId = intent.getIntExtra("userId", -1);
-        fullName = intent.getStringExtra("nameOfUser");
-        tourId = intent.getIntExtra("tourId", -1);
-
         setWidget();
+        Intent intent = getIntent();
+        if (intent.getBooleanExtra("FireBase", false))
+        {
+            tourId = Integer.parseInt(intent.getStringExtra("tourId"));
+            SharedPreferences sharedPreferences = getSharedPreferences("tokenShare", MODE_PRIVATE);
+            userId = sharedPreferences.getInt("userID", -1);
+            token = sharedPreferences.getString("token", "");
+            rltTourInfo.setVisibility(View.GONE);
+            rltComment.setVisibility(View.VISIBLE);
+        }
+        else {
+            userId = intent.getIntExtra("userId", -1);
+            fullName = intent.getStringExtra("nameOfUser");
+            tourId = intent.getIntExtra("tourId", -1);
+            token = ListTourActivity.token;
+        }
+
+
         LoadTourInfo();
         LoadListReview();
         LoadPointReviewRating();
@@ -163,6 +166,7 @@ public class TourInfo extends AppCompatActivity {
     }
 
     public void setWidget() {
+        imbRefresh = (ImageButton) findViewById(R.id.refreshImageButton);
         btnFollow = (ImageButton) findViewById(R.id.followImageButton);
         btnChat = (ImageButton) findViewById(R.id.chatImageButton);
         btnAudio = (ImageButton) findViewById(R.id.audioImageButton);
@@ -192,6 +196,7 @@ public class TourInfo extends AppCompatActivity {
         rcvListReview = (RecyclerView) findViewById(R.id.rcvListReview);
         rcvListReview.setLayoutManager(new LinearLayoutManager(TourInfo.this));
         tvUpdateTourInfo = (TextView) findViewById(R.id.updateTourInfoClick);
+        tvRemoveTour = (TextView) findViewById(R.id.removeTour);
         edtTourname = (EditText)findViewById(R.id.inputTourNameForUpdate);
         edtStartDate = (EditText)findViewById(R.id.inputStaDateUpdate);
         edtEndDate = (EditText)findViewById(R.id.inputEndDateUpdate);
@@ -209,6 +214,7 @@ public class TourInfo extends AppCompatActivity {
 
         spnStatus = (Spinner) findViewById(R.id.selectStatusTour);
         List<String> status = new ArrayList<String>();
+        status.add("Select Status");
         status.add("Canceled");
         status.add("Open");
         status.add("Started");
@@ -222,6 +228,17 @@ public class TourInfo extends AppCompatActivity {
     }
 
     public void setEvent() {
+        imbRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LoadListComment();
+                LoadListReview();
+                LoadPointReviewRating();
+                LoadTourInfo();
+                Toast.makeText(getApplicationContext(), "Refresh Successfully", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         tvUpdateTourInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -354,7 +371,7 @@ public class TourInfo extends AppCompatActivity {
                         jsonObject.put("status", 0);
                     else if (String.valueOf(spnStatus.getSelectedItem()).equals("Started"))
                         jsonObject.put("status", 1);
-                    else
+                    else if (String.valueOf(spnStatus.getSelectedItem()).equals("Closed"))
                         jsonObject.put("status", 2);
 
                     RequestBody formBody = RequestBody.create(jsonObject.toString(), JSON);
@@ -372,11 +389,13 @@ public class TourInfo extends AppCompatActivity {
                                 Response response = httpClient.newCall(request).execute();
 
                                 if (!response.isSuccessful())
-                                    return null;
+                                    return response.body().string();
 
-                                return  response.body().string();
+                                JSONObject object = new JSONObject(response.body().string());
+                                object.put("message", "Update Successfully");
+                                return object.toString();
                             }
-                            catch (IOException e) {
+                            catch (Exception e) {
                                 e.printStackTrace();
                                 return null;
                             }
@@ -397,19 +416,25 @@ public class TourInfo extends AppCompatActivity {
                                     edtMinCost.setText("");
                                     edtMaxCost.setText("");
                                     rdbPrivate.setChecked(false);
+                                    LoadTourInfo();
                                 }
                                 catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             }
-                            else
-                                Toast.makeText(getApplicationContext(), "Update Failed!", Toast.LENGTH_SHORT).show();
                         }
                     };
                     asyncTask.execute();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            }
+        });
+
+        tvRemoveTour.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showAlertDialog();
             }
         });
 
@@ -434,7 +459,7 @@ public class TourInfo extends AppCompatActivity {
                     RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
                     final Request request = new Request.Builder()
                             .url(API_ADDR + "tour/add/review")
-                            .addHeader("Authorization", ListTourActivity.token)
+                            .addHeader("Authorization", token)
                             .post(body)
                             .build();
 
@@ -488,7 +513,7 @@ public class TourInfo extends AppCompatActivity {
         btnSendComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String a_comment = edtInputComment.getText().toString();
+                final String a_comment = edtInputComment.getText().toString();
                 if (!a_comment.equals("")) {
                     Comment c = new Comment(userId, fullName, a_comment, null);
 
@@ -546,6 +571,17 @@ public class TourInfo extends AppCompatActivity {
                     commentArrayList.add(c);
                     edtInputComment.setText("");
                     listCommentAdapter.notifyDataSetChanged();
+
+                    FirebaseMessaging.getInstance().subscribeToTopic("tour-id" + tourId)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful())
+                                    {
+                                        sendComment(a_comment);
+                                    }
+                                }
+                            });
                 }
             }
         });
@@ -563,7 +599,7 @@ public class TourInfo extends AppCompatActivity {
                     RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
                     final Request request = new Request.Builder()
                             .url(API_ADDR + "tour/add/member")
-                            .addHeader("Authorization", ListTourActivity.token)
+                            .addHeader("Authorization", token)
                             .post(body)
                             .build();
 
@@ -615,7 +651,13 @@ public class TourInfo extends AppCompatActivity {
         btnFollow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(TourInfo.this, FollowMap.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList("list_stop_points", stopPointArrayList);
+                intent.putExtras(bundle);
+                intent.putExtra("tourId", tourId);
+                intent.putExtra("userId", userId);
+                startActivity(intent);
             }
         });
 
@@ -632,7 +674,7 @@ public class TourInfo extends AppCompatActivity {
         btnAudio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DisplayPopupAudioDialog();
+
             }
         });
 
@@ -701,7 +743,7 @@ public class TourInfo extends AppCompatActivity {
         ImageButton imgExitListStopPoint = (ImageButton) dialog.findViewById(R.id.list_stop_point_popup_exit_button);
         rcvStopPoints = (RecyclerView) dialog.findViewById(R.id.rcvListStopPoint);
         rcvStopPoints.setLayoutManager(new LinearLayoutManager(this));
-        listStopPointAdapter = new ListStopPointAdapter(stopPointArrayList, TourInfo.this);
+        listStopPointAdapter = new ListStopPointAdapter(stopPointArrayList, TourInfo.this, TourInfo.this);
         rcvStopPoints.setAdapter(listStopPointAdapter);
 
         imgExitListStopPoint.setOnClickListener(new View.OnClickListener() {
@@ -736,76 +778,6 @@ public class TourInfo extends AppCompatActivity {
         dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
     }
 
-    public void DisplayPopupAudioDialog() {
-        dialog = new Dialog(TourInfo.this);
-        dialog.setContentView(R.layout.send_audio);
-
-        ImageButton imgExitPopupAudio = (ImageButton) dialog.findViewById(R.id.list_members_popup_exit_button);
-        imgStartAudio = (ImageButton) dialog.findViewById(R.id.startAudio);
-        imgPauseAudio = (ImageButton) dialog.findViewById(R.id.pauseAudio);
-        imgSendAudio = (ImageButton) dialog.findViewById(R.id.sendAudio);
-        imgPauseAudio.setEnabled(false);
-        imgSendAudio.setEnabled(false);
-
-        outputFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/recording.3gp";
-        MediaRecorderReady();
-
-        imgStartAudio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (checkPermission()) {
-                    try {
-                        myAudioRecorder.prepare();
-                        myAudioRecorder.start();
-                    } catch (IllegalStateException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        //make something
-                    }
-                    imgStartAudio.setEnabled(false);
-                    imgPauseAudio.setEnabled(true);
-                }
-                else {
-                    requestPermission();
-                }
-            }
-        });
-
-        imgPauseAudio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                myAudioRecorder.stop();
-                myAudioRecorder.release();
-                imgStartAudio.setEnabled(true);
-                imgPauseAudio.setEnabled(false);
-                imgSendAudio.setEnabled(true);
-            }
-        });
-
-        imgSendAudio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MediaPlayer mediaPlayer = new MediaPlayer();
-                try {
-                    mediaPlayer.setDataSource(outputFile);
-                    mediaPlayer.prepare();
-                    mediaPlayer.start();
-                } catch (Exception e) {
-                    // make something
-                }
-            }
-        });
-
-        imgExitPopupAudio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-        dialog.show();
-    }
-
     public void DisplayPopupAddMemberDialog() {
         dialog = new Dialog(TourInfo.this);
         dialog.setContentView(R.layout.add_member_popup);
@@ -837,7 +809,7 @@ public class TourInfo extends AppCompatActivity {
                     RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
                     final Request request = new Request.Builder()
                             .url(API_ADDR + "tour/add/member")
-                            .addHeader("Authorization", ListTourActivity.token)
+                            .addHeader("Authorization", token)
                             .post(body)
                             .build();
 
@@ -883,40 +855,11 @@ public class TourInfo extends AppCompatActivity {
         dialog.show();
     }
 
-    public void MediaRecorderReady(){
-        myAudioRecorder = new MediaRecorder();
-        myAudioRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        myAudioRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        myAudioRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
-        myAudioRecorder.setOutputFile(outputFile);
-    }
-
-    private void requestPermission() {
-        ActivityCompat.requestPermissions(TourInfo.this, new
-                String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}, RequestPermissionCode);
-    }
-
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        if (requestCode == RequestPermissionCode && grantResults.length > 0) {
-            boolean StoragePermission = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-            boolean RecordPermission = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-        }
-    }
-
-    public boolean checkPermission() {
-        int result = ContextCompat.checkSelfPermission(getApplicationContext(),
-                WRITE_EXTERNAL_STORAGE);
-        int result1 = ContextCompat.checkSelfPermission(getApplicationContext(),
-                RECORD_AUDIO);
-        return result == PackageManager.PERMISSION_GRANTED &&
-                result1 == PackageManager.PERMISSION_GRANTED;
-    }
-
     private void LoadTourInfo() {
         final OkHttpClient httpClient = new OkHttpClient();
         final Request request = new Request.Builder()
                 .url(MainActivity.API_ADDR + "tour/info?tourId=" + tourId)
-                .addHeader("Authorization",ListTourActivity.token)
+                .addHeader("Authorization",token)
                 .build();
 
         @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
@@ -1016,7 +959,7 @@ public class TourInfo extends AppCompatActivity {
         final OkHttpClient okHttpClient = new OkHttpClient();
         final Request request = new Request.Builder()
                 .url(API_ADDR + "tour/get/review-list?tourId=" + tourId + "&pageIndex=1&pageSize=1000")
-                .addHeader("Authorization", ListTourActivity.token)
+                .addHeader("Authorization", token)
                 .build();
 
         @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
@@ -1059,7 +1002,7 @@ public class TourInfo extends AppCompatActivity {
         final OkHttpClient httpClient = new OkHttpClient();
         final Request request = new Request.Builder()
                 .url(API_ADDR + "tour/get/review-point-stats?tourId=" + tourId)
-                .addHeader("Authorization", ListTourActivity.token)
+                .addHeader("Authorization", token)
                 .build();
 
         @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
@@ -1122,5 +1065,128 @@ public class TourInfo extends AppCompatActivity {
             rltTourInfo.setVisibility(View.VISIBLE);
         } else
             super.onBackPressed();
+    }
+
+    private void sendComment(String comment){
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("tourId", tourId);
+            jsonObject.put("userId", userId);
+            jsonObject.put("comment", comment);
+
+            final OkHttpClient httpClient = new OkHttpClient();
+            RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
+            final Request request = new Request.Builder()
+                    .url(API_ADDR + "tour/comment")
+                    .addHeader("Authorization", token)
+                    .post(body)
+                    .build();
+
+            @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
+                @Override
+                protected String doInBackground(Void... voids) {
+                    try {
+                        Response response = httpClient.newCall(request).execute();
+
+                        if (!response.isSuccessful())
+                            return null;
+
+                        return response.body().string();
+                    }
+                    catch (IOException ex) {
+                        ex.printStackTrace();
+                        return null;
+                    }
+                }
+
+                @Override
+                protected void onPostExecute(String s) {
+                    if (s != null)
+                    {
+                        Toast.makeText(getApplicationContext(), "successfull", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            };
+            asyncTask.execute();
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void showAlertDialog() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Remove Tour");
+        builder.setMessage("Are you sure you want to delete ?");
+        builder.setCancelable(false);
+        builder.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    final OkHttpClient httpClient = new OkHttpClient();
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("id", tourId);
+                    jsonObject.put("status", -1);
+
+                    RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
+                    final Request request = new Request.Builder()
+                            .url(API_ADDR + "tour/update-tour")
+                            .addHeader("Authorization", ListTourActivity.token)
+                            .post(body)
+                            .build();
+
+                    @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
+                        @Override
+                        protected String doInBackground(Void... voids) {
+                            try {
+                                Response response = httpClient.newCall(request).execute();
+
+                                if (!response.isSuccessful())
+                                    return null;
+
+                                return response.body().string();
+                            }
+                            catch (Exception e) {
+                                e.printStackTrace();
+                                return null;
+                            }
+                        }
+
+                        @Override
+                        protected void onPostExecute(String s) {
+                            if (s != null) {
+                                Toast.makeText(getApplicationContext(), "Remove Successfully", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+                            else
+                                Toast.makeText(getApplicationContext(), "Remove Failed", Toast.LENGTH_SHORT).show();
+                        }
+                    };
+                    asyncTask.execute();
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+                dialog.dismiss();
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    @Override
+    public void onStopPointClick(int i) {
+        Intent intent = new Intent(TourInfo.this, StopPointInfo.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("stop-point-info", stopPointArrayList.get(i));
+        bundle.putInt("tourId", tourId);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 }

@@ -62,7 +62,7 @@ public class ChatActivity extends AppCompatActivity {
     String token;
     public static int userId;
     private static int tourId;
-    private BroadcastReceiver chatMessage = new BroadcastReceiver() {
+    private BroadcastReceiver chatMessage =     new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getBooleanExtra("isReceived", false))

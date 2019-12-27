@@ -31,22 +31,107 @@ public class FireBaseService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         Map data = remoteMessage.getData();
         String type = (String) data.get("type");
+        SharedPreferences sharedPreferences = getSharedPreferences("tokenShare", MODE_PRIVATE);
+        int userId = sharedPreferences.getInt("userID", -1);
+        String senderId = (String) data.get("userId");
+
+        Log.d("XXX", "XXX: " + data.toString());
 
         switch (type)
         {
+            case "2":
+                sharedPreferences = getSharedPreferences("tokenShare", MODE_PRIVATE);
+                userId = sharedPreferences.getInt("userID", -1);
+                senderId = (String) data.get("userId");
+                if (senderId.equals("" + userId))
+                    break;
+                sendWarningText(data);
+                break;
             case "6":
                 sendInviteNotification(data);
                 break;
+            case "3":
+                sharedPreferences = getSharedPreferences("tokenShare", MODE_PRIVATE);
+                userId = sharedPreferences.getInt("userID", -1);
+                senderId = (String) data.get("userId");
+                if (senderId.equals("" + userId))
+                    break;
+                sendWarningSpeed(data);
+                break;
             case "4":
-                SharedPreferences sharedPreferences = getSharedPreferences("tokenShare", MODE_PRIVATE);
-                int userId = sharedPreferences.getInt("userID", -1);
-                String senderId = (String) data.get("userId");
+                sharedPreferences = getSharedPreferences("tokenShare", MODE_PRIVATE);
+                userId = sharedPreferences.getInt("userID", -1);
+                senderId = (String) data.get("userId");
                 if (senderId.equals("" + userId))
                     break;
                 sendStatusChatMessage();
                 sendChatNotification(data);
                 break;
+            case "5":
+                sendCommentNotification(data);
+                break;
+
         }
+    }
+
+    private void sendCommentNotification(Map data){
+        final String KEY_TEXT = "COMMENT_REPLY";
+        final int ID_SALT = 281999;
+        String tourId = (String) data.get("tourId");
+        String senderId = (String) data.get("userId");
+        String comment = (String) data.get("comment");
+
+
+        Spannable title  = new SpannableString("New comment in tour " + tourId);
+        title.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        Spannable line = new SpannableString(comment);
+        line.setSpan(new StyleSpan(Typeface.ITALIC), 0, line.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        RemoteInput remoteInput = new RemoteInput.Builder(KEY_TEXT)
+                .setLabel("Type to reply...")
+                .build();
+
+        Intent intent = new Intent(this, ReplyService.class);
+        intent.putExtra("tourId", tourId);
+        intent.putExtra("type", 5);
+        PendingIntent replyPending = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Intent chatIntent = new Intent(this, TourInfo.class);
+        chatIntent.putExtra("tourId", tourId);
+        chatIntent.putExtra("FireBase", true);
+        PendingIntent chatAcPending = PendingIntent.getActivity(this, 0, chatIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Action action = new NotificationCompat.Action.Builder(R.drawable.ic_launcher_background, "Reply", replyPending)
+                .addRemoteInput(remoteInput)
+                .build();
+
+        String chanelId = getString(R.string.project_id);
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, chanelId)
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher_background))
+                .setContentTitle(title)
+                .setStyle(new NotificationCompat.InboxStyle()
+                        .addLine(line))
+                .setAutoCancel(true)
+                .setSound(defaultSoundUri)
+                .addAction(action)
+                .setPriority(NotificationManager.IMPORTANCE_HIGH)
+                .setContentIntent(chatAcPending);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    chanelId,
+                    "Channel human readable title",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+
+            notificationManager.createNotificationChannel(channel);
+        }
+
+
+        notificationManager.notify(Integer.parseInt(tourId) + ID_SALT, notificationBuilder.build());
     }
 
     private void sendChatNotification(Map data){
@@ -69,6 +154,7 @@ public class FireBaseService extends FirebaseMessagingService {
 
         Intent intent = new Intent(this, ReplyService.class);
         intent.putExtra("tourId", tourId);
+        intent.putExtra("type", 4);
         PendingIntent replyPending = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent chatIntent = new Intent(this, ChatActivity.class);
@@ -164,6 +250,27 @@ public class FireBaseService extends FirebaseMessagingService {
     private void sendStatusChatMessage(){
         Intent intent  = new Intent("MessageStatus");
         intent.putExtra("isReceived", true);
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+    }
+
+    private void sendWarningSpeed(Map data){
+        Intent intent = new Intent("MemberStatus");
+        intent.putExtra("isReceived", true);
+        intent.putExtra("isWarningSpeed", true);
+        intent.putExtra("speedLimit", (String) data.get("speed"));
+        intent.putExtra("lat", (String) data.get("lat"));
+        intent.putExtra("long", (String) data.get("long"));
+        intent.putExtra("isOff", (String) data.get("note"));
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+
+    }
+
+    private void sendWarningText(Map data){
+        Intent intent = new Intent("MemberStatus");
+        intent.putExtra("isReceived", true);
+        intent.putExtra("isWarningText", true);
+        intent.putExtra("senderId", (String) data.get("userId"));
+        intent.putExtra("content", (String) data.get("note"));
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
     }
 }

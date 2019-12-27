@@ -15,14 +15,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <ImageButton
+                android:id="@+id/refreshImageButton"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
+                android:src="@drawable/refresh_icon"
+                android:background="@android:color/transparent"
+                android:layout_margin="5dp"
+                android:layout_alignParentRight="true"/>
+
             <ImageView
                 android:id="@+id/avatarOfATour"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="15dp"
                 android:layout_marginRight="10dp"
-                android:src="@drawable/background"/>
+                android:src="@drawable/background"
+                android:layout_below="@id/refreshImageButton"/>
 
             <LinearLayout
                 android:id="@+id/tourInfo"
@@ -132,6 +141,19 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/removeTour"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Remove Tour"
+                android:textStyle="italic"
+                android:textSize="17sp"
+                android:layout_below="@id/tourInfo"
+                android:layout_marginTop="5dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:clickable="true"/>
+
+            <TextView
                 android:id="@+id/updateTourInfoClick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -140,8 +162,8 @@
                 android:textSize="17sp"
                 android:layout_below="@id/tourInfo"
                 android:layout_marginTop="5dp"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="10dp"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="10dp"
                 android:clickable="true"/>
 
             <TextView

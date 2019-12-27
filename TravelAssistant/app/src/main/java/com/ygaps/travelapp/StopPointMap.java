@@ -503,8 +503,8 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
                 sp.avatar = null;
                 sp.Long = latLngs.get(lastIndex).longitude;
                 sp.Lat = latLngs.get(lastIndex).latitude;
-                sp.minCost = minCost;
-                sp.maxCost = maxCost;
+                sp.minCost = minCost + "";
+                sp.maxCost = maxCost + "";
                 sp.name = strStopPointName;
                 sp.provinceId = provinceId;
                 sp.serviceTypeId = serviceId;
@@ -665,4 +665,7 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
         dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
 
     }
+
+    //Get list stop points without origin and destination
+
 }

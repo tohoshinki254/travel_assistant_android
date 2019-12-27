@@ -21,8 +21,8 @@ public class StopPoint implements Parcelable {
 
     public Long arrivalAt;
     public Long leaveAt;
-    public Integer minCost;
-    public Integer maxCost;
+    public String minCost;
+    public String maxCost;
     public Integer serviceTypeId;
     public String avatar;
     public String address;
@@ -83,12 +83,12 @@ public class StopPoint implements Parcelable {
         if (in.readByte() == 0) {
             minCost = null;
         } else {
-            minCost = in.readInt();
+            minCost = in.readString();
         }
         if (in.readByte() == 0) {
             maxCost = null;
         } else {
-            maxCost = in.readInt();
+            maxCost = in.readString();
         }
         if (in.readByte() == 0) {
             serviceTypeId = null;
@@ -160,13 +160,13 @@ public class StopPoint implements Parcelable {
             dest.writeByte((byte) 0);
         } else {
             dest.writeByte((byte) 1);
-            dest.writeInt(minCost);
+            dest.writeString(minCost);
         }
         if (maxCost == null) {
             dest.writeByte((byte) 0);
         } else {
             dest.writeByte((byte) 1);
-            dest.writeInt(maxCost);
+            dest.writeString(maxCost);
         }
         if (serviceTypeId == null) {
             dest.writeByte((byte) 0);
