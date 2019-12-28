@@ -150,10 +150,10 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
         else
         {
             AlertDialog.Builder builder = new AlertDialog.Builder(ListTourActivity.this);
-            builder.setTitle(R.string.title_dialog);
-            builder.setMessage(R.string.message_dialog);
+            builder.setTitle("Choose Option.");
+            builder.setMessage("Please click buttons below!");
             builder.setCancelable(true);
-            builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton("Update", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int k) {
                     dialogInterface.cancel();
