@@ -97,4 +97,16 @@
         android:layout_marginRight="14dp"
         android:layout_marginBottom="14dp"/>
 
+    <ImageButton
+        android:id="@+id/imgbAddRecommendedSP"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/add_icon"
+        android:scaleType="fitXY"
+        android:layout_above="@id/imgbMenuStopPoint"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="14dp"
+        android:layout_marginBottom="14dp"/>
+
 </RelativeLayout>

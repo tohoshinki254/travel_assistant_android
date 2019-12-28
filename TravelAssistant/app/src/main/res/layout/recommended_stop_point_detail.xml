@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="180dp"
+    android:layout_marginTop="15dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:background="@drawable/border_tour_item"
+    >
+
+    <CheckBox
+        android:id="@+id/checkboxRecommendedSP"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:checked="false"
+        />
+
+    <LinearLayout
+        android:id="@+id/recommendedNameLinear"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:orientation="horizontal"
+        android:layout_below="@id/checkboxRecommendedSP"
+        android:layout_marginTop="4dp">
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/location_icon"
+            android:layout_marginStart="3dp"/>
+
+        <TextView
+            android:id="@+id/textViewRecommendedSPName"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:paddingTop="3dp"
+            android:layout_marginStart="5dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/recommendedAddressLinear"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="4dp"
+        android:layout_below="@id/recommendedNameLinear">
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="match_parent"
+            android:src="@mipmap/home_icon"
+            android:layout_marginStart="3dp"/>
+
+        <TextView
+            android:id="@+id/textViewRecommendedSPAddress"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:paddingTop="3dp"
+            android:layout_marginStart="5dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/recommendedServiceLinear"
+        android:layout_below="@id/recommendedAddressLinear"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="4dp">
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="match_parent"
+            android:src="@mipmap/services_icon"
+            android:layout_marginStart="3dp"/>
+
+        <TextView
+            android:id="@+id/textViewRecommendedSPService"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:paddingTop="3dp"
+            android:layout_marginStart="5dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/recommendedMoneyLinear"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="4dp"
+        android:layout_below="@id/recommendedServiceLinear">
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/money_icon"
+            android:layout_marginStart="3dp"/>
+
+        <TextView
+            android:id="@+id/textViewRecommendedSPMoney"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:paddingTop="3dp"
+            android:layout_marginStart="5dp"/>
+    </LinearLayout>
+
+
+</RelativeLayout>

@@ -21,7 +21,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".FollowMap"></activity>
+        <activity android:name=".RecommendedStopPointActivity"></activity>
+        <activity android:name=".FollowMap" />
         <activity
             android:name=".TourInfo"
             android:label="Tour Information"
@@ -30,7 +31,7 @@
         <activity
             android:name=".ChatActivity"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ListStopPoint"
             android:label="@string/list_stop_point_label"

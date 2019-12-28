@@ -1,6 +1,7 @@
 package com.ygaps.travelapp;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -55,6 +56,8 @@ import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -73,8 +76,11 @@ import java.util.concurrent.ExecutionException;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.ygaps.travelapp.ListStopPoint.JSON;
+import static com.ygaps.travelapp.ListTourActivity.token;
 import static java.util.Locale.getDefault;
 
 public class StopPointMap extends FragmentActivity implements OnMapReadyCallback {
@@ -86,6 +92,7 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
     public static int ID;
     final static String keyAPI = "AIzaSyDA0nzuUp9-hXSMcNliQrzKmlbFudlRQNQ";
     final static String keyAPIHTTP = "AIzaSyC6HrlfZJ18_N9kZBKKnqXZCCfVGqqff74";
+    public static final int REQUEST_CODE = 12345;
     LinearLayout btnCreateStopPoint;
     SupportMapFragment mapFragment;
     Geocoder geocoder;
@@ -100,12 +107,15 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
     EditText edtStopPointName, edtAddress,edtMinCost, edtMaxCost;
 
     ArrayList<StopPoint> stopPointArrayList;
+    ArrayList<StopPoint> pendingResult;
+
 
 
 
     ArrayList<LatLng> latLngs;
     ImageButton imgbMyLocation;
     ImageButton imgbMenuStopPoint;
+    ImageButton imgbAddRecommendedSP;
     Polyline polyline;
 
 
@@ -128,6 +138,36 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if ((requestCode == REQUEST_CODE) && (resultCode == RESULT_OK))
+        {
+            ArrayList<StopPoint> result = new ArrayList<>();
+            result = data.getParcelableArrayListExtra("checkedRecommendedSP");
+
+            for(int i = 0; i < result.size(); i++)
+            {
+                if (isContainingStopPoint(pendingResult,result.get(i),0) == -1)
+                    stopPointArrayList.add(stopPointArrayList.size() - 1,result.get(i));
+
+
+                //if (!pendingResult.contains(result.get(i)))
+                //    stopPointArrayList.add(stopPointArrayList.size() - 1,result.get(i));
+            }
+
+            for(int i = 0; i < pendingResult.size(); i++)
+            {
+                if (isContainingStopPoint(result, pendingResult.get(i),0) == -1)
+                    stopPointArrayList.remove(pendingResult.get(i));
+
+                //if (!result.contains(pendingResult.get(i)))
+                //    stopPointArrayList.remove(pendingResult.get(i));
+            }
+            pendingResult = result;
+
+        }
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -208,6 +248,91 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
                 startActivity(intent);
             }
         });
+
+        imgbAddRecommendedSP.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try
+                {
+                    final OkHttpClient httpClient = new OkHttpClient();
+
+                    final JSONObject jsonObject = new JSONObject();
+                    JSONArray coordList = new JSONArray();
+
+                    jsonObject.put("hasOneCoordinate", false);
+
+                    JSONArray coordinateSet = new JSONArray();
+                    int size = stopPointArrayList.size();
+
+                    JSONObject begin = new JSONObject();
+                    JSONObject end = new JSONObject();
+                    begin.put("lat",stopPointArrayList.get(0).Lat);
+                    begin.put("long",stopPointArrayList.get(0).Long);
+
+                    end.put("lat",stopPointArrayList.get(size - 1).Lat);
+                    end.put("long",stopPointArrayList.get(size - 1).Long);
+
+                    coordinateSet.put(begin);
+                    coordinateSet.put(end);
+
+                    JSONObject CoordinateSet = new JSONObject();
+                    CoordinateSet.put("coordinateSet",coordinateSet);
+                    coordList.put(CoordinateSet);
+                    jsonObject.put("coordList",coordList);
+
+
+                    RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
+                    final Request request = new Request.Builder()
+                            .url(MainActivity.API_ADDR + "tour/suggested-destination-list")
+                            .addHeader("Authorization",token)
+                            .post(body)
+                            .build();
+
+                    @SuppressLint("StaticFieldLeak") AsyncTask <Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
+                        @Override
+                        protected String doInBackground(Void... voids) {
+                            try {
+                                Response response = httpClient.newCall(request).execute();
+
+                                if(!response.isSuccessful())
+                                    return null;
+
+                                return response.body().string();
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                return null;
+                            }
+                        }
+
+                        @Override
+                        protected void onPostExecute(String s) {
+                            if (s != null){
+                                try {
+                                    Intent intent = new Intent(StopPointMap.this, RecommendedStopPointActivity.class);
+                                    intent.putExtra("recommendedSP",s);
+                                    intent.putExtra("alreadyCheckedSP",pendingResult);
+                                    startActivityForResult(intent, REQUEST_CODE);
+                                }
+                                catch (Exception e)
+                                {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    };
+
+                    asyncTask.execute();
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+
+
+
+            }
+        }));
     }
 
 
@@ -404,6 +529,9 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         polyline = null;
         stopPointArrayList = new ArrayList<>();
+        imgbAddRecommendedSP = (ImageButton) findViewById(R.id.imgbAddRecommendedSP);
+        pendingResult = new ArrayList<>();
+
     }
 
     int lastIndex = -1;
@@ -468,14 +596,15 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View view) {
                 long timeArrive_ms = 0;
                 long timeLeave_ms = 0;
-                int provinceId, serviceId, minCost, maxCost;
+                int provinceId, serviceId;
+                String minCost, maxCost;
 
                 provinceId = spnProvince.getSelectedItemPosition() + 1;
                 serviceId = spnService.getSelectedItemPosition() + 1;
                 String strStopPointName = edtStopPointName.getText().toString();
                 String strAddress = edtAddress.getText().toString();
-                minCost = Integer.parseInt(edtMinCost.getText().toString());
-                maxCost = Integer.parseInt(edtMaxCost.getText().toString());
+                minCost = edtMinCost.getText().toString();
+                maxCost = edtMaxCost.getText().toString();
                 String strArriveTime = txtArriveTime.getText().toString();
                 String strArriveDate = txtArriveDate.getText().toString();
                 String strLeaveTime = txtLeaveTime.getText().toString();
@@ -503,8 +632,8 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
                 sp.avatar = null;
                 sp.Long = latLngs.get(lastIndex).longitude;
                 sp.Lat = latLngs.get(lastIndex).latitude;
-                sp.minCost = minCost + "";
-                sp.maxCost = maxCost + "";
+                sp.minCost = minCost;
+                sp.maxCost = maxCost;
                 sp.name = strStopPointName;
                 sp.provinceId = provinceId;
                 sp.serviceTypeId = serviceId;
@@ -666,6 +795,23 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    //Get list stop points without origin and destination
 
+
+
+    public int isContainingStopPoint(ArrayList<StopPoint> arr, StopPoint sp, int begin)
+    {
+        for(int i = begin; i < arr.size(); i++)
+        {
+            if ((Double.parseDouble(sp.Lat.toString()) == Double.parseDouble(arr.get(i).Lat.toString()))
+                    && (Double.parseDouble(sp.Long.toString()) == Double.parseDouble(arr.get(i).Long.toString()))
+                    && (arr.get(i).id.equals(sp.id))
+                    && (arr.get(i).address.equals(sp.address))
+                    && (arr.get(i).name.equals(sp.name))
+            )
+                return i;
+        }
+        return -1;
+    }
+
+    //Get list stop points without origin and destination
 }

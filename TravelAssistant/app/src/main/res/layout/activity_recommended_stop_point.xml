@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RecommendedStopPointActivity">
+
+    <Button
+        android:id="@+id/SaveRecommendedSP"
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="SAVE"
+        android:textSize="20sp"
+        android:background="@drawable/border_button"
+        />
+    <EditText
+        android:id="@+id/edtSearchRecommendedStopPoint"
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:hint="@string/search_hint"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="7dp"
+        android:layout_marginRight="7dp"
+        android:textSize="20sp"
+        android:drawablePadding="5dp"
+        android:paddingLeft="4dp"
+        android:paddingBottom="2dp"
+        android:drawableLeft="@drawable/ic_search"
+        android:background="@drawable/border_search_edit_text"
+        android:layout_below="@id/SaveRecommendedSP"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcvRecommendedStopPoint"
+        android:layout_below="@id/edtSearchRecommendedStopPoint"
+        android:layout_width="match_parent"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="5dp"
+        android:layout_height="match_parent"
+
+        />
+</RelativeLayout>
