@@ -5,6 +5,7 @@ public class Comment {
     public String name;
     public String comment;
     public String avatar;
+    public String createdOn;
 
     public Comment() {
 
@@ -15,6 +16,7 @@ public class Comment {
         name = cm.name;
         comment = cm.comment;
         avatar = cm.avatar;
+        createdOn = cm.createdOn;
     }
 
     public Comment(Integer id, String name, String comment, String avatar) {

@@ -22,7 +22,7 @@
         android:layout_marginLeft="6dp"
         android:layout_marginRight="6dp"
         android:layout_marginBottom="8dp"
-        android:text="@string/stop_point_save"
+        android:text="UPLOAD"
         android:textStyle="bold"
         android:textSize="25sp"
         android:textColor="@color/quantum_white_100"/>

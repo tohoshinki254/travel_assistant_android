@@ -47,6 +47,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -108,7 +109,9 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
 
     ArrayList<StopPoint> stopPointArrayList;
     ArrayList<StopPoint> pendingResult;
+    ArrayList<Marker> markerArrayList;
 
+    boolean isDialogShowing = false;
 
 
 
@@ -117,7 +120,7 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
     ImageButton imgbMenuStopPoint;
     ImageButton imgbAddRecommendedSP;
     Polyline polyline;
-
+    final int REQUEST_CODE_MENU = 1999;
 
 
     @Override
@@ -138,36 +141,6 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if ((requestCode == REQUEST_CODE) && (resultCode == RESULT_OK))
-        {
-            ArrayList<StopPoint> result = new ArrayList<>();
-            result = data.getParcelableArrayListExtra("checkedRecommendedSP");
-
-            for(int i = 0; i < result.size(); i++)
-            {
-                if (isContainingStopPoint(pendingResult,result.get(i),0) == -1)
-                    stopPointArrayList.add(stopPointArrayList.size() - 1,result.get(i));
-
-
-                //if (!pendingResult.contains(result.get(i)))
-                //    stopPointArrayList.add(stopPointArrayList.size() - 1,result.get(i));
-            }
-
-            for(int i = 0; i < pendingResult.size(); i++)
-            {
-                if (isContainingStopPoint(result, pendingResult.get(i),0) == -1)
-                    stopPointArrayList.remove(pendingResult.get(i));
-
-                //if (!result.contains(pendingResult.get(i)))
-                //    stopPointArrayList.remove(pendingResult.get(i));
-            }
-            pendingResult = result;
-
-        }
-    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -181,11 +154,14 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
         }
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngs.get(0), 17));
 
-        mMap.addMarker(new MarkerOptions().position(latLngs.get(0)).title("Origin")
+        Marker ori = mMap.addMarker(new MarkerOptions().position(latLngs.get(0)).title("Origin")
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.my_marker_icon)));
 
-        mMap.addMarker(new MarkerOptions().position(latLngs.get(1)).title("Destination")
+        Marker des = mMap.addMarker(new MarkerOptions().position(latLngs.get(1)).title("Destination")
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.my_marker_icon)));
+        markerArrayList.add(ori);
+        markerArrayList.add(des);
+
         if (!Places.isInitialized()) {
             Places.initialize(getApplicationContext(), keyAPI );
         }
@@ -241,11 +217,12 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
         imgbMenuStopPoint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                initTrackNumber();
                 Intent intent = new Intent(StopPointMap.this, ListStopPoint.class);
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList("list_stop_points", stopPointArrayList);
                 intent.putExtras(bundle);
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_CODE_MENU);
             }
         });
 
@@ -529,14 +506,18 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         polyline = null;
         stopPointArrayList = new ArrayList<>();
+
         imgbAddRecommendedSP = (ImageButton) findViewById(R.id.imgbAddRecommendedSP);
         pendingResult = new ArrayList<>();
+        markerArrayList = new ArrayList<>();
 
     }
 
     int lastIndex = -1;
     public void DisplayPopupDialog()
     {
+
+        isDialogShowing = true;
         dialog = new Dialog(StopPointMap.this);
         dialog.setContentView(R.layout.stoppoint_info_popup);
 
@@ -645,22 +626,27 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
                     stopPointArrayList.add(stopPointArrayList.size() - 1,sp);
 
                 dialog.dismiss();
+                isDialogShowing = false;
                 try {
                     if (latLngs.size() > 2)
                     {
+                        Marker marker;
                         switch (stopPointArrayList.get(lastIndex).serviceTypeId) {
                             case 1:
-                                mMap.addMarker(new MarkerOptions().position(latLngs.get(lastIndex)).title("Restaurant")
+                                marker = mMap.addMarker(new MarkerOptions().position(latLngs.get(lastIndex)).title("Restaurant")
                                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant_icon)));
                                 break;
                             case 2:
-                                mMap.addMarker(new MarkerOptions().position(latLngs.get(lastIndex)).title("Hotel")
+                                marker = mMap.addMarker(new MarkerOptions().position(latLngs.get(lastIndex)).title("Hotel")
                                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.hotel_icon)));
                                 break;
                             default:
-                                mMap.addMarker(new MarkerOptions().position(latLngs.get(lastIndex)).title("Stop Point")
+                                marker = mMap.addMarker(new MarkerOptions().position(latLngs.get(lastIndex)).title("Stop Point")
                                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.stop_point_icon)));
                         }
+
+                        markerArrayList.add(markerArrayList.size() - 1 ,marker);
+
                         if (polyline != null)
                         {
                             polyline.remove();
@@ -775,6 +761,7 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View view) {
                 latLngs.remove(lastIndex);
                 dialog.dismiss();
+                isDialogShowing = false;
             }
         });
 
@@ -814,4 +801,156 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
     }
 
     //Get list stop points without origin and destination
+
+    private void initTrackNumber(){
+        for (int i = 0; i < stopPointArrayList.size(); i++){
+            stopPointArrayList.get(i).track = i;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == REQUEST_CODE_MENU){
+            if (resultCode == RESULT_OK){
+                Bundle bundle = data.getExtras();
+                if (bundle.getBoolean("isRemove", false)){
+                    ArrayList <Integer> trackList = bundle.getIntegerArrayList("track_list");
+                    int lastRemoveIndex = stopPointArrayList.size();
+                    for (int i = 0; i < trackList.size(); i++){
+                        int removeIndex;
+
+                        if (trackList.get(i) > lastRemoveIndex){
+                            removeIndex = trackList.get(i) - 1;
+                        }
+                        else{
+                            removeIndex = trackList.get(i);
+                        }
+
+                        StopPoint sp = stopPointArrayList.get(removeIndex);
+                        int index = isContainingStopPoint(pendingResult,sp,0);
+                        pendingResult.remove(index);
+
+                        markerArrayList.get(removeIndex).remove();
+                        markerArrayList.remove(removeIndex);
+                        stopPointArrayList.remove(removeIndex);
+                        latLngs.remove(removeIndex);
+
+                    }
+
+                    if (polyline != null){
+                        polyline.remove();
+                        polyline = null;
+                    }
+                    try {
+                        drawRoute();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                stopPointArrayList = bundle.getParcelableArrayList("list_stop_points");
+
+                updateMarker();
+            }
+        }
+        else
+        {
+            if ((requestCode == REQUEST_CODE) && (resultCode == RESULT_OK))
+            {
+                ArrayList<StopPoint> result = new ArrayList<>();
+                result = data.getParcelableArrayListExtra("checkedRecommendedSP");
+
+                for(int i = 0; i < result.size(); i++)
+                {
+                    if (isContainingStopPoint(pendingResult,result.get(i),0) == -1) {
+                        stopPointArrayList.add(stopPointArrayList.size() - 1, result.get(i));
+                        LatLng latLng = new LatLng(result.get(i).Lat, result.get(i).Long);
+                        latLngs.add(latLngs.size() - 1,latLng);
+                    }
+                }
+
+
+
+
+
+                for(int i = 0; i < pendingResult.size(); i++)
+                {
+                    int index = isContainingStopPoint(result, pendingResult.get(i),0);
+                    if (index == -1) {
+                        stopPointArrayList.remove(pendingResult.get(i));
+                        latLngs.remove(index);
+                    }
+                }
+
+
+                if (polyline != null)
+                {
+                    polyline.remove();
+                    polyline = null;
+                }
+
+                try {
+                    drawRoute();
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+
+                updateMarker();
+                pendingResult = result;
+
+            }
+        }
+    }
+
+    private void updateMarker(){
+        for (int i = 0; i < markerArrayList.size(); i++){
+            markerArrayList.get(i).remove();
+        }
+        markerArrayList.clear();
+
+        Marker ori = mMap.addMarker(new MarkerOptions().position(latLngs.get(0)).title("Origin")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.my_marker_icon)));
+
+        Marker des = mMap.addMarker(new MarkerOptions().position(latLngs.get(latLngs.size() - 1)).title("Des")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.my_marker_icon)));
+
+        markerArrayList.add(ori);
+        markerArrayList.add(des);
+
+        for (int i = 1; i < stopPointArrayList.size() - 1; i++){
+            Marker marker;
+            switch (stopPointArrayList.get(i).serviceTypeId) {
+                case 1:
+                    marker = mMap.addMarker(new MarkerOptions().position(latLngs.get(i)).title("Restaurant")
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant_icon)));
+                    break;
+                case 2:
+                    marker = mMap.addMarker(new MarkerOptions().position(latLngs.get(i)).title("Hotel")
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.hotel_icon)));
+                    break;
+                default:
+                    marker = mMap.addMarker(new MarkerOptions().position(latLngs.get(i)).title("Stop Point")
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.stop_point_icon)));
+            }
+
+            markerArrayList.add(markerArrayList.size() - 1 ,marker);
+        }
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        if (isDialogShowing)
+        {
+            latLngs.remove(lastIndex);
+            dialog.dismiss();
+            isDialogShowing = false;
+        }
+        else
+        {
+            super.onBackPressed();
+        }
+    }
 }

@@ -1,14 +1,28 @@
 package com.ygaps.travelapp;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.TimePickerDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -17,7 +31,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -32,6 +52,12 @@ public class ListStopPoint extends AppCompatActivity implements ListStopPointAda
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     RecyclerView rcvListStopPoint;
     Button btnSave;
+    ArrayList<Integer> trackList;
+    ArrayList<StopPoint> stopPointArrayList;
+    Calendar calendar;
+    int day, month, year, hour, minute;
+    TimePickerDialog timePickerDialog;
+    DatePickerDialog datePickerDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +67,8 @@ public class ListStopPoint extends AppCompatActivity implements ListStopPointAda
 
         Bundle bundle = getIntent().getExtras();
         listStopPoints = bundle.getParcelableArrayList("list_stop_points");
-        listStopPointAdapter = new ListStopPointAdapter(getListStopPoints(listStopPoints), ListStopPoint.this, ListStopPoint.this);
+        stopPointArrayList = getListStopPoints(listStopPoints);
+        listStopPointAdapter = new ListStopPointAdapter(stopPointArrayList, ListStopPoint.this, ListStopPoint.this);
         rcvListStopPoint.setAdapter(listStopPointAdapter);
 
 
@@ -90,9 +117,12 @@ public class ListStopPoint extends AppCompatActivity implements ListStopPointAda
                     String result = asyncTask.execute().get();
                     if(result == null)
                         Toast.makeText(getApplicationContext(),"Save Failed", Toast.LENGTH_SHORT).show();
-                    else
-                        Toast.makeText(getApplicationContext(),"Save Successfully", Toast.LENGTH_SHORT).show();
+                    else {
+                        Toast.makeText(getApplicationContext(), "Save Successfully", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(ListStopPoint.this, ListTourActivity.class);
+                        startActivity(intent);
 
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -118,11 +148,263 @@ public class ListStopPoint extends AppCompatActivity implements ListStopPointAda
         rcvListStopPoint = (RecyclerView)findViewById(R.id.rcvListStopPoint);
         rcvListStopPoint.setLayoutManager(new LinearLayoutManager(this));
         listStopPoints = new ArrayList<>();
-
+        trackList = new ArrayList<>();
+        stopPointArrayList = new ArrayList<>();
     }
 
     @Override
     public void onStopPointClick(int i) {
+        final Dialog dialog = new Dialog(ListStopPoint.this);
+        dialog.setContentView(R.layout.choose_option_popup);
+        final int index = i + 1;
+        Button btnEdit = (Button) dialog.findViewById(R.id.btnEdit);
+        Button btnRemove = (Button) dialog.findViewById(R.id.btnRemove);
+        final ImageButton btnExit = (ImageButton) dialog.findViewById(R.id.btnExitChooseOption);
 
+        btnExit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        btnRemove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                trackList.add(listStopPoints.get(index).track);
+                listStopPoints.remove(index);
+                stopPointArrayList.remove(index - 1);
+                listStopPointAdapter.notifyDataSetChanged();
+            }
+        });
+
+        btnEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                DisplayStopPointPopUp(index);
+            }
+        });
+        dialog.show();
     }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList("list_stop_points", listStopPoints);
+        if (trackList.size() > 0)
+        {
+            bundle.putBoolean("isRemove", true);
+            bundle.putIntegerArrayList("track_list", trackList);
+        }
+        intent.putExtras(bundle);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    private void DisplayStopPointPopUp(int i){
+        final Dialog dialog = new Dialog(ListStopPoint.this);
+        dialog.setContentView(R.layout.stoppoint_info_popup);
+        final StopPoint sp = listStopPoints.get(i);
+        final int index = i;
+        final EditText edtName = (EditText) dialog.findViewById(R.id.stop_point_name_Content);
+        final Spinner spinnerService = (Spinner) dialog.findViewById(R.id.stop_point_serviceType_Category);
+        final TextView tvAddr = (TextView) dialog.findViewById(R.id.stop_point_address_Content);
+        final Spinner spinnerProvince = (Spinner) dialog.findViewById(R.id.stop_point_province_Category);
+        final EditText edtMinCos = (EditText) dialog.findViewById(R.id.stop_point_min_cost_Content);
+        final EditText edtMaxCos = (EditText) dialog.findViewById(R.id.stop_point_max_cost_Content);
+        final TextView tvArrTime = (TextView) dialog.findViewById(R.id.stop_point_arrive_time);
+        final TextView tvArrDate = (TextView) dialog.findViewById(R.id.stop_point_arrive_date);
+        final TextView tvLeaveTime = (TextView) dialog.findViewById(R.id.stop_point_leave_time);
+        final TextView tvLeaveDate = (TextView) dialog.findViewById(R.id.stop_point_leave_date);
+        Button btnOk = (Button) dialog.findViewById(R.id.stop_point_OK_button);
+        ImageButton btnExit = (ImageButton) dialog.findViewById(R.id.stop_point_exit_button);
+
+        tvArrTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                calendar = Calendar.getInstance();
+                minute = calendar.get(Calendar.MINUTE);
+                hour = calendar.get(Calendar.HOUR_OF_DAY);
+
+                timePickerDialog = new TimePickerDialog(ListStopPoint.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int i, int i1) {
+                        tvArrTime.setText(String.format("%02d:%02d", i, i1));
+                    }
+                }, hour, minute, true);
+
+                timePickerDialog.show();
+            }
+        });
+
+        tvLeaveTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                calendar = Calendar.getInstance();
+                minute = calendar.get(Calendar.MINUTE);
+                hour = calendar.get(Calendar.HOUR_OF_DAY);
+
+                timePickerDialog = new TimePickerDialog(ListStopPoint.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int i, int i1) {
+                        tvLeaveTime.setText(String.format("%02d:%02d", i, i1));
+                    }
+                }, hour, minute, true);
+
+                timePickerDialog.show();
+            }
+        });
+
+        tvArrDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                calendar = Calendar.getInstance();
+                year = calendar.get(Calendar.YEAR);
+                month = calendar.get(Calendar.MONTH);
+                day = calendar.get(Calendar.DAY_OF_MONTH);
+                minute = calendar.get(Calendar.MINUTE);
+                hour = calendar.get(Calendar.HOUR);
+                datePickerDialog = new DatePickerDialog(ListStopPoint.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
+                        String chosenDay = Integer.toString(dayOfMonth);
+                        String chosenMonth = Integer.toString(month + 1);
+                        if (dayOfMonth < 10)
+                            chosenDay = "0" + chosenDay;
+                        if (month + 1 < 10)
+                            chosenMonth = "0" + chosenMonth;
+
+                        tvArrDate.setText(chosenDay + "/" + chosenMonth + "/" + year);
+                    }
+                }, year, month, day);
+
+                datePickerDialog.show();
+            }
+        });
+
+        tvLeaveDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                calendar = Calendar.getInstance();
+                year = calendar.get(Calendar.YEAR);
+                month = calendar.get(Calendar.MONTH);
+                day = calendar.get(Calendar.DAY_OF_MONTH);
+                minute = calendar.get(Calendar.MINUTE);
+                hour = calendar.get(Calendar.HOUR);
+                datePickerDialog = new DatePickerDialog(ListStopPoint.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
+                        String chosenDay = Integer.toString(dayOfMonth);
+                        String chosenMonth = Integer.toString(month + 1);
+                        if (dayOfMonth < 10)
+                            chosenDay = "0" + chosenDay;
+                        if (month + 1 < 10)
+                            chosenMonth = "0" + chosenMonth;
+
+                        tvLeaveDate.setText(chosenDay + "/" + chosenMonth + "/" + year);
+                    }
+                }, year, month, day);
+
+                datePickerDialog.show();
+            }
+        });
+
+        edtName.setText(sp.name);
+        tvAddr.setText(sp.address);
+        edtMaxCos.setText(sp.maxCost);
+        edtMinCos.setText(sp.minCost);
+        if (sp.leaveAt != null && sp.arrivalAt != null) {
+            DateFormat date = new SimpleDateFormat("dd/MM/yyyy");
+            DateFormat time = new SimpleDateFormat("HH:mm");
+            Date arr = new Date(sp.arrivalAt);
+            Date lev = new Date(sp.leaveAt);
+            tvArrTime.setText(time.format(arr));
+            tvArrDate.setText(date.format(arr));
+            tvLeaveTime.setText(time.format(lev));
+            tvLeaveDate.setText(date.format(lev));
+        }
+
+
+        String[] arrProvinceName = getResources().getStringArray(R.array.list_province_name);
+        String[] arrProvinceId = getResources().getStringArray(R.array.list_province_id);
+        String[] arrServiceName = getResources().getStringArray(R.array.list_service);
+        ArrayList<String> arrListProvince = new ArrayList<String>(Arrays.asList(arrProvinceName));
+        ArrayList<String> arrListService = new ArrayList<String>(Arrays.asList(arrServiceName));
+
+        ArrayAdapter<String> adapter_province = new ArrayAdapter(ListStopPoint.this,android.R.layout.simple_spinner_item,arrListProvince);
+        adapter_province.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
+        spinnerProvince.setAdapter(adapter_province);
+        if (sp.provinceId != null)
+            spinnerProvince.setSelection(sp.provinceId - 1);
+
+        ArrayAdapter<String> adapter_service = new ArrayAdapter(ListStopPoint.this,android.R.layout.simple_spinner_item,arrListService);
+        adapter_service.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
+        spinnerService.setAdapter(adapter_service);
+        if (sp.serviceTypeId != null)
+            spinnerService.setSelection(sp.serviceTypeId - 1);
+
+        btnExit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        btnOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                StopPoint spNew = new StopPoint();
+                spNew.name = edtName.getText().toString();
+                spNew.address = edtName.getText().toString();
+                spNew.minCost = edtMinCos.getText().toString();
+                spNew.maxCost = edtMaxCos.getText().toString();
+
+                String strArriveTime = tvArrTime.getText().toString();
+                String strArriveDate = tvArrDate.getText().toString();
+                String strLeaveTime = tvLeaveTime.getText().toString();
+                String strLeaveDate = tvLeaveDate.getText().toString();
+
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
+                formatter.setLenient(false);
+                String timeArrived = strArriveDate + ", " + strArriveTime;
+                String timeLeave = strLeaveDate + ", " + strLeaveTime;
+
+                try {
+                    Date timeArrivedDate = formatter.parse(timeArrived);
+                    Date timeLeaveDate = formatter.parse(timeLeave);
+                    long timeArrive_ms = timeArrivedDate.getTime();
+                    long timeLeave_ms = timeLeaveDate.getTime();
+                    spNew.arrivalAt = timeArrive_ms;
+                    spNew.leaveAt = timeLeave_ms;
+                    spNew.provinceId = spinnerProvince.getSelectedItemPosition() + 1;
+                    spNew.serviceTypeId = spinnerService.getSelectedItemPosition() + 1;
+                    spNew.track = sp.track;
+                    spNew.Lat = sp.Lat;
+                    spNew.Long = sp.Long;
+                    spNew.address = tvAddr.getText().toString();
+                    spNew.contact = sp.contact;
+                    spNew.selfStarRatings = sp.selfStarRatings;
+                    spNew.id = sp.id;
+                    spNew.serviceId = sp.serviceId;
+
+                    listStopPoints.remove(index);
+                    listStopPoints.add(index, spNew);
+                    stopPointArrayList.remove(index - 1);
+                    stopPointArrayList.add(index - 1, spNew);
+                    listStopPointAdapter.notifyDataSetChanged();
+                    dialog.dismiss();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        dialog.show();
+        dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
+    }
+
+
 }

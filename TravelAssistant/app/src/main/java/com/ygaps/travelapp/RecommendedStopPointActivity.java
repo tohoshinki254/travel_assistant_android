@@ -8,8 +8,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -28,6 +31,7 @@ public class RecommendedStopPointActivity extends AppCompatActivity implements R
     RecommendedStopPointAdapter recommendedStopPointAdapter;
     ArrayList<RecommendedStopPoint> recommendedStopPointReceivedList = new ArrayList<>();
     ArrayList<StopPoint> stopPointReceivedList = new ArrayList<>();
+    EditText edtSearch;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +87,22 @@ public class RecommendedStopPointActivity extends AppCompatActivity implements R
             }
         });
 
+        edtSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                recommendedStopPointAdapter.getFilter().filter(editable.toString());
+            }
+        });
     }
 
 
@@ -98,12 +118,13 @@ public class RecommendedStopPointActivity extends AppCompatActivity implements R
         rcvRecommendedSP = (RecyclerView) findViewById(R.id.rcvRecommendedStopPoint);
         rcvRecommendedSP.setLayoutManager(new LinearLayoutManager(this));
         btnSaveRecommendedSP = (Button) findViewById(R.id.SaveRecommendedSP);
+        edtSearch = (EditText) findViewById(R.id.edtSearchRecommendedStopPoint);
 
     }
 
     @Override
     public void onRecommendedClick(int i) {
-        Toast.makeText(getApplicationContext(),"Load successfully" + i, Toast.LENGTH_SHORT).show();
+
 
     }
 

@@ -1,0 +1,694 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".StopPointInfo">
+
+    <ScrollView
+        android:id="@+id/StopPointInfoActivity"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible" >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp">
+
+            <ImageView
+                android:id="@+id/avatarOfAStopPoint"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:src="@drawable/background"/>
+
+            <RatingBar
+                android:id="@+id/ratingStarStopPoint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:numStars="5"
+                android:saveEnabled="true"
+                android:layout_below="@id/avatarOfAStopPoint"
+                android:layout_centerHorizontal="true"
+                style="@style/CustomRatingBar"
+                android:isIndicator="true"
+                android:layout_marginTop="10dp" />
+
+            <LinearLayout
+                android:id="@+id/tourIdFieldInStopPoint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@id/ratingStarStopPoint"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp">
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+                    <TextView
+                        android:id="@+id/tourIdLabelSP"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tour ID"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorGray" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2">
+                    <TextView
+                        android:id="@+id/tourIdContentSP"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorGray" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/stopPointIdFieldInStopPoint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@id/tourIdFieldInStopPoint"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp">
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+                    <TextView
+                        android:id="@+id/stopPointIdLabelSP"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Stop point ID"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorGray" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2">
+                    <TextView
+                        android:id="@+id/stopPointIdContentSP"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorGray" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/nameFieldInStopPoint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@id/stopPointIdFieldInStopPoint"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp">
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+                    <TextView
+                        android:id="@+id/nameLabelSP"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Name"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorGray" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2">
+                    <TextView
+                        android:id="@+id/nameContentSP"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorGray" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/addressFieldInStopPoint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@id/nameFieldInStopPoint"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp">
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+                    <TextView
+                        android:id="@+id/addressLabelSP"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Address"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorGray" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2">
+                    <TextView
+                        android:id="@+id/addressContentSP"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorGray" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/serviceTypeFieldInStopPoint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@id/addressFieldInStopPoint"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp">
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+                    <TextView
+                        android:id="@+id/serviceTypeLabelSP"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Service"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorGray" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2">
+                    <TextView
+                        android:id="@+id/serviceTypeContentSP"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorGray" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/arrivalFieldInStopPoint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@id/serviceTypeFieldInStopPoint"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp">
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+                    <TextView
+                        android:id="@+id/arrivalLabelSP"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Arrival at"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorGray" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2">
+                    <TextView
+                        android:id="@+id/arrivalContentSP"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorGray" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/minCostFieldInStopPoint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@id/leaveFieldInStopPoint"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp">
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+                    <TextView
+                        android:id="@+id/minCostLabelSP"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Min cost"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorGray" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2">
+                    <TextView
+                        android:id="@+id/minCostContentSP"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorGray" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/leaveFieldInStopPoint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@id/arrivalFieldInStopPoint"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp">
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+                    <TextView
+                        android:id="@+id/leaveLabelSP"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Leave at"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorGray" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2">
+                    <TextView
+                        android:id="@+id/leaveContentSP"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorGray" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/maxCostFieldInStopPoint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@id/minCostFieldInStopPoint"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp">
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+                    <TextView
+                        android:id="@+id/maxCostLabelSP"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Max cost"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorGray" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2">
+                    <TextView
+                        android:id="@+id/maxCostContentSP"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorGray" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/commentReviewFieldInStopPoint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@id/maxCostFieldInStopPoint"
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp">
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginRight="10dp">
+                    <Button
+                        android:id="@+id/updateButtonSP"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Update"
+                        android:textSize="20sp"
+                        android:textAllCaps="false"
+                        android:textColor="@color/colorWhite"
+                        android:background="@drawable/border_button"
+                        android:drawableStart="@drawable/comment_icon"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"/>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="10dp">
+                    <Button
+                        android:id="@+id/feedBackButtonSP"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Feed Back"
+                        android:textSize="20sp"
+                        android:textAllCaps="false"
+                        android:textColor="@color/colorWhite"
+                        android:background="@drawable/border_button"
+                        android:drawableStart="@drawable/review_icon"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"/>
+                </RelativeLayout>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/removeStopPointButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/commentReviewFieldInStopPoint"
+                android:text="Remove Stop Point"
+                android:textSize="20sp"
+                android:textAllCaps="false"
+                android:textColor="@color/colorWhite"
+                android:background="@drawable/border_button"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="40dp"
+                android:visibility="visible"/>
+        </RelativeLayout>
+    </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/SendFeedBackSPActivity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:visibility="gone">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcvListFeedBack"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/feedBackStarSP"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="10dp"/>
+
+        <RatingBar
+            android:id="@+id/feedBackStarSP"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numStars="5"
+            android:saveEnabled="true"
+            style="@style/CustomRatingBar"
+            android:layout_above="@id/feedBackContentSP"
+            android:layout_marginLeft="50dp" />
+
+        <EditText
+            android:id="@+id/feedBackContentSP"
+            android:layout_margin="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_alignParentBottom="true"
+            android:layout_toStartOf="@id/feedBackSendButton"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:textSize="20sp"
+            android:background="@drawable/border_rectangle_edit_text"
+            android:inputType="text" />
+        <Button
+            android:id="@+id/feedBackSendButton"
+            android:layout_margin="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/border_button"
+            android:textColor="#FFFFFF"
+            android:text="Send" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:id="@+id/UpdateStopPointInfoActivity"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp">
+
+            <TextView
+                android:id="@+id/nameStopPointLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Name"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorGray"
+                android:layout_marginTop="10dp" />
+
+            <EditText
+                android:id="@+id/inputNameStopPoint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/nameStopPointLabel"
+                android:background="@drawable/border_edit_text"
+                android:textSize="20sp"
+                android:inputType="text"
+                android:padding="10sp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp" />
+
+            <LinearLayout
+                android:id="@+id/ArrivalLeave"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@id/inputNameStopPoint">
+                <RelativeLayout
+                    android:id="@+id/arrivalAtField"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginRight="20dp">
+                    <TextView
+                        android:id="@+id/arrivalAtLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Arrival at"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorGray" />
+                    <EditText
+                        android:id="@+id/arrivalAtContent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/arrivalAtLabel"
+                        android:background="@drawable/border_edit_text_rectangle"
+                        android:textSize="15sp"
+                        android:textColor="@color/colorBlack"
+                        android:inputType="datetime"
+                        android:padding="10sp"
+                        android:hint="Select time"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:enabled="false"/>
+                    <ImageButton
+                        android:id="@+id/arrivalAtSelectSP"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/calendar_icon"
+                        android:layout_toEndOf="@id/arrivalAtContent"
+                        android:background="@color/colorWhite"
+                        android:layout_marginTop="22dp"
+                        android:layout_marginLeft="4dp"/>
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="20dp">
+                    <TextView
+                        android:id="@+id/leaveAtLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Leave at"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorGray" />
+                    <EditText
+                        android:id="@+id/leaveAtContent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/leaveAtLabel"
+                        android:background="@drawable/border_edit_text_rectangle"
+                        android:textSize="15sp"
+                        android:textColor="@color/colorBlack"
+                        android:inputType="datetime"
+                        android:padding="10sp"
+                        android:hint="@string/select_date_hint"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:enabled="false"/>
+                    <ImageButton
+                        android:id="@+id/leaveAtSelectSP"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/calendar_icon"
+                        android:layout_toEndOf="@id/leaveAtContent"
+                        android:background="@color/colorWhite"
+                        android:layout_marginTop="22dp"
+                        android:layout_marginLeft="4dp"/>
+                </RelativeLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/serviceTypeStopPointLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Service"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorGray"
+                android:layout_marginTop="10dp"
+                android:layout_below="@id/ArrivalLeave"/>
+
+            <Spinner
+                android:id="@+id/selectServiceTypeStopPoint"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_below="@id/serviceTypeStopPointLabel"
+                android:background="@drawable/border_edit_text"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp" />
+
+            <LinearLayout
+                android:id="@+id/minMaxCostStopPointInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@id/selectServiceTypeStopPoint">
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginRight="30dp">
+                    <TextView
+                        android:id="@+id/minCostStopPointLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/min_cost_label"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorGray" />
+
+
+                    <EditText
+                        android:id="@+id/inputMinCostStopPoint"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/minCostStopPointLabel"
+                        android:inputType="number"
+                        android:background="@drawable/border_edit_text"
+                        android:textSize="20sp"
+                        android:padding="10sp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"/>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="30dp">
+                    <TextView
+                        android:id="@+id/maxCostStopPointLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/max_cost_label"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorGray" />
+
+                    <EditText
+                        android:id="@+id/inputMaxCostStopPoint"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/maxCostStopPointLabel"
+                        android:inputType="number"
+                        android:background="@drawable/border_edit_text"
+                        android:textSize="20sp"
+                        android:padding="10sp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"/>
+                </RelativeLayout>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/updateStopPointInfoButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/minMaxCostStopPointInfo"
+                android:text="Update"
+                android:textSize="20sp"
+                android:textAllCaps="false"
+                android:textColor="@color/colorWhite"
+                android:background="@drawable/border_button"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="40dp"/>
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

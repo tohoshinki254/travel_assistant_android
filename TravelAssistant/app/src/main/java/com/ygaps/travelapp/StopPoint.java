@@ -9,6 +9,9 @@ public class StopPoint implements Parcelable {
     public Integer id;
     public String name;
     public Integer provinceId;
+    public Integer serviceId;
+    public String contact;
+    public Integer selfStarRatings;
 
     @SerializedName("lat")
     public Double Lat;
@@ -23,7 +26,7 @@ public class StopPoint implements Parcelable {
     public Integer serviceTypeId;
     public String avatar;
     public String address;
-
+    public Integer track;
     public StopPoint() {
 
     }
@@ -40,7 +43,12 @@ public class StopPoint implements Parcelable {
         serviceTypeId = sp.serviceTypeId;
         avatar = sp.avatar;
         address = sp.address;
+        serviceId = sp.serviceId;
+        contact = sp.contact;
+        selfStarRatings = sp.selfStarRatings;
+        track = sp.track;
     }
+
 
     protected StopPoint(Parcel in) {
         if (in.readByte() == 0) {
@@ -53,6 +61,17 @@ public class StopPoint implements Parcelable {
             provinceId = null;
         } else {
             provinceId = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            serviceId = null;
+        } else {
+            serviceId = in.readInt();
+        }
+        contact = in.readString();
+        if (in.readByte() == 0) {
+            selfStarRatings = null;
+        } else {
+            selfStarRatings = in.readInt();
         }
         if (in.readByte() == 0) {
             Lat = null;
@@ -74,16 +93,8 @@ public class StopPoint implements Parcelable {
         } else {
             leaveAt = in.readLong();
         }
-        if (in.readByte() == 0) {
-            minCost = null;
-        } else {
-            minCost = in.readString();
-        }
-        if (in.readByte() == 0) {
-            maxCost = null;
-        } else {
-            maxCost = in.readString();
-        }
+        minCost = in.readString();
+        maxCost = in.readString();
         if (in.readByte() == 0) {
             serviceTypeId = null;
         } else {
@@ -91,6 +102,11 @@ public class StopPoint implements Parcelable {
         }
         avatar = in.readString();
         address = in.readString();
+        if (in.readByte() == 0) {
+            track = null;
+        } else {
+            track = in.readInt();
+        }
     }
 
     public static final Creator<StopPoint> CREATOR = new Creator<StopPoint>() {
@@ -112,7 +128,6 @@ public class StopPoint implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-
         if (id == null) {
             dest.writeByte((byte) 0);
         } else {
@@ -125,6 +140,19 @@ public class StopPoint implements Parcelable {
         } else {
             dest.writeByte((byte) 1);
             dest.writeInt(provinceId);
+        }
+        if (serviceId == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(serviceId);
+        }
+        dest.writeString(contact);
+        if (selfStarRatings == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(selfStarRatings);
         }
         if (Lat == null) {
             dest.writeByte((byte) 0);
@@ -150,18 +178,8 @@ public class StopPoint implements Parcelable {
             dest.writeByte((byte) 1);
             dest.writeLong(leaveAt);
         }
-        if (minCost == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeString(minCost);
-        }
-        if (maxCost == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeString(maxCost);
-        }
+        dest.writeString(minCost);
+        dest.writeString(maxCost);
         if (serviceTypeId == null) {
             dest.writeByte((byte) 0);
         } else {
@@ -170,5 +188,11 @@ public class StopPoint implements Parcelable {
         }
         dest.writeString(avatar);
         dest.writeString(address);
+        if (track == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(track);
+        }
     }
 }

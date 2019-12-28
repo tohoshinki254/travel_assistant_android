@@ -13,6 +13,7 @@
         android:layout_height="50dp"
         android:text="SAVE"
         android:textSize="20sp"
+        android:textColor="@color/colorWhite"
         android:background="@drawable/border_button"
         />
     <EditText

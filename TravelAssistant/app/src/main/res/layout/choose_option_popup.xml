@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:layout_margin="10dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:id="@+id/input_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Choose Option"
+        android:layout_marginBottom="10dp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textAlignment="center" />
+
+    <ImageButton
+        android:id="@+id/btnExitChooseOption"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/exit_icon"
+        android:background="#00000000" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/input_label"
+        android:weightSum="2"
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnEdit"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:layout_marginLeft="5dp"
+            android:textSize="20sp"
+            android:background="@drawable/border_button"
+            android:text="Edit"
+            android:textColor="@color/quantum_white_100"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/btnRemove"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:layout_gravity="left"
+            android:layout_marginLeft="10dp"
+            android:textSize="20sp"
+            android:background="@drawable/border_button"
+            android:text="Remove"
+            android:textColor="@color/quantum_white_100"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+</RelativeLayout>
