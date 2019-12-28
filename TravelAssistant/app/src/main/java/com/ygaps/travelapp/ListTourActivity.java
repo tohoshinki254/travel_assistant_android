@@ -113,7 +113,13 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
             loadListInvitation();
         }
         else {
-            registerFireBase(token);
+            if (intent.getBooleanExtra("isFromListSP", false)){
+                SharedPreferences sharedPreferences = getSharedPreferences("tokenShare", MODE_PRIVATE);
+                token = sharedPreferences.getString("token", "");
+            }
+            else
+                registerFireBase(token);
+
             setStatusTab(statusTab);
             loadListTour(currentPage, "");
         }

@@ -75,13 +75,13 @@
         android:layout_alignParentBottom="true"
         android:layout_above="@id/edtSearch"
         android:orientation="horizontal"
-        android:weightSum="7">
+        android:weightSum="6">
         <ImageButton
             android:id="@+id/imgbMenu"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="25dp"
-            android:layout_marginLeft="35dp"
+            android:layout_marginLeft="30dp"
             android:layout_marginTop="8dp"
             android:src="@drawable/menu_icon"
             android:scaleType="fitXY"

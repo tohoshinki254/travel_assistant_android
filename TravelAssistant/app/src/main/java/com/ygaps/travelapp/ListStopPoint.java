@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -81,10 +82,16 @@ public class ListStopPoint extends AppCompatActivity implements ListStopPointAda
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                formatStopPoints();
                 String stopPointsArray = new Gson().toJson(listStopPoints);
 
                 try {
                     JSONArray jsonArray = new JSONArray(stopPointsArray);
+                    for (int i = 0; i < jsonArray.length(); i++){
+                        JSONObject temp = jsonArray.getJSONObject(i);
+                        temp.remove("track");
+                        temp.remove("selfStarRatings");
+                    }
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("tourId",StopPointMap.ID);
                     jsonObject.putOpt("stopPoints",jsonArray);
@@ -103,9 +110,6 @@ public class ListStopPoint extends AppCompatActivity implements ListStopPointAda
                             try {
                                 Response response = httpClient.newCall(request).execute();
 
-                                if(!response.isSuccessful())
-                                    return null;
-
                                 return response.body().string();
 
                             } catch (IOException e) {
@@ -113,16 +117,23 @@ public class ListStopPoint extends AppCompatActivity implements ListStopPointAda
                                 return null;
                             }
                         }
-                    };
-                    String result = asyncTask.execute().get();
-                    if(result == null)
-                        Toast.makeText(getApplicationContext(),"Save Failed", Toast.LENGTH_SHORT).show();
-                    else {
-                        Toast.makeText(getApplicationContext(), "Save Successfully", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(ListStopPoint.this, ListTourActivity.class);
-                        startActivity(intent);
 
-                    }
+                        @Override
+                        protected void onPostExecute(String s) {
+                            try {
+                                JSONObject jsonObject1 = new JSONObject(s);
+                                Toast.makeText(getApplicationContext(), jsonObject1.getString("message"), Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(ListStopPoint.this, ListTourActivity.class);
+                                intent.putExtra("isFromListSP", true);
+                                startActivity(intent);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    };
+                    asyncTask.execute();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -406,5 +417,23 @@ public class ListStopPoint extends AppCompatActivity implements ListStopPointAda
         dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
     }
 
+    private void formatStopPoints(){
+        for (int i = 0; i < listStopPoints.size(); i++){
+            if (listStopPoints.get(i).id != null)
+            {
+                listStopPoints.get(i).serviceId = listStopPoints.get(i).id;
+                listStopPoints.get(i).id = null;
+            }
 
+            if (listStopPoints.get(i).arrivalAt == null){
+                Date currentTime = Calendar.getInstance().getTime();
+                listStopPoints.get(i).arrivalAt = currentTime.getTime();
+            }
+
+            if (listStopPoints.get(i).leaveAt == null){
+                Date currentTime = Calendar.getInstance().getTime();
+                listStopPoints.get(i).leaveAt = currentTime.getTime();
+            }
+        }
+    }
 }
