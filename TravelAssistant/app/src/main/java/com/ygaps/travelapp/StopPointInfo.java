@@ -86,7 +86,7 @@ public class StopPointInfo extends AppCompatActivity {
     private ImageButton imbSelectLeave;
     private int year, month, day;
     private Calendar calendar;
-    private String[] arrServiceName = {"Select Service", "Restaurant", "Hotel", "Rest Station", "Other"};
+    private String[] arrServiceName = {"Restaurant", "Hotel", "Rest Station", "Other"};
     private ArrayList<String> arrListService = new ArrayList<String>(Arrays.asList(arrServiceName));
     private Long millis_start;
     private Long millis_end;
@@ -153,9 +153,6 @@ public class StopPointInfo extends AppCompatActivity {
         btnUpdateStopPointInfo = (Button) findViewById(R.id.updateStopPointInfoButton);
         imbSelectArrival = (ImageButton) findViewById(R.id.arrivalAtSelectSP);
         imbSelectLeave = (ImageButton) findViewById(R.id.leaveAtSelectSP);
-        ArrayAdapter<String> adapter_service = new ArrayAdapter(StopPointInfo.this,android.R.layout.simple_spinner_item,arrListService);
-        adapter_service.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
-        spnServiceType.setAdapter(adapter_service);
     }
 
     private void setDisplay() {
@@ -165,34 +162,58 @@ public class StopPointInfo extends AppCompatActivity {
             tvStopPointId.setText(serviceIdStopPoint.toString());
         else
             tvStopPointId.setText(spUnModified.id.toString());
-        if (spUnModified.name != null && !spUnModified.name.equals(""))
+        if (spUnModified.name != null && !spUnModified.name.equals("")) {
             tvName.setText(spUnModified.name);
+            edtNameStopPoint.setText(spUnModified.name);
+        }
         if (spUnModified.address != null && !spUnModified.address.equals(""))
             tvAddress.setText(spUnModified.address);
         if (spUnModified.serviceTypeId != null && !spUnModified.serviceTypeId.equals("")) {
             if (spUnModified.serviceTypeId == 1)
                 tvService.setText("Restaurant");
-            else if (spUnModified.serviceTypeId == 2)
+            else if (spUnModified.serviceTypeId == 2) {
                 tvService.setText("Hotel");
-            else if (spUnModified.serviceTypeId == 3)
+                String temp = arrServiceName[0];
+                arrServiceName[0] = arrServiceName[1];
+                arrServiceName[1] = temp;
+            }
+            else if (spUnModified.serviceTypeId == 3) {
                 tvService.setText("Rest Station");
-            else
+                String temp = arrServiceName[0];
+                arrServiceName[0] = arrServiceName[2];
+                arrServiceName[2] = temp;
+            }
+            else {
                 tvService.setText("Other");
+                String temp = arrServiceName[0];
+                arrServiceName[0] = arrServiceName[3];
+                arrServiceName[3] = temp;
+            }
         }
         if (spUnModified.arrivalAt != null && !spUnModified.arrivalAt.equals("")) {
-            DateFormat simple = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
+            DateFormat simple = new SimpleDateFormat("dd/MM/yyyy");
             Date dateArrive = new Date(spUnModified.arrivalAt);
             tvArrivalAt.setText(simple.format(dateArrive));
+            edtArrivalAt.setText(simple.format(dateArrive));
         }
         if (spUnModified.leaveAt != null && !spUnModified.leaveAt.equals("")) {
-            DateFormat simple = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
+            DateFormat simple = new SimpleDateFormat("dd/MM/yyyy");
             Date dateLeave = new Date(spUnModified.leaveAt);
             tvLeaveAt.setText(simple.format(dateLeave));
+            edtLeaveAt.setText(simple.format(dateLeave));
         }
-        if (spUnModified.minCost != null && !spUnModified.minCost.equals(""))
+        if (spUnModified.minCost != null && !spUnModified.minCost.equals("")) {
             tvMinCost.setText(spUnModified.minCost);
-        if (spUnModified.maxCost != null && !spUnModified.maxCost.equals(""))
+            edtMinCost.setText(spUnModified.minCost);
+        }
+        if (spUnModified.maxCost != null && !spUnModified.maxCost.equals("")) {
             tvMaxCost.setText(spUnModified.maxCost);
+            edtMaxCost.setText(spUnModified.maxCost);
+        }
+
+        ArrayAdapter<String> adapter_service = new ArrayAdapter(StopPointInfo.this,android.R.layout.simple_spinner_item,arrListService);
+        adapter_service.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
+        spnServiceType.setAdapter(adapter_service);
     }
 
     private void setEvent() {
