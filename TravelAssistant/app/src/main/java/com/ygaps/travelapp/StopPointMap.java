@@ -827,8 +827,10 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
                         }
 
                         StopPoint sp = stopPointArrayList.get(removeIndex);
-                        int index = isContainingStopPoint(pendingResult,sp,0);
-                        pendingResult.remove(index);
+                        if (sp.id != null) {
+                            int index = isContainingStopPoint(pendingResult, sp, 0);
+                            pendingResult.remove(index);
+                        }
 
                         markerArrayList.get(removeIndex).remove();
                         markerArrayList.remove(removeIndex);

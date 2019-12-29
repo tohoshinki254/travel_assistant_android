@@ -267,6 +267,9 @@ public class StopPointInfo extends AppCompatActivity {
                                 try {
                                     JSONObject object = new JSONObject(s);
                                     Toast.makeText(getApplicationContext(), object.getString("message"), Toast.LENGTH_SHORT).show();
+                                    if (object.getString("message").equals("Successful")){
+                                        finish();
+                                    }
                                 }
                                 catch (Exception e) {
                                     e.printStackTrace();

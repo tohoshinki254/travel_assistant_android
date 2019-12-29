@@ -204,7 +204,7 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
                         case 2:
                             setStatusTab(2);
                             rcvListTour.setAdapter(invitationAdapter);
-                            setTitle("Invitaion");
+                            setTitle("Invitation");
                             break;
                     }
                 }
@@ -300,7 +300,7 @@ public class ListTourActivity extends AppCompatActivity implements TourAdapter.o
     private void loadListInvitation(){
         statusTab = 2;
         setStatusTab(statusTab);
-        setTitle("Invitaion");
+        setTitle("Invitation");
 
         final OkHttpClient httpClient = new OkHttpClient();
         final Request request = new Request.Builder()
