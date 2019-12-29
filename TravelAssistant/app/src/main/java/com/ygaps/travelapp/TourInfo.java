@@ -431,6 +431,7 @@ public class TourInfo extends AppCompatActivity implements ListStopPointAdapter.
                                     edtMaxCost.setText("");
                                     rdbPrivate.setChecked(false);
                                     LoadTourInfo();
+                                    finish();
                                 }
                                 catch (Exception e) {
                                     e.printStackTrace();
@@ -499,17 +500,20 @@ public class TourInfo extends AppCompatActivity implements ListStopPointAdapter.
                                 try {
                                     JSONObject object = new JSONObject(s);
                                     Toast.makeText(getApplicationContext(), object.getString("message"), Toast.LENGTH_SHORT).show();
+                                    rtbSendStar.setRating(0);
+                                    edtContentReview.setText("");
+                                    LoadListReview();
                                 }
                                 catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             }
                             else
-                                Toast.makeText(getApplicationContext(), "Review Failed!", Toast.LENGTH_SHORT).show();
-                        }
-                    };
-                    asyncTask.execute();
+                    Toast.makeText(getApplicationContext(), "Review Failed!", Toast.LENGTH_SHORT).show();
                 }
+            };
+                    asyncTask.execute();
+        }
                 catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -567,6 +571,7 @@ public class TourInfo extends AppCompatActivity implements ListStopPointAdapter.
                                     try {
                                         JSONObject jsonObject1 = new JSONObject(s);
                                         Toast.makeText(getApplicationContext(), jsonObject1.getString("message"), Toast.LENGTH_SHORT).show();
+                                        edtInputComment.setText("");
                                         LoadListComment();
                                     } catch (JSONException e) {
                                         e.printStackTrace();
@@ -748,7 +753,7 @@ public class TourInfo extends AppCompatActivity implements ListStopPointAdapter.
             btnAudio.setEnabled(false);
             btnJoin.setVisibility(View.VISIBLE);
             btnComment.setEnabled(false);
-            tvJoin.setText("Haven't joined this tour yet?");
+            tvJoin.setText("Haven't joined yet?");
         }
         else {
             return;
