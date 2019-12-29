@@ -147,11 +147,7 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         getLocationPermission();
-        try {
-            drawRoute();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngs.get(0), 17));
 
         Marker ori = mMap.addMarker(new MarkerOptions().position(latLngs.get(0)).title("Origin")
@@ -194,6 +190,26 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            if (requestCode == PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION){
+                mLocationPermissionGranted = true;
+                try {
+                    drawRoute();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        else{
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED){
+                Toast.makeText(getApplicationContext(), "Permission Denied!", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+            mLocationPermissionGranted = false;
+        }
+    }
 
     private void setEvent()
     {
@@ -444,6 +460,11 @@ public class StopPointMap extends FragmentActivity implements OnMapReadyCallback
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             mLocationPermissionGranted = true;
+            try {
+                drawRoute();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         } else {
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);

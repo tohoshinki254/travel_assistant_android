@@ -144,9 +144,6 @@ public class FollowMap extends FragmentActivity implements OnMapReadyCallback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_follow_map);
         setWidget();
-
-        LocalBroadcastManager.getInstance(this).registerReceiver(dataMessage, new IntentFilter("MemberStatus"));
-
         Bundle bundle = getIntent().getExtras();
         tourId = getIntent().getIntExtra("tourId", -1);
         userId = getIntent().getIntExtra("userId", -1);
@@ -202,6 +199,26 @@ public class FollowMap extends FragmentActivity implements OnMapReadyCallback {
         }
 
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if ( grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            if (requestCode == PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION){
+                LocalBroadcastManager.getInstance(this).registerReceiver(dataMessage, new IntentFilter("MemberStatus"));
+                mLocationPermissionGranted = true;
+                getDeviceLocationDraw();
+            }
+        }
+        else
+        {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED)
+            {
+                Toast.makeText(getApplicationContext(), "Permission Denied!", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+            mLocationPermissionGranted = false;
+        }
     }
 
     @Override
@@ -395,6 +412,7 @@ public class FollowMap extends FragmentActivity implements OnMapReadyCallback {
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             mLocationPermissionGranted = true;
+            LocalBroadcastManager.getInstance(this).registerReceiver(dataMessage, new IntentFilter("MemberStatus"));
         } else {
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);

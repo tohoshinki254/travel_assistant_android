@@ -130,6 +130,21 @@ public class Map extends FragmentActivity implements OnMapReadyCallback {
 
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            if (requestCode == PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION){
+                mLocationPermissionGranted = true;
+            }
+        }
+        else{
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED){
+                Toast.makeText(getApplicationContext(), "Permission Denied!", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+            mLocationPermissionGranted = false;
+        }
+    }
 
     private void setEvent()
     {
